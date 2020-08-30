@@ -1,0 +1,14 @@
+/.azureml/
+/.idea/
+/.venv/
+/.vscode/settings.json
+/.data
+/setup/.config
+/.vscode/.ropeproject
+/lightning_logs
+
+__pycache__/
+.ipynb_checkpoints
+.directory
+
+*.bat
