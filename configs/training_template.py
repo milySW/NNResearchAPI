@@ -2,9 +2,9 @@ from typing import Any, List, Tuple, Dict, Optional, Callable
 from src.losses import CrossEntropyLoss
 from src.metrics import Accuracy
 from src.callbacks import (
-    CalculateMetrics,
     CalculateClassMetrics,
     Visualizator,
+    CollectBestMetrics,
 )
 
 
@@ -20,9 +20,9 @@ class DefaultTraining:
             dict(name="accuracy", metric=Accuracy, kwargs={}),
         ),
         callbacks: List[Callable] = [
-            CalculateMetrics(),
             CalculateClassMetrics(),
             Visualizator(),
+            CollectBestMetrics(),
         ],
     ):
 
