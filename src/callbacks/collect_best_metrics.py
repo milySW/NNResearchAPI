@@ -26,7 +26,7 @@ class CollectBestMetrics(CalculateMetrics):
             if best_file.is_file():
                 best_metrics = pd.read_csv(best_file)
 
-                if best_metrics[name].values.item():
+                if best_metrics[name].values.item() < stat:
                     hist = pd.read_csv(best_metric_dir / history_filename)
                     hist = hist.set_index("best")
 
