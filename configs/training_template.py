@@ -13,7 +13,7 @@ class DefaultTraining:
         self,
         epochs: int = 1,
         batch_size: int = 128,
-        save_model: bool = False,
+        checkpoint_callback: bool = False,
         seed: int = 42,
         loss: Callable = CrossEntropyLoss(),
         metrics: Tuple[Dict[str, Optional[Any]], ...] = (
@@ -21,14 +21,14 @@ class DefaultTraining:
         ),
         callbacks: List[Callable] = [
             CalculateClassMetrics(),
-            Visualizator(),
             CollectBestMetrics(),
+            Visualizator(),
         ],
     ):
 
         self.epochs = epochs
         self.batch_size = batch_size
-        self.save_model = save_model
+        self.checkpoint_callback = checkpoint_callback
         self.seed = seed
         self.loss = loss
         self.metrics = metrics

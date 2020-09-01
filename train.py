@@ -37,14 +37,13 @@ def main(config_path: Path, dataset_path: Path, output_path: Path) -> None:
     trainer = pl.Trainer(
         max_epochs=config.training.epochs,
         default_root_dir=model_path,
+        checkpoint_callback=config.training.checkpoint_callback,
         weights_summary="full",
         gpus=-1,
         profiler=True,
         callbacks=config.training.callbacks,
     )
     trainer.fit(model, train_loader, test_loader)
-    if config.training.save_model:
-        torch.save(model, model_path / "model.pth")
 
 
 if __name__ == "__main__":
