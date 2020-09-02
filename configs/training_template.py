@@ -5,6 +5,7 @@ from src.callbacks import (
     CalculateClassMetrics,
     Visualizator,
     CollectBestMetrics,
+    CollectBestClassMetrics,
 )
 
 
@@ -16,11 +17,11 @@ class DefaultTraining:
         checkpoint_callback: bool = False,
         seed: int = 42,
         loss: Callable = CrossEntropyLoss(),
-        metrics: Tuple[Dict[str, Optional[Any]], ...] = (
+        metrics: Tuple[Dict[str, Optional[Any]]] = (
             dict(name="accuracy", metric=Accuracy, kwargs={}),
         ),
         callbacks: List[Callable] = [
-            CalculateClassMetrics(),
+            CollectBestClassMetrics(),
             CollectBestMetrics(),
             Visualizator(),
         ],

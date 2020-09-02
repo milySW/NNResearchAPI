@@ -24,13 +24,15 @@ class LitModel(pl.LightningModule):
         x, y = batch
         y_hat = self(x.float())
 
-        label = torch.argmax(y.squeeze(), 1)
-        loss = self.loss_function(y_hat, label)
+        labels = torch.argmax(y.squeeze(), 1)
+        preds = torch.argmax(y_hat.squeeze(), 1)
+
+        loss = self.loss_function(y_hat, labels)
 
         hiddens = dict(
             inputs=x.detach().cpu(),
-            predictions=y_hat.detach().cpu(),
-            targets=label.detach().cpu(),
+            predictions=preds.detach().cpu(),
+            targets=labels.detach().cpu(),
         )
 
         return loss, hiddens
