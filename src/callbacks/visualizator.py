@@ -1,5 +1,6 @@
 from pytorch_lightning.callbacks.base import Callback
 from src.models.lightning import LitModel
+from pytorch_lightning.trainer.trainer import Trainer
 
 
 class Visualizator(Callback):
