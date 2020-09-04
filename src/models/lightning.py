@@ -1,6 +1,8 @@
 import pytorch_lightning as pl
 import torch
 
+from src.optim import BaseOptim
+
 
 class LitModel(pl.LightningModule):
     def __init__(self, *kwargs):
@@ -14,11 +16,17 @@ class LitModel(pl.LightningModule):
     def metrics(self):
         return NotImplemented
 
+    @property
+    def optim(self):
+        NotImplemented
+
     def forward(self, x):
         return NotImplemented
 
-    def configure_optimizers(self):
-        return NotImplemented
+    def configure_optimizers(self) -> BaseOptim:
+        optimizer, kwargs = self.optim.values()
+        optimizer = optimizer(self.parameters(), **kwargs)
+        return optimizer
 
     def calculate_batch(self, batch: list) -> torch.tensor:
         x, y = batch

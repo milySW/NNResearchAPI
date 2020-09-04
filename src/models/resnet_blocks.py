@@ -1,4 +1,3 @@
-from typing import Any
 import torch
 from torch import nn
 
@@ -93,7 +92,6 @@ class XResNet(LitModel):
             config.model, DefaultResnet
         ), "Passed config is not for RESNET architecutre!"
         self.config = config
-
         model = config.model
 
         # create the stem of the network
@@ -156,6 +154,10 @@ class XResNet(LitModel):
     def metrics(self):
         return self.config.training.metrics
 
+    @property
+    def optim(self):
+        return self.config.training.optim
+
     @staticmethod
     def _make_layer(
         expansion: int,
@@ -177,7 +179,3 @@ class XResNet(LitModel):
                 for i in range(n_blocks)
             ]
         )
-
-    def configure_optimizers(self) -> Any:
-        optimizer = torch.optim.Adam(self.parameters(), lr=1e-3)
-        return optimizer

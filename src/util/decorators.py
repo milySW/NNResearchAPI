@@ -2,7 +2,7 @@ from functools import wraps
 from time import time
 
 
-def timespan(process_name):
+def timespan(process_name: str):
     def timing(f):
         @wraps(f)
         def wrap(*args, **kw):

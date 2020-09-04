@@ -1,4 +1,4 @@
-from torch.nn import CrossEntropyLoss
-from torch.nn import NLLLoss
+from src.losses.base import BaseLoss
+from src.losses.cross_entropy import CrossEntropyLoss
 
-__all__ = ["CrossEntropyLoss", "NLLLoss"]
+__all__ = ["BaseLoss", "CrossEntropyLoss"]

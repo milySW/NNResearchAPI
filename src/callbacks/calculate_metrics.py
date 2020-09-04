@@ -11,23 +11,43 @@ from src.models.lightning import LitModel
 
 class CalculateMetrics(Callback):
     def __init__(self):
+        super().__init__()
+
         self.preds = []
         self.labels = []
 
+        self.subdir = "metrics"
+        self.index_name = "epoch"
+        self.all_file_name = "metrics_all.csv"
+        self.last_file_name = "metrics_last.csv"
+
+        self.metrics_dir: Path = NotImplemented
+        self.data_frame: pd.DataFrame = NotImplemented
+
+    @property
+    def all_path(self):
+        return self.metrics_dir / self.all_file_name
+
+    @property
+    def last_path(self):
+        return self.metrics_dir / self.last_file_name
+
+    def load_save_dataframe(self, cols: List[str]):
+        self.data_frame = pd.DataFrame(columns=cols)
+        self.data_frame = self.data_frame.rename_axis(index=self.index_name)
+        self.data_frame.to_csv(self.all_path)
+
+    def save_final_metrics(self):
+        last = self.data_frame.tail(1).rename_axis(index=self.index_name)
+        last.to_csv(self.last_path)
+
     def on_fit_start(self, trainer: Trainer, pl_module: LitModel):
-        sub_dir = "metrics"
-        self.metrics_dir = Path(trainer.default_root_dir) / sub_dir
-
-        self.all_path = self.metrics_dir / "metrics_all.csv"
-        self.last_path = self.metrics_dir / "metrics_last.csv"
-
+        self.metrics_dir = Path(trainer.default_root_dir) / self.subdir
         self.metrics_dir.mkdir(parents=True, exist_ok=True)
 
     def on_train_start(self, trainer: Trainer, pl_module: LitModel):
         cols = [metric["name"] for metric in trainer.model.metrics]
-        self.data_frame = pd.DataFrame(columns=cols)
-        self.data_frame = self.data_frame.rename_axis(index="epoch")
-        self.data_frame.to_csv(self.all_path)
+        self.load_save_dataframe(cols=cols)
 
     def on_epoch_start(self, trainer: Trainer, pl_module: LitModel):
         self.preds = torch.empty(0)
@@ -52,8 +72,7 @@ class CalculateMetrics(Callback):
             series[name] = round(stat.item(), 4)
 
         self.data_frame = self.data_frame.append(series, ignore_index=True)
-        self.data_frame.to_csv(self.all_path, mode="a", header=False)
+        self.data_frame.to_csv(self.all_path, header=False)
 
     def on_train_end(self, trainer: Trainer, pl_module: LitModel):
-        last = self.data_frame.tail(1).rename_axis(index="epoch")
-        last.to_csv(self.last_path)
+        self.save_final_metrics()

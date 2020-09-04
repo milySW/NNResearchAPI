@@ -1,3 +1,4 @@
-from pytorch_lightning.metrics.classification import Accuracy
+from src.metrics.base import BaseMetric
+from src.metrics.accuracy import Accuracy
 
-__all__ = ["Accuracy"]
+__all__ = ["BaseMetric", "Accuracy"]

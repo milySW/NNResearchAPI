@@ -6,7 +6,7 @@ def conv_layer(
     n_inputs: int,
     n_filters: int,
     kernel_size: int = 3,
-    stride=1,
+    stride: int = 1,
     zero_batch_norm: bool = False,
     use_activation: bool = True,
     activation: torch.nn.Module = nn.ReLU(inplace=True),
