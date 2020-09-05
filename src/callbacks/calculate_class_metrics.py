@@ -36,7 +36,7 @@ class CalculateClassMetrics(CalculateMetrics):
         self.classes = len(y)
 
         cols = self.get_columns(metrics=trainer.model.metrics)
-        self.load_save_dataframe(cols=cols)
+        self.initial_load_save_dataframe(cols=cols)
 
     def on_epoch_end(self, trainer: Trainer, pl_module: LitModel):
         series = pd.Series(dtype="str")
@@ -48,5 +48,5 @@ class CalculateClassMetrics(CalculateMetrics):
                     metric=metric, kwargs=kwargs, group=group,
                 )
 
-        self.data_frame = self.data_frame.append(series, ignore_index=True)
-        self.data_frame.to_csv(self.all_path)
+        self.load_save_dataframe(series=series)
+

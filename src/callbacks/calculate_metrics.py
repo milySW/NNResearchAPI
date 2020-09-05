@@ -32,8 +32,13 @@ class CalculateMetrics(Callback):
     def last_path(self):
         return self.metrics_dir / self.last_file_name
 
-    def load_save_dataframe(self, cols: List[str]):
+    def initial_load_save_dataframe(self, cols: List[str]):
         self.data_frame = pd.DataFrame(columns=cols)
+        self.data_frame.to_csv(self.all_path)
+
+    def load_save_dataframe(self, series: pd.Series):
+        self.data_frame = self.data_frame.append(series, ignore_index=True)
+        self.data_frame = self.data_frame.rename_axis(index=self.index_name)
         self.data_frame.to_csv(self.all_path)
 
     def save_final_metrics(self):
@@ -46,7 +51,7 @@ class CalculateMetrics(Callback):
 
     def on_train_start(self, trainer: Trainer, pl_module: LitModel):
         cols = [metric["name"] for metric in trainer.model.metrics]
-        self.load_save_dataframe(cols=cols)
+        self.initial_load_save_dataframe(cols=cols)
 
     def on_epoch_start(self, trainer: Trainer, pl_module: LitModel):
         self.preds = torch.empty(0)
@@ -70,9 +75,7 @@ class CalculateMetrics(Callback):
             stat = metric(*kwargs)(self.preds, self.labels)
             series[name] = round(stat.item(), 4)
 
-        self.data_frame = self.data_frame.append(series, ignore_index=True)
-        self.data_frame = self.data_frame.rename_axis(index=self.index_name)
-        self.data_frame.to_csv(self.all_path)
+        self.load_save_dataframe(series=series)
 
     def on_train_end(self, trainer: Trainer, pl_module: LitModel):
         self.save_final_metrics()
