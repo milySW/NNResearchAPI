@@ -1,3 +1,5 @@
+from typing import Tuple
+
 import torch
 from torch import nn
 
@@ -87,7 +89,7 @@ class XResNetBlock(LitModel):
 
 
 class XResNet(LitModel):
-    def __init__(self, expansion: int, layers: list, config: DefaultConfig):
+    def __init__(self, expansion: int, layers: Tuple, config: DefaultConfig):
         assert isinstance(
             config.model, DefaultResnet
         ), "Passed config is not for RESNET architecutre!"

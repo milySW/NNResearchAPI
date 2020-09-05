@@ -28,7 +28,9 @@ def main(config_path: Path, dataset_path: Path, output_path: Path) -> None:
         torch.backends.cudnn.benchmark = False
 
     train_loader, test_loader, val_loader = create_loaders(
-        path_to_data=dataset_path, bs=config.training.batch_size
+        path_to_data=dataset_path,
+        loading_func=config.training.loader_func,
+        bs=config.training.batch_size,
     )
 
     model_path = create_save_path(".data/models", config.model.name)

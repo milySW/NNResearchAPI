@@ -1,12 +1,23 @@
 from pathlib import Path
 import importlib
-from typing import Any, Tuple
+from typing import Any, Tuple, Callable
 
 import numpy as np
 from torch.utils.data.dataloader import DataLoader
 
 
-def load_sets(path_to_data: Path) -> Tuple[np.array, ...]:
+def load_variable(variable_name: str, path: Path) -> Any:
+    spec = importlib.util.spec_from_file_location(variable_name, path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return getattr(module, variable_name)
+
+
+def load_custom_sets(data_path: Path, *args, **kwargs) -> Tuple[np.array, ...]:
+    return NotImplemented
+
+
+def load_default_sets(path_to_data: Path) -> Tuple[np.array, ...]:
     X_train = np.expand_dims(np.load(path_to_data / "X_train.npy"), axis=1)
     y_train = np.load(path_to_data / "y_train.npy")
 
@@ -22,13 +33,6 @@ def load_sets(path_to_data: Path) -> Tuple[np.array, ...]:
     return sets
 
 
-def load_variable(variable_name: str, path: Path) -> Any:
-    spec = importlib.util.spec_from_file_location(variable_name, path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return getattr(module, variable_name)
-
-
 def create_loader(
     x_data: np.array, labels: np.array, shuffle: bool, batch_size: int
 ) -> DataLoader:
@@ -37,11 +41,13 @@ def create_loader(
     return loader
 
 
-def create_loaders(path_to_data: Path, bs: int) -> Tuple[DataLoader, ...]:
-    sets = load_sets(path_to_data)
+def create_loaders(
+    path_to_data: Path, loading_func: Callable = load_default_sets, bs: int = 1
+) -> Tuple[DataLoader, ...]:
 
-    train_loader = create_loader(*sets["train"], shuffle=True, batch_size=bs)
-    test_loader = create_loader(*sets["test"], shuffle=False, batch_size=bs)
-    valid_loader = create_loader(*sets["valid"], shuffle=False, batch_size=bs)
+    sets = loading_func(path_to_data)
+    for key, data_set in sets.items():
+        shuffle = True if key == "train" else False
+        loader = create_loader(*data_set, shuffle=shuffle, batch_size=bs)
 
-    return train_loader, test_loader, valid_loader
+        yield loader

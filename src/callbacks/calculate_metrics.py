@@ -34,7 +34,6 @@ class CalculateMetrics(Callback):
 
     def load_save_dataframe(self, cols: List[str]):
         self.data_frame = pd.DataFrame(columns=cols)
-        self.data_frame = self.data_frame.rename_axis(index=self.index_name)
         self.data_frame.to_csv(self.all_path)
 
     def save_final_metrics(self):
@@ -72,7 +71,8 @@ class CalculateMetrics(Callback):
             series[name] = round(stat.item(), 4)
 
         self.data_frame = self.data_frame.append(series, ignore_index=True)
-        self.data_frame.to_csv(self.all_path, header=False)
+        self.data_frame = self.data_frame.rename_axis(index=self.index_name)
+        self.data_frame.to_csv(self.all_path)
 
     def on_train_end(self, trainer: Trainer, pl_module: LitModel):
         self.save_final_metrics()

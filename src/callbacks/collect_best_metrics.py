@@ -18,7 +18,7 @@ class CollectBest:
         self.best_dir_path = Path("best_metrics")
 
     def check_conflicts(self, trainer: Trainer, callback: Callback):
-        condition = any(isinstance(i, callback) for i in trainer.callbacks)
+        condition = any(type(i) == callback for i in trainer.callbacks)
         info = "Don't use {} wrapper with parent callback {}"
         names = self.__class__.__name__, callback.__name__
         assert not condition, info.format(*names)

@@ -49,4 +49,4 @@ class CalculateClassMetrics(CalculateMetrics):
                 )
 
         self.data_frame = self.data_frame.append(series, ignore_index=True)
-        self.data_frame.to_csv(self.all_path, header=False)
+        self.data_frame.to_csv(self.all_path)
