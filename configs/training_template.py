@@ -20,7 +20,7 @@ class DefaultTraining:
         loader_func=load_default_sets,
         loss: BaseLoss = CrossEntropyLoss(),
         metrics: Tuple[Dict[str, Tuple[str, BaseMetric, dict]]] = (
-            dict(name="accuracy", metric=Accuracy, kwargs={}),
+            dict(name="accuracy", metric=Accuracy, kwargs={}, plot=True),
         ),
         optim: BaseOptim = dict(optimizer=Adam, kwargs={}),
         callbacks: List[Callable] = [

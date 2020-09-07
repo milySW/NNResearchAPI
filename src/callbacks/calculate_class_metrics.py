@@ -1,5 +1,4 @@
 import pandas as pd
-from typing import Tuple, Dict, Any, Optional
 
 import numpy as np
 from pytorch_lightning.trainer.trainer import Trainer
@@ -17,11 +16,17 @@ class CalculateClassMetrics(CalculateMetrics):
 
         self.classes: int = NotImplemented
 
-    def get_columns(self, metrics: Tuple[Dict[str, Optional[Any]]]):
-        cols = [metric["name"] for metric in metrics]
+    @property
+    def cols(self):
+        cols = [metric["name"] for metric in self.metrics]
         cols = cols * self.classes
         cols = [f"{name}_{i%self.classes}" for i, name in enumerate(cols)]
         return cols
+
+    @property
+    def plots(self):
+        plots = [metric["plot"] for metric in self.metrics]
+        return plots * self.classes
 
     def calculate_metric(self, metric: BaseMetric, kwargs: dict, group: int):
         indices = np.where(self.labels == group)
@@ -35,13 +40,12 @@ class CalculateClassMetrics(CalculateMetrics):
         _, y = trainer.train_dataloader.dataset.pop()
         self.classes = len(y)
 
-        cols = self.get_columns(metrics=trainer.model.metrics)
-        self.initial_load_save_dataframe(cols=cols)
+        super().on_train_start(trainer=trainer, pl_module=pl_module)
 
     def on_epoch_end(self, trainer: Trainer, pl_module: LitModel):
         series = pd.Series(dtype="str")
         for metric_data in trainer.model.metrics:
-            name, metric, kwargs = metric_data.values()
+            name, metric, kwargs, _ = metric_data.values()
 
             for group in range(self.classes):
                 series[f"{name}_{group}"] = self.calculate_metric(
@@ -49,4 +53,3 @@ class CalculateClassMetrics(CalculateMetrics):
                 )
 
         self.load_save_dataframe(series=series)
-
