@@ -1,5 +1,6 @@
-import pandas as pd
+from typing import Dict
 
+import pandas as pd
 import numpy as np
 from pytorch_lightning.trainer.trainer import Trainer
 
@@ -36,6 +37,14 @@ class CalculateClassMetrics(CalculateMetrics):
         stat = metric(num_classes=self.classes, *kwargs)(preds, labels)
         return round(stat.item(), 4)
 
+    def calculate(self, series: pd.Series, metric_data: Dict) -> pd.Series:
+        name, metric, kwargs, _ = metric_data.values()
+        for group in range(self.classes):
+            series[f"{name}_{group}"] = self.calculate_metric(
+                metric=metric, kwargs=kwargs, group=group,
+            )
+        return series
+
     def on_train_start(self, trainer: Trainer, pl_module: LitModel):
         _, y = trainer.train_dataloader.dataset.pop()
         self.classes = len(y)
@@ -43,13 +52,5 @@ class CalculateClassMetrics(CalculateMetrics):
         super().on_train_start(trainer=trainer, pl_module=pl_module)
 
     def on_epoch_end(self, trainer: Trainer, pl_module: LitModel):
-        series = pd.Series(dtype="str")
-        for metric_data in trainer.model.metrics:
-            name, metric, kwargs, _ = metric_data.values()
-
-            for group in range(self.classes):
-                series[f"{name}_{group}"] = self.calculate_metric(
-                    metric=metric, kwargs=kwargs, group=group,
-                )
-
+        series = self.calculate_metrics()
         self.load_save_dataframe(series=series)

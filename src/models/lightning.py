@@ -41,6 +41,7 @@ class LitModel(pl.LightningModule):
             inputs=x.detach().cpu(),
             predictions=preds.detach().cpu(),
             targets=labels.detach().cpu(),
+            loss=loss.detach().cpu().unsqueeze(dim=0),
         )
 
         return loss, hiddens

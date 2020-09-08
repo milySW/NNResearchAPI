@@ -16,6 +16,7 @@ class CalculateMetrics(Callback):
 
         self.preds = []
         self.labels = []
+        self.losses = []
 
         self.subdir = "metrics"
         self.plot_dir = "plots"
@@ -41,7 +42,8 @@ class CalculateMetrics(Callback):
 
     @property
     def plots(self):
-        return [metric["plot"] for metric in self.metrics]
+        plots = [metric["plot"] for metric in self.metrics]
+        return plots + [True] * (len(self.data_frame.columns) - len(plots))
 
     def initial_load_save_dataframe(self):
         self.data_frame = pd.DataFrame()
@@ -51,6 +53,19 @@ class CalculateMetrics(Callback):
         self.data_frame = self.data_frame.append(series, ignore_index=True)
         self.data_frame = self.data_frame.rename_axis(index=self.index_name)
         self.data_frame.to_csv(self.all_path)
+
+    def calculate(self, series: pd.Series, metric_data: Dict) -> pd.Series:
+        name, metric, kwargs, _ = metric_data.values()
+        stat = metric(*kwargs)(self.preds, self.labels)
+        series[name] = round(stat.item(), 4)
+        return series
+
+    def calculate_metrics(self):
+        series = pd.Series(dtype="str")
+        for metric_data in self.metrics:
+            series = self.calculate(series, metric_data)
+
+        return series
 
     def save_final_metrics(self):
         last = self.data_frame.tail(1).rename_axis(index=self.index_name)
@@ -65,7 +80,7 @@ class CalculateMetrics(Callback):
         plt.savefig(plot_root_dir / f"{metric_name}.png", transparent=True)
 
     def plot_metrics(self):
-        for name, flag in zip(self.cols, self.plots):
+        for name, flag in zip(self.data_frame.columns, self.plots):
             self.plot_metric(metric_name=name) if flag else None
 
     def on_fit_start(self, trainer: Trainer, pl_module: LitModel):
@@ -79,6 +94,7 @@ class CalculateMetrics(Callback):
     def on_epoch_start(self, trainer: Trainer, pl_module: LitModel):
         self.preds = torch.empty(0)
         self.labels = torch.empty(0)
+        self.losses = torch.empty(0)
 
     def on_train_batch_end(
         self,
@@ -90,13 +106,11 @@ class CalculateMetrics(Callback):
     ):
         self.preds = torch.cat((self.preds, trainer.hiddens["predictions"]))
         self.labels = torch.cat((self.labels, trainer.hiddens["targets"]))
+        self.losses = torch.cat((self.losses, trainer.hiddens["loss"]))
 
     def on_epoch_end(self, trainer: Trainer, pl_module: LitModel):
-        series = pd.Series(dtype="str")
-        for metric_data in self.metrics:
-            name, metric, kwargs, _ = metric_data.values()
-            stat = metric(*kwargs)(self.preds, self.labels)
-            series[name] = round(stat.item(), 4)
+        series = self.calculate_metrics()
+        series["loss"] = round(self.losses.mean().item(), 4)
 
         self.load_save_dataframe(series=series)
 

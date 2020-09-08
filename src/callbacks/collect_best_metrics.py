@@ -17,6 +17,8 @@ class CollectBest:
         self.history_filename = "history.csv"
         self.best_dir_path = Path("best_metrics")
 
+        self.metrics_dir = NotImplemented
+
     def check_conflicts(self, trainer: Trainer, callback: Callback):
         condition = any(type(i) == callback for i in trainer.callbacks)
         info = "Don't use {} wrapper with parent callback {}"
@@ -51,28 +53,51 @@ class CollectBest:
         copytree(self.last_path.parent.parent, best_dir)
         history.to_csv(best_dir / self.history_filename)
 
+    def prepare_vars(self, name: str):
+        stat = float(self.data_frame.tail(1)[name].values.item())
+        root_dir = self.metrics_dir.parent.parent
+        best_metric_dir, best_file = self.get_paths(root_dir, name)
+
+        data = {"model_index": [self.metrics_dir.parent.name], name: [stat]}
+        new = self.get_new_metric(data=data, root_dir=self.metrics_dir.parent)
+
+        return stat, new, best_metric_dir, best_file
+
+    def collect(
+        self,
+        name: str,
+        stat: float,
+        new_metric: pd.DataFrame,
+        best_file: Path,
+        best_metric_dir: Path,
+    ):
+        best_metrics = pd.read_csv(best_file)
+        assert name in best_metrics.columns, f"Column {name} doesn't exist"
+
+        if best_metrics[name].values.item() < stat:
+            history = self.add_new_metric(new_metric, best_metric_dir)
+            self.replace_best_dir(history, best_metric_dir)
+
+    def collect_best_metric(self, name: str):
+        stat, new, best_metric_dir, best_file = self.prepare_vars(name)
+
+        if best_file.is_file():
+            self.collect(
+                name=name,
+                stat=stat,
+                new_metric=new,
+                best_file=best_file,
+                best_metric_dir=best_metric_dir,
+            )
+
+        else:
+            self.create_best_dir(history=new, best_dir=best_metric_dir)
+
     def collect_best_metrics(self, trainer: Trainer):
         self.save_final_metrics()
-        root_dir = Path(trainer.default_root_dir)
 
-        model_root_dir = root_dir.parent
         for name in self.data_frame.columns:
-
-            stat = float(self.data_frame.tail(1)[name].values.item())
-            best_metric_dir, best_file = self.get_paths(model_root_dir, name)
-
-            data = {"model_index": [root_dir.name], name: [stat]}
-            new_metric = self.get_new_metric(data=data, root_dir=root_dir)
-
-            if best_file.is_file():
-                best_metrics = pd.read_csv(best_file)
-
-                if best_metrics[name].values.item() < stat:
-                    history = self.add_new_metric(new_metric, best_metric_dir)
-                    self.replace_best_dir(history, best_metric_dir)
-
-            else:
-                self.create_best_dir(new_metric, best_metric_dir)
+            self.collect_best_metric(name=name)
 
 
 class CollectBestMetrics(CalculateMetrics, CollectBest):
