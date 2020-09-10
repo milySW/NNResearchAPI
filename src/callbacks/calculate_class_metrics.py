@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Tuple, Any
 
 import pandas as pd
 import numpy as np
@@ -19,14 +19,14 @@ class CalculateClassMetrics(CalculateMetrics):
 
     @property
     def cols(self):
-        cols = [metric["name"] for metric in self.metrics]
+        cols = self.metrics.keys()
         cols = cols * self.classes
         cols = [f"{name}_{i%self.classes}" for i, name in enumerate(cols)]
         return cols
 
     @property
     def plots(self):
-        plots = [metric["plot"] for metric in self.metrics]
+        plots = [metric["plot"] for metric in self.metrics.values()]
         return plots * self.classes
 
     def calculate_metric(self, metric: BaseMetric, kwargs: dict, group: int):
@@ -37,8 +37,14 @@ class CalculateClassMetrics(CalculateMetrics):
         stat = metric(num_classes=self.classes, *kwargs)(preds, labels)
         return round(stat.item(), 4)
 
-    def calculate(self, series: pd.Series, metric_data: Dict) -> pd.Series:
-        name, metric, kwargs, _ = metric_data.values()
+    def calculate(
+        self,
+        series: pd.Series,
+        name: str,
+        metric_data: Dict[str, Tuple[BaseMetric, dict, Any]],
+    ) -> pd.Series:
+
+        metric, _, kwargs = metric_data.values()
         for group in range(self.classes):
             series[f"{name}_{group}"] = self.calculate_metric(
                 metric=metric, kwargs=kwargs, group=group,

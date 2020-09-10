@@ -1,5 +1,6 @@
 from pathlib import Path
 from shutil import rmtree, copytree
+import operator
 
 import pandas as pd
 from pytorch_lightning.trainer.trainer import Trainer
@@ -7,6 +8,7 @@ from pytorch_lightning.callbacks.base import Callback
 
 from src.callbacks import CalculateMetrics, CalculateClassMetrics
 from src.models.base import LitModel
+from src.losses import BaseLoss
 
 
 class CollectBest:
@@ -65,6 +67,14 @@ class CollectBest:
 
         return stat, new, best_metric_dir, best_file
 
+    def get_extremum(self, name: str) -> str:
+
+        metric_name = name.rsplit("_", 1)[0]
+        var = self.metrics.get(metric_name, {})
+        extremum = var.get("metric", BaseLoss).extremum
+
+        return extremum
+
     def collect(
         self,
         name: str,
@@ -72,15 +82,17 @@ class CollectBest:
         new_metric: pd.DataFrame,
         best_file: Path,
         best_metric_dir: Path,
+        extremum: str,
     ):
         best_metrics = pd.read_csv(best_file)
         assert name in best_metrics.columns, f"Column {name} doesn't exist"
 
-        if best_metrics[name].values.item() < stat:
+        sign = operator.lt if extremum == "max" else operator.gt
+        if sign(best_metrics[name].values.item(), stat):
             history = self.add_new_metric(new_metric, best_metric_dir)
             self.replace_best_dir(history, best_metric_dir)
 
-    def collect_best_metric(self, name: str):
+    def collect_best_metric(self, name: str, extremum: str):
         stat, new, best_metric_dir, best_file = self.prepare_vars(name)
 
         if best_file.is_file():
@@ -90,6 +102,7 @@ class CollectBest:
                 new_metric=new,
                 best_file=best_file,
                 best_metric_dir=best_metric_dir,
+                extremum=extremum,
             )
 
         else:
@@ -99,7 +112,9 @@ class CollectBest:
         self.save_final_metrics()
 
         for name in self.data_frame.columns:
-            self.collect_best_metric(name=name)
+            extremum = self.get_extremum(name)
+
+            self.collect_best_metric(name=name, extremum=extremum)
 
 
 class CollectBestMetrics(CalculateMetrics, CollectBest):

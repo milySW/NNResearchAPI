@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Tuple, Dict
+from typing import List, Tuple, Dict, Any
 
 from pytorch_lightning.callbacks.base import Callback
 from pytorch_lightning.trainer.trainer import Trainer
@@ -8,6 +8,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 from src.models.base import LitModel
+from src.metrics import BaseMetric
 
 
 class CalculateMetrics(Callback):
@@ -38,11 +39,11 @@ class CalculateMetrics(Callback):
 
     @property
     def cols(self):
-        return [metric["name"] for metric in self.metrics]
+        return self.metrics.keys()
 
     @property
     def plots(self):
-        plots = [metric["plot"] for metric in self.metrics]
+        plots = [metric["plot"] for metric in self.metrics.values()]
         return plots + [True] * (len(self.data_frame.columns) - len(plots))
 
     def initial_load_save_dataframe(self):
@@ -54,16 +55,22 @@ class CalculateMetrics(Callback):
         self.data_frame = self.data_frame.rename_axis(index=self.index_name)
         self.data_frame.to_csv(self.all_path)
 
-    def calculate(self, series: pd.Series, metric_data: Dict) -> pd.Series:
-        name, metric, kwargs, _ = metric_data.values()
+    def calculate(
+        self,
+        series: pd.Series,
+        name: str,
+        metric_data: Dict[str, Tuple[BaseMetric, dict, Any]],
+    ) -> pd.Series:
+
+        metric, _, kwargs = metric_data.values()
         stat = metric(*kwargs)(self.preds, self.labels)
         series[name] = round(stat.item(), 4)
         return series
 
     def calculate_metrics(self):
         series = pd.Series(dtype="str")
-        for metric_data in self.metrics:
-            series = self.calculate(series, metric_data)
+        for name, metric_data in self.metrics.items():
+            series = self.calculate(series, name, metric_data)
 
         return series
 

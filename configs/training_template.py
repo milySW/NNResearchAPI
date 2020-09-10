@@ -1,4 +1,4 @@
-from typing import List, Tuple, Dict, Callable
+from typing import List, Tuple, Dict, Callable, Any
 from src.losses import BaseLoss, CrossEntropyLoss
 from src.metrics import BaseMetric, Accuracy
 from src.optimizers import BaseOptim, Adam
@@ -19,8 +19,8 @@ class DefaultTraining:
         seed: int = 42,
         loader_func=load_default_sets,
         loss: BaseLoss = CrossEntropyLoss(),
-        metrics: Tuple[Dict[str, Tuple[str, BaseMetric, dict]]] = (
-            dict(name="accuracy", metric=Accuracy, kwargs={}, plot=True),
+        metrics: Dict[str, Dict[str, Tuple[BaseMetric, dict, Any]]] = dict(
+            accuracy=dict(metric=Accuracy, plot=True, kwargs={}),
         ),
         optim: BaseOptim = dict(optimizer=Adam, kwargs={}),
         callbacks: List[Callable] = [
