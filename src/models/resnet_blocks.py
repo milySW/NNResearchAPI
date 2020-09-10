@@ -4,7 +4,7 @@ import torch
 from torch import nn
 
 from src.models.utils import conv_layer
-from src.models.lightning import LitModel
+from src.models.base import LitModel
 from configs.config_template import DefaultConfig
 from configs.models import DefaultResnet
 

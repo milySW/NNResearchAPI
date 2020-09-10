@@ -3,11 +3,11 @@ from pathlib import Path
 import pytorch_lightning as pl
 import torch
 
-from src.util.params import ParamsBuilder
-from src.util.loaders import create_loaders, load_variable
-from src.util.decorators import timespan
+from src.utils.params import ParamsBuilder
+from src.utils.loaders import create_loaders, load_variable
+from src.utils.decorators import timespan
 from src.models import get_model
-from src.util.save import create_save_path
+from src.utils.save import create_save_path
 
 
 @timespan("Training")

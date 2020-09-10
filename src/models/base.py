@@ -1,7 +1,7 @@
 import pytorch_lightning as pl
 import torch
 
-from src.optim import BaseOptim
+from src.optimizers import BaseOptim
 
 
 class LitModel(pl.LightningModule):

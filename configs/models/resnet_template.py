@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Tuple
 
-from src.models.lightning import LitModel
+from src.models.base import LitModel
 import torch.nn as nn
 import torch
 from configs.models.model_template import DefaultModel

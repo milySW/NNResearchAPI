@@ -6,10 +6,12 @@ from pytorch_lightning.trainer.trainer import Trainer
 from pytorch_lightning.callbacks.base import Callback
 
 from src.callbacks import CalculateMetrics, CalculateClassMetrics
-from src.models.lightning import LitModel
+from src.models.base import LitModel
 
 
 class CollectBest:
+    """Callback collecting best metrics."""
+
     def __init__(self):
         super().__init__()
 

@@ -7,7 +7,7 @@ import torch
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from src.models.lightning import LitModel
+from src.models.base import LitModel
 
 
 class CalculateMetrics(Callback):

@@ -1,8 +1,8 @@
 from typing import List, Tuple, Dict, Callable
 from src.losses import BaseLoss, CrossEntropyLoss
 from src.metrics import BaseMetric, Accuracy
-from src.optim import BaseOptim, Adam
-from src.util.loaders import load_default_sets
+from src.optimizers import BaseOptim, Adam
+from src.utils.loaders import load_default_sets
 from src.callbacks import (
     Visualizator,
     CollectBestMetrics,

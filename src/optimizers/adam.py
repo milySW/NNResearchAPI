@@ -1,5 +1,5 @@
 from torch.optim import Adam as TorchAdam
-from src.optim import BaseOptim
+from src.optimizers import BaseOptim
 
 
 class Adam(BaseOptim, TorchAdam):
