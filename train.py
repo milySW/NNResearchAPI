@@ -43,7 +43,7 @@ def main(config_path: Path, dataset_path: Path, output_path: Path) -> None:
         weights_summary="full",
         gpus=-1,
         profiler=True,
-        callbacks=config.training.callbacks,
+        callbacks=config.callbacks.value_list(),
     )
     trainer.fit(model, train_loader, test_loader)
 

@@ -5,28 +5,49 @@ from src.optimizers import BaseOptim
 
 
 class LitModel(pl.LightningModule):
+    """BASE MODEL"""
+
     def __init__(self, *kwargs):
+        self.conifg = NotImplemented
         super().__init__()
 
     @property
     def loss_function(self):
-        return NotImplemented
+        return self.config.training.loss
 
     @property
     def metrics(self):
-        return NotImplemented
+        return self.config.metrics.to_dict()
 
     @property
     def optim(self):
+        return self.config.optimizers
+
+    @property
+    def model_gen(self):
+        NotImplemented
+
+    @property
+    def model_disc(self):
         NotImplemented
 
     def forward(self, x):
         return NotImplemented
 
     def configure_optimizers(self) -> BaseOptim:
-        optimizer, kwargs = self.optim.values()
-        optimizer = optimizer(self.parameters(), **kwargs)
-        return optimizer
+        r"""
+        Set optimizers and learning-rate schedulers
+        passed to config as DefaultOptimizer.
+        Return:
+            - Single optimizer.
+        """
+        models = dict(normal=self, gen=self.model_gen, disc=self.model_disc,)
+        opts = self.optim.optimizers
+
+        optimizers = self.optim.get_optimizers(opts.items(), models)
+        schedulers = self.optim.get_schedulers(optimizers)
+
+        return list(optimizers.values()), schedulers
 
     def calculate_batch(self, batch: list) -> torch.tensor:
         x, y = batch

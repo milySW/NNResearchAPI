@@ -5,8 +5,7 @@ from torch import nn
 
 from src.models.utils import conv_layer
 from src.models.base import LitModel
-from configs.config_template import DefaultConfig
-from configs.models import DefaultResnet
+from configs import DefaultConfig, DefaultResnet
 
 
 class XResNetBlock(LitModel):
@@ -90,8 +89,8 @@ class XResNetBlock(LitModel):
 
 class XResNet(LitModel):
     def __init__(self, expansion: int, layers: Tuple, config: DefaultConfig):
-        assert isinstance(
-            config.model, DefaultResnet
+        assert (
+            config.model == DefaultResnet
         ), "Passed config is not for RESNET architecutre!"
         self.config = config
         model = config.model
@@ -147,18 +146,6 @@ class XResNet(LitModel):
         for layer in self.x_res_net:
             x = layer(x)
         return x
-
-    @property
-    def loss_function(self):
-        return self.config.training.loss
-
-    @property
-    def metrics(self):
-        return self.config.training.metrics
-
-    @property
-    def optim(self):
-        return self.config.training.optim
 
     @staticmethod
     def _make_layer(

@@ -10,12 +10,14 @@ NNResearchAPI's documentation
    :maxdepth: 2
 
    callbacks
+   configs
    losses
    metrics
    models
    optimizers
-   utils
    train
+   utils
+   
 
 
 

@@ -12,6 +12,8 @@ from src.metrics import BaseMetric
 
 
 class CalculateMetrics(Callback):
+    """LOLOLOLOLO"""
+
     def __init__(self):
         super().__init__()
 

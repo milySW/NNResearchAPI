@@ -1,13 +1,12 @@
-from dataclasses import dataclass
 from typing import Tuple
 
-from src.models.base import LitModel
 import torch.nn as nn
 import torch
-from configs.models.model_template import DefaultModel
+
+from src.models.base import LitModel
+from configs import DefaultModel
 
 
-@dataclass
 class DefaultResnet(DefaultModel):
     name: str = "xresnet18"
     expansion: int = 1

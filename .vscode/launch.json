@@ -11,7 +11,7 @@
             "module": "train",
             "args": [
                 "--config_path",
-                "configs/config.py",
+                "configs/main/config.py",
                 "--dataset_path",
                 ".data",
                 "--output_path",
