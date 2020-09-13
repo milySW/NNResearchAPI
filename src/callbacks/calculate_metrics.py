@@ -12,7 +12,15 @@ from src.metrics import BaseMetric
 
 
 class CalculateMetrics(Callback):
-    """LOLOLOLOLO"""
+    """
+    Callbck callculating metrics after every epoch.
+
+    Return:
+
+        - Two lists - The first list has multiple optimizers,\
+    the second a list of LR schedulers (or lr_dict).
+
+    """
 
     def __init__(self):
         super().__init__()

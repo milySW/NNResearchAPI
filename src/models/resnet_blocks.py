@@ -9,7 +9,9 @@ from configs import DefaultConfig, DefaultResnet
 
 
 class XResNetBlock(LitModel):
-    """Creates the standard `XResNet` block."""
+    """
+    Creates the standard `XResNet` block.
+    """
 
     def __init__(
         self,

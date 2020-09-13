@@ -6,40 +6,29 @@ Configs
 
 Architecture templates
 ------------------------------------------------
-
-.. automodule:: configs.models.resnet_template
-   :members:
-   :autodoc_inherit_docstrings:
-   :show-inheritance:
+.. autoclass:: configs.DefaultModel
+.. autoclass:: configs.DefaultResnet
 
 
-Callbacks template
+Callbacks templates
 ------------------------------------------------
-
-.. automodule:: configs.callbacks_template
-   :members:
-   :show-inheritance:
+.. autoclass:: configs.DefaultCallbacks
 
 
-Metrics template
+Metrics templates
 ------------------------------------------------
-
-.. automodule:: configs.metrics_template
-   :members:
-   :show-inheritance:
+.. autoclass:: configs.DefaultMetrics
 
 
-Optimizers template
+Optimizers templates
 ------------------------------------------------
+.. autoclass:: configs.DefaultOptimizers
 
-.. automodule:: configs.optimizers_template
-   :members:
-   :show-inheritance:
-
-
-Main template
+Training templates
 ------------------------------------------------
+.. autoclass:: configs.DefaultTraining
 
-.. automodule:: configs.config_template
-   :members:
-   :show-inheritance:
+
+
+
+

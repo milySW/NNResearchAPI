@@ -35,7 +35,7 @@ class LitModel(pl.LightningModule):
         return NotImplemented
 
     def configure_optimizers(self) -> BaseOptim:
-        r"""
+        """
         Set optimizers and learning-rate schedulers
         passed to config as DefaultOptimizer.
         Return:

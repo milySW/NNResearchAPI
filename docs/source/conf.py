@@ -37,8 +37,9 @@ release = "0.0.1"
 extensions = [
     "rinoh.frontend.sphinx",
     "sphinx.ext.autodoc",
-    "sphinx.ext.doctest",
     "sphinx.ext.intersphinx",
+    "sphinx.ext.napoleon",
+    "sphinx_paramlinks",
     "sphinx.ext.todo",
     "sphinx.ext.coverage",
     "sphinx.ext.mathjax",

@@ -35,7 +35,10 @@ class DefaultOptimizers(BaseConfig):
 
         for name in opts.keys():
             opt = opts[name]
-            schedulers = cls.schedulers[name]
+            schedulers = cls.schedulers.get(name, None)
+
+            if schedulers is None:
+                continue
 
             var = [cls.get_scheduler(opt, sched) for sched in schedulers]
             all_schedulers.extend(var)
