@@ -2,7 +2,7 @@ from configs import (
     DefaultConfig,
     DefaultTraining,
     DefaultResnet,
-    DefaultOptimizers,
+    DefaultOptimizersAndSchedulers,
     DefaultMetrics,
     DefaultCallbacks,
 )
@@ -11,7 +11,7 @@ from configs import (
 config = DefaultConfig(
     model=DefaultResnet,
     training=DefaultTraining,
-    optimizers=DefaultOptimizers,
+    optimizers=DefaultOptimizersAndSchedulers,
     metrics=DefaultMetrics,
     callbacks=DefaultCallbacks,
 )

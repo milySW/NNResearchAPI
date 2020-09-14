@@ -38,7 +38,7 @@
   
   <style>
     /* white letters */
-      .n, .nn, .o, .p, p, .rst-content dl:not(.docutils) dl dt, .rst-content dl:not(.docutils) dt{
+      .n, .nn, .o, .p, p, .rst-content dl:not(.docutils) dl dt, .rst-content dl:not(.docutils) dt, .MathJax span {
       color: white;
     }
   </style>
@@ -59,7 +59,7 @@
   
   <style>
     /* function color */
-      .fm, .nf, .rst-content dl:not(.docutils) code.descname, .rst-content dl:not(.docutils) code.descclassname  {
+      .fm, .nf, .rst-content dl:not(.docutils) code.descname, .rst-content dl:not(.docutils) code.descclassname, cite  {
       color: #dcdcaa
     }
   </style>
@@ -84,6 +84,15 @@
       color: #ce9178
     }
   </style>
+  
+   <style>
+    /* Variable style */
+      cite {
+	  font-style: normal;
+	  font-weight: bold;
+    }
+  </style>
+
 
   
  {% endblock %}

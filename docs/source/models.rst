@@ -4,20 +4,11 @@ Models
    :maxdepth: 4
 
 
-Abstract
+ResNet
 ------------------------------------------------
 
-.. automodule:: src.models.base
-   :members:
-   :show-inheritance:
-
-
-Architectures
-------------------------------------------------
-
-.. automodule:: src.models.resnet_blocks
-   :members:
-   :show-inheritance:
+.. autoclass:: src.models.resnet_blocks.XResNetBlock
+.. autoclass:: src.models.resnet_blocks.XResNet
 
 
 Utils
@@ -25,4 +16,3 @@ Utils
 
 .. automodule:: src.models.utils
    :members:
-   :show-inheritance:

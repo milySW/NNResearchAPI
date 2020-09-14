@@ -11,6 +11,15 @@ from configs import DefaultConfig, DefaultResnet
 class XResNetBlock(LitModel):
     """
     Creates the standard `XResNet` block.
+
+    Parameters:
+
+        int expansion: Model expantion
+        int n_inputs: Number of inputs
+        int n_filters: Number of filters
+        int stride: controls the stride for the cross-correlation
+        torch.nn.Module activation: Model activation function
+
     """
 
     def __init__(
@@ -90,6 +99,17 @@ class XResNetBlock(LitModel):
 
 
 class XResNet(LitModel):
+    """
+    Creates the standard `XResNet` model.
+
+    Parameters:
+
+        int expansion: Model expantion
+        tuple layer: TOADD
+        DefaultConfig config: config with model parameters
+
+    """
+
     def __init__(self, expansion: int, layers: Tuple, config: DefaultConfig):
         assert (
             config.model == DefaultResnet

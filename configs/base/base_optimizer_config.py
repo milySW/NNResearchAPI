@@ -2,12 +2,12 @@ from typing import Dict, List, Tuple
 
 from src.optimizers import BaseOptim
 from src.optimizers.schedulers import BaseScheduler
-from configs import BaseConfig, Optimizers, Schedulers
+from configs import BaseConfig, DefaultOptimizers, DefaultSchedulers
 
 
-class DefaultOptimizers(BaseConfig):
-    optimizers: Dict[str, BaseOptim] = Optimizers.to_dict()
-    schedulers: Dict[str, BaseScheduler] = Schedulers.to_dict()
+class DefaultOptimizersAndSchedulers(BaseConfig):
+    optimizers: Dict[str, BaseOptim] = DefaultOptimizers.to_dict()
+    schedulers: Dict[str, BaseScheduler] = DefaultSchedulers.to_dict()
 
     @classmethod
     def get_optimizer(cls, opt: dict, models: dict) -> BaseOptim:
@@ -24,7 +24,7 @@ class DefaultOptimizers(BaseConfig):
     @classmethod
     def get_scheduler(cls, opt: BaseOptim, scheduler: dict) -> BaseScheduler:
         scheduler_func = scheduler["sched"]
-        kwargs = scheduler["scheduler_dict"].__dict__
+        kwargs = scheduler["common_kwargs"].__dict__
         scheduler_kwargs = scheduler["scheduler_kwargs"]
 
         return scheduler_func(opt, **scheduler_kwargs, **kwargs)

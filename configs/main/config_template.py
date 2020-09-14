@@ -6,7 +6,7 @@ from configs import (
     BaseConfig,
     DefaultTraining,
     DefaultModel,
-    DefaultOptimizers,
+    DefaultOptimizersAndSchedulers,
     DefaultMetrics,
     DefaultCallbacks,
 )
@@ -17,7 +17,7 @@ class DefaultConfig(BaseConfig):
         self,
         model: DefaultModel,
         training: DefaultTraining,
-        optimizers: DefaultOptimizers,
+        optimizers: DefaultOptimizersAndSchedulers,
         metrics: DefaultMetrics,
         callbacks: DefaultCallbacks,
     ):

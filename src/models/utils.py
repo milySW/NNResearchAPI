@@ -12,7 +12,19 @@ def conv_layer(
     activation: torch.nn.Module = nn.ReLU(inplace=True),
     bias: bool = True,
 ) -> nn.Sequential:
-    """Creates a convolution block for `XResNet`."""
+    """Creates a convolution block for `XResNet`.
+
+    Arguments:
+        int n_inputs: Number of inputs
+        int n_filters: Number of filters
+        int kernel_size: Size of convolutional  kernel
+        int stride: controls the stride for the cross-correlation
+        bool zero_batch_norm: TOADD
+        bool use_activation: TOADD
+        torch.nn.Module activation: Model activation function
+        bool bias: TOADD
+
+    """
 
     batch_norm = nn.BatchNorm2d(n_filters)
     # initializer batch normalization to 0 if its the final conv layer

@@ -118,6 +118,23 @@ class CollectBest:
 
 
 class CollectBestMetrics(CalculateMetrics, CollectBest):
+    """
+    Extension of :class:`CalculateMetrics` callback. It's forbidden to
+    use them together. Callback first use initiate directory with
+    best metrics per currently used architecture. At the end of next
+    runs final metrics will be compared with best metrics currently
+    saved in directory "best_{metric_name}". Every record better
+    than previous ones will be added to file history.csv with info
+    about experiment number. Furthermore experiment directory
+    content will be saved as backup in "best_{metric_name}" directory.
+
+    Output:
+
+        - `history.csv`: File with history of models with best metric
+        - content of experiment run directory
+
+    """
+
     def __init__(self):
         super().__init__()
 
@@ -130,6 +147,24 @@ class CollectBestMetrics(CalculateMetrics, CollectBest):
 
 
 class CollectBestClassMetrics(CalculateClassMetrics, CollectBest):
+    """
+    Extension of :class:`CalculateClassMetrics` callbck. It's forbidden to
+    use them together. Callback first use initiate directory with
+    best metrics per currently used architecture. At the end of next
+    runs final metrics will be compared with best metrics currently
+    saved in directory "best_{metric_name}". Every record better
+    than previous ones will be added to file history.csv with info
+    about experiment number. Furthermore experiment directory
+    content will be saved as backup in "best_{metric_name}" directory.
+
+    Output:
+
+        - `history.csv`: File with history of models with best metric
+        - content of experiment run directory
+
+
+    """
+
     def __init__(self):
         super().__init__()
 

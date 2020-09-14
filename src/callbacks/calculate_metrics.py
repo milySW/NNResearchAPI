@@ -13,12 +13,14 @@ from src.metrics import BaseMetric
 
 class CalculateMetrics(Callback):
     """
-    Callbck callculating metrics after every epoch.
+    Callback callculating metrics after every epoch.
+    Metrics are saved in output directory "metrics"
+    inside experiment directory.
 
-    Return:
+    Output:
 
-        - Two lists - The first list has multiple optimizers,\
-    the second a list of LR schedulers (or lr_dict).
+        - `metrics_all.csv`: metrics calculated for every epoch
+        - `metrics_last.csv`: final metrics
 
     """
 

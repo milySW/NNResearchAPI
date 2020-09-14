@@ -10,6 +10,18 @@ from src.metrics import BaseMetric
 
 
 class CalculateClassMetrics(CalculateMetrics):
+    """
+    Callbck callculating metrics per class after every epoch.
+    Metrics are saved in output directory "metrics"
+    inside experiment directory.
+
+    Output:
+
+        - `metrics_group_all.csv`: metrics calculated for every epoch
+        - `metrics_group_last.csv`: final metrics
+
+    """
+
     def __init__(self):
         super().__init__()
         self.all_file_name = "metrics_group_all.csv"

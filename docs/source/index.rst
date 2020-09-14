@@ -9,16 +9,13 @@ NNResearchAPI's documentation
 .. toctree::
    :maxdepth: 2
 
-   callbacks
    configs
+   models
    losses
    metrics
-   models
    optimizers
-   train
-   utils
-   
-
+   callbacks
+   train   
 
 
 Indices and tables

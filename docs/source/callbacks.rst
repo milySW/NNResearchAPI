@@ -3,28 +3,27 @@ Callbacks
 .. toctree::
    :maxdepth: 4
 
+.. automodule:: src.callbacks
+
 
 Calculate metrics
 ------------------------------------------------
 
-.. automodule:: src.callbacks.calculate_metrics
-   :members:
-   :show-inheritance:
+.. autoclass:: src.callbacks.CalculateMetrics
 
-
+   
 Calculate metrics per class
 ------------------------------------------------
 
-.. automodule:: src.callbacks.calculate_class_metrics
-   :members:
+.. autoclass:: src.callbacks.CalculateClassMetrics
    :show-inheritance:
 
 
-Collect best metrics to csv
+Collect best metrics
 ------------------------------------------------
 
-.. automodule:: src.callbacks.collect_best_metrics
-   :members:
+.. autoclass:: src.callbacks.CollectBestMetrics
    :show-inheritance:
 
-
+.. autoclass:: src.callbacks.CollectBestClassMetrics
+   :show-inheritance:

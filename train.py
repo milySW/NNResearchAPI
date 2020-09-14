@@ -13,7 +13,13 @@ from src.utils.save import create_save_path
 @timespan("Training")
 def main(config_path: Path, dataset_path: Path, output_path: Path) -> None:
     """
-    Function for training classification model
+    Main function responsible for training classification model.
+
+    Arguments:
+        Path config_path: path to main config (of :class:`DefaultConfig` class)
+        Path dataset_path: path to dataset
+        Path output_path: path to directory where experiment will be saved
+
     """
 
     config = load_variable("config", config_path)
