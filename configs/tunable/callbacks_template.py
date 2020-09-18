@@ -1,5 +1,6 @@
 from configs import BaseConfig
 from src.callbacks import (
+    LightProgressBar,
     CollectBestMetrics,
     CollectBestClassMetrics,
 )
@@ -11,5 +12,6 @@ class DefaultCallbacks(BaseConfig):
     Providing new callbacks require adding new class field field with any name
     """
 
+    bar = LightProgressBar()
     best_class_metric = CollectBestClassMetrics()
     best_metric = CollectBestMetrics()

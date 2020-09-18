@@ -1,13 +1,18 @@
+import sys
 from pathlib import Path
 
-import pytorch_lightning as pl
 import torch
 
+from src.trainer.trainer import Trainer
+from src.models import get_model
 from src.utils.params import ParamsBuilder
 from src.utils.loaders import create_loaders, load_variable
 from src.utils.decorators import timespan
-from src.models import get_model
 from src.utils.save import create_save_path
+
+from src.utils.logging import get_logger
+
+logger = get_logger("Trainer")
 
 
 @timespan("Training")
@@ -38,11 +43,14 @@ def main(config_path: Path, dataset_path: Path, output_path: Path) -> None:
         loading_func=config.training.loader_func,
         bs=config.training.batch_size,
     )
-
+    model.example_input_array = torch.tensor(
+        train_loader.dataset[0][0][None], dtype=torch.float32
+    )
     model_path = create_save_path(".data/models", config.model.name)
     config.save_configs(model_path)
 
-    trainer = pl.Trainer(
+    trainer = Trainer(
+        logger=None,
         max_epochs=config.training.epochs,
         default_root_dir=model_path,
         checkpoint_callback=config.training.checkpoint_callback,
@@ -54,6 +62,13 @@ def main(config_path: Path, dataset_path: Path, output_path: Path) -> None:
     trainer.fit(model, train_loader, test_loader)
 
 
+def log_parser(args):
+    args_items = args.__dict__.items()
+    args = [f"{k.ljust(20)}: {str(v).ljust(20)} \n" for k, v in args_items]
+    logger.info("Parsed arguments \n")
+    sys.stdout.write(f"{''.join(args)} \n")
+
+
 if __name__ == "__main__":
     parser = ParamsBuilder("Single-particle tracking data clssification train")
     parser.add_config_argument()
@@ -61,5 +76,6 @@ if __name__ == "__main__":
     parser.add_output_argument()
 
     args, _ = parser.parse_known_args()
+    log_parser(args)
 
     main(**vars(args))

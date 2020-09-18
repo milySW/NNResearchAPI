@@ -1,6 +1,8 @@
+import sys
 from pathlib import Path
 from typing import List, Tuple, Dict, Any
 
+from tabulate import tabulate
 from pytorch_lightning.callbacks.base import Callback
 from pytorch_lightning.trainer.trainer import Trainer
 import torch
@@ -36,6 +38,8 @@ class CalculateMetrics(Callback):
         self.index_name = "epoch"
         self.all_file_name = "metrics_all.csv"
         self.last_file_name = "metrics_last.csv"
+        self.train_prefix = "train"
+        self.valid_prefix = "valid"
 
         self.metrics_dir: Path = NotImplemented
         self.data_frame: pd.DataFrame = NotImplemented
@@ -102,6 +106,19 @@ class CalculateMetrics(Callback):
         for name, flag in zip(self.data_frame.columns, self.plots):
             self.plot_metric(metric_name=name) if flag else None
 
+    def log_metrics(self, series, epoch, width=11):
+        if epoch == 0:
+            headers = [[f"|{i.center(width)}|" for i in series.keys().values]]
+            print("\n")
+            print("=" * ((len(series)) * (width + 2) + 2))
+            print(tabulate(headers, tablefmt="plain"))
+            print("=" * ((len(series)) * (width + 2) + 2))
+
+        metrics = [[f"|{str(i).center(width)}|" for i in series.values]]
+        print("")
+        print(tabulate(metrics, tablefmt="plain"))
+        print("-" * ((len(series)) * (width + 2) + 2))
+
     def on_fit_start(self, trainer: Trainer, pl_module: LitModel):
         self.metrics_dir = Path(trainer.default_root_dir) / self.subdir
         self.metrics_dir.mkdir(parents=True, exist_ok=True)
@@ -132,6 +149,7 @@ class CalculateMetrics(Callback):
         series["loss"] = round(self.losses.mean().item(), 4)
 
         self.load_save_dataframe(series=series)
+        self.log_metrics(series, epoch=trainer.current_epoch)
 
     def on_train_end(self, trainer: Trainer, pl_module: LitModel):
         self.save_final_metrics()

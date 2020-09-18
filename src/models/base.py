@@ -5,8 +5,6 @@ from src.optimizers import BaseOptim
 
 
 class LitModel(pl.LightningModule):
-    """BASE MODEL"""
-
     def __init__(self, *kwargs):
         self.conifg = NotImplemented
         super().__init__()

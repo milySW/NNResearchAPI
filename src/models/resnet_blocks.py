@@ -24,6 +24,7 @@ class XResNetBlock(LitModel):
 
     def __init__(
         self,
+        config: DefaultConfig,
         expansion: int,
         n_inputs: int,
         n_filters: int,
@@ -31,6 +32,7 @@ class XResNetBlock(LitModel):
         activation: torch.nn.Module = nn.ReLU(inplace=True),
     ):
         super().__init__()
+        self.config = config
 
         n_inputs = n_inputs * expansion
         n_filters = n_filters * expansion
@@ -143,6 +145,7 @@ class XResNet(LitModel):
                 n_blocks=layer,
                 stride=1 if i == 0 else 2,
                 activation=model.activation,
+                config=self.config,
             )
             for i, layer in enumerate(layers)
         ]
@@ -177,6 +180,7 @@ class XResNet(LitModel):
         n_blocks: nn.Module,
         stride: int,
         activation: nn.Module,
+        config: DefaultConfig,
     ) -> nn.Sequential:
         return nn.Sequential(
             *[
@@ -186,6 +190,7 @@ class XResNet(LitModel):
                     n_filters=n_filters,
                     stride=stride if i == 0 else 1,
                     activation=activation,
+                    config=config,
                 )
                 for i in range(n_blocks)
             ]

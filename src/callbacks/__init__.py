@@ -1,3 +1,4 @@
+from src.callbacks.progress import LightProgressBar
 from src.callbacks.calculate_metrics import CalculateMetrics
 from src.callbacks.calculate_class_metrics import CalculateClassMetrics
 from src.callbacks.collect_best_metrics import (
@@ -6,9 +7,9 @@ from src.callbacks.collect_best_metrics import (
 )
 
 __all__ = [
+    "LightProgressBar",
     "CalculateClassMetrics",
     "CalculateMetrics",
-    "Visualizator",
     "CollectBestMetrics",
     "CollectBestClassMetrics",
 ]
