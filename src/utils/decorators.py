@@ -4,6 +4,12 @@ from time import time
 
 
 def timespan(process_name: str):
+    """
+    Decorator based on `High Performance Python - Practical Performant
+    Programming for Humans` by Micha Gorelicki & Ian Ozsvald.
+    Chapeter 2: Profiling to Find Bottlenecks, example 2-5.
+    """
+
     def timing(f):
         @wraps(f)
         def wrap(*args, **kw):

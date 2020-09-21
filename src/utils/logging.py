@@ -2,9 +2,10 @@ import logging
 import re
 import sys
 import warnings
+from typing import List
 
 
-def get_logger(name, level=logging.INFO):
+def get_logger(name: str, level=logging.INFO) -> logging.Logger:
     logger = logging.getLogger(name)
     handlers = get_handlers()
     logger.handlers = handlers
@@ -13,11 +14,11 @@ def get_logger(name, level=logging.INFO):
     return logger
 
 
-def is_logging_disabled(logger):
+def is_logging_disabled(logger: logging.Logger):
     return not logger.isEnabledFor(logging.INFO)
 
 
-def get_handlers():
+def get_handlers() -> List[logging.StreamHandler]:
     var = "%(asctime)s %(levelname)s %(name)s - %(message)s"
     formatter = logging.Formatter(var)
 
@@ -38,7 +39,9 @@ def _configure_warnings_logger():
     stderr_handler = logging.StreamHandler(sys.stderr)
     stderr_handler.setFormatter(formatter)
 
-    def formatwarning(msg, category, filename, lineno, *args):
+    def formatwarning(
+        msg: UserWarning, category: type, filename: str, lineno: int, *args
+    ) -> str:
         msg = re.sub(r"\s+", " ", str(msg))
         return f"{filename}:{lineno} - {msg}"
 

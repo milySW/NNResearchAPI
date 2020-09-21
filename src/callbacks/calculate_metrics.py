@@ -1,4 +1,3 @@
-import sys
 from pathlib import Path
 from typing import List, Tuple, Dict, Any
 
@@ -66,58 +65,84 @@ class CalculateMetrics(Callback):
         self.data_frame = pd.DataFrame()
         self.data_frame.to_csv(self.all_path)
 
-    def load_save_dataframe(self, series: pd.Series):
-        self.data_frame = self.data_frame.append(series, ignore_index=True)
-        self.data_frame = self.data_frame.rename_axis(index=self.index_name)
+    def load_save_dataframe(self):
+        data_frame = self.data_frame.append(self.series, ignore_index=True)
+        data_frame = data_frame.rename_axis(index=self.index_name)
+        self.data_frame = data_frame[self.series.index.tolist()]
         self.data_frame.to_csv(self.all_path)
 
     def calculate(
-        self,
-        series: pd.Series,
-        name: str,
-        metric_data: Dict[str, Tuple[BaseMetric, dict, Any]],
+        self, name: str, metric_data: Dict[str, Tuple[BaseMetric, dict, Any]],
     ) -> pd.Series:
 
         metric, _, kwargs = metric_data.values()
         stat = metric(*kwargs)(self.preds, self.labels)
-        series[name] = round(stat.item(), 4)
-        return series
+        self.series[name] = round(stat.item(), 4)
 
-    def calculate_metrics(self):
-        series = pd.Series(dtype="str")
+    def calculate_metrics(self, prefix: str):
         for name, metric_data in self.metrics.items():
-            series = self.calculate(series, name, metric_data)
-
-        return series
+            metric_name = f"{prefix}{name}"
+            self.calculate(name=metric_name, metric_data=metric_data)
 
     def save_final_metrics(self):
         last = self.data_frame.tail(1).rename_axis(index=self.index_name)
         last.to_csv(self.last_path)
 
-    def plot_metric(self, metric_name: str):
+    def plot_metric(self, names: List[str]):
         plot_root_dir = self.metrics_dir.parent / self.plot_dir
         plot_root_dir.mkdir(parents=True, exist_ok=True)
 
         plt.figure()
-        plt.plot(self.data_frame[metric_name])
-        plt.savefig(plot_root_dir / f"{metric_name}.png", transparent=True)
+        for name in names:
+            plt.plot(self.data_frame[name], label=name)
+        plt.legend(loc="best")
+        plt.savefig(plot_root_dir / f"{names[0]}.png", transparent=True)
 
     def plot_metrics(self):
-        for name, flag in zip(self.data_frame.columns, self.plots):
-            self.plot_metric(metric_name=name) if flag else None
+        df = self.data_frame
+        group = df.groupby(lambda x: x.rsplit("_", maxsplit=1)[-1], axis=1)
 
-    def log_metrics(self, series, epoch, width=11):
+        for names, flag in zip(group.groups.values(), self.plots):
+            self.plot_metric(names) if flag else None
+
+    def log_metrics(self, epoch, width=12):
+        columns_number = len(self.series)
+        total_width = columns_number * (width + 2) + 2 * (columns_number - 1)
+
+        names = self.series.keys().values
+        values = self.series.values
+
         if epoch == 0:
-            headers = [[f"|{i.center(width)}|" for i in series.keys().values]]
+            headers = [[f"|{i.center(width)}|" for i in names]]
             print("\n")
-            print("=" * ((len(series)) * (width + 2) + 2))
+            print("=" * total_width)
             print(tabulate(headers, tablefmt="plain"))
-            print("=" * ((len(series)) * (width + 2) + 2))
+            print("=" * total_width)
 
-        metrics = [[f"|{str(i).center(width)}|" for i in series.values]]
+        metrics = [[f"|{str(i).center(width)}|" for i in values]]
         print("")
         print(tabulate(metrics, tablefmt="plain"))
-        print("-" * ((len(series)) * (width + 2) + 2))
+        print("-" * total_width)
+
+    def initialize_tensors(self):
+        self.preds = torch.empty(0)
+        self.labels = torch.empty(0)
+        self.losses = torch.empty(0)
+
+    def fill_tensors(self, trainer: Trainer):
+        self.preds = torch.cat((self.preds, trainer.calculations["preds"]))
+        self.labels = torch.cat((self.labels, trainer.calculations["labels"]))
+        self.losses = torch.cat((self.losses, trainer.calculations["losses"]))
+
+    def manage_metrics(self, trainer: Trainer, prefix: str):
+        self.calculate_metrics(prefix=prefix)
+        self.series[f"{prefix}loss"] = round(self.losses.mean().item(), 4)
+
+    @staticmethod
+    def sorted_series(series: pd.Series):
+        cols = series.index.tolist()
+        cols = sorted(cols, key=lambda x: x.split("_")[-1])
+        return series[cols]
 
     def on_fit_start(self, trainer: Trainer, pl_module: LitModel):
         self.metrics_dir = Path(trainer.default_root_dir) / self.subdir
@@ -127,10 +152,17 @@ class CalculateMetrics(Callback):
         self.metrics = trainer.model.metrics
         self.initial_load_save_dataframe()
 
-    def on_epoch_start(self, trainer: Trainer, pl_module: LitModel):
-        self.preds = torch.empty(0)
-        self.labels = torch.empty(0)
-        self.losses = torch.empty(0)
+    def on_epoch_start(self, trainer, pl_module):
+        self.series = pd.Series()
+
+    def on_train_epoch_start(self, trainer: Trainer, pl_module: LitModel):
+        self.initialize_tensors()
+
+    def on_validation_epoch_start(self, trainer: Trainer, pl_module: LitModel):
+        self.initialize_tensors()
+
+    def on_test_epoch_start(self, trainer: Trainer, pl_module: LitModel):
+        self.initialize_tensors()
 
     def on_train_batch_end(
         self,
@@ -140,16 +172,38 @@ class CalculateMetrics(Callback):
         batch_idx: int,
         dataloader_idx: int,
     ):
-        self.preds = torch.cat((self.preds, trainer.hiddens["predictions"]))
-        self.labels = torch.cat((self.labels, trainer.hiddens["targets"]))
-        self.losses = torch.cat((self.losses, trainer.hiddens["loss"]))
+        self.fill_tensors(trainer=trainer)
+        if trainer.num_training_batches - batch_idx == 1:
+            self.manage_metrics(trainer=trainer, prefix="")
+
+    def on_validation_batch_end(
+        self,
+        trainer: Trainer,
+        pl_module: LitModel,
+        batch: List[torch.Tensor],
+        batch_idx: int,
+        dataloader_idx: int,
+    ):
+        self.fill_tensors(trainer=trainer)
+        if trainer.num_val_batches[dataloader_idx] - batch_idx == 1:
+            self.manage_metrics(trainer=trainer, prefix="val_")
+
+    def on_test_batch_end(
+        self,
+        trainer: Trainer,
+        pl_module: LitModel,
+        batch: List[torch.Tensor],
+        batch_idx: int,
+        dataloader_idx: int,
+    ):
+        self.fill_tensors(trainer=trainer)
+        if trainer.num_test_batches[dataloader_idx] - batch_idx == 1:
+            self.manage_metrics(trainer=trainer, prefix="test_")
 
     def on_epoch_end(self, trainer: Trainer, pl_module: LitModel):
-        series = self.calculate_metrics()
-        series["loss"] = round(self.losses.mean().item(), 4)
-
-        self.load_save_dataframe(series=series)
-        self.log_metrics(series, epoch=trainer.current_epoch)
+        self.series = self.sorted_series(series=self.series)
+        self.load_save_dataframe()
+        self.log_metrics(epoch=trainer.current_epoch)
 
     def on_train_end(self, trainer: Trainer, pl_module: LitModel):
         self.save_final_metrics()

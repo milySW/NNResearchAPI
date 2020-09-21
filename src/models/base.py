@@ -29,7 +29,7 @@ class LitModel(pl.LightningModule):
     def model_disc(self):
         NotImplemented
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor):
         return NotImplemented
 
     def configure_optimizers(self) -> BaseOptim:
@@ -56,32 +56,32 @@ class LitModel(pl.LightningModule):
 
         loss = self.loss_function(y_hat, labels)
 
-        hiddens = dict(
+        calculations = dict(
             inputs=x.detach().cpu(),
-            predictions=preds.detach().cpu(),
-            targets=labels.detach().cpu(),
-            loss=loss.detach().cpu().unsqueeze(dim=0),
+            preds=preds.detach().cpu(),
+            labels=labels.detach().cpu(),
+            losses=loss.detach().cpu().unsqueeze(dim=0),
         )
 
-        return loss, hiddens
+        return loss, calculations
 
     def training_step(self, batch: list, batch_idx: int) -> pl.TrainResult:
-        loss, hiddens = self.calculate_batch(batch)
+        loss, calculations = self.calculate_batch(batch)
         result = pl.TrainResult(loss)
 
-        result.hiddens = hiddens
+        self.trainer.calculations = calculations
         return result
 
     def validation_step(self, batch: list, batch_idx: int) -> pl.EvalResult:
-        loss, hiddens = self.calculate_batch(batch)
+        loss, calculations = self.calculate_batch(batch)
         result = pl.EvalResult(checkpoint_on=loss)
 
-        result.hiddens = hiddens
+        self.trainer.calculations = calculations
         return result
 
     def test_step(self, batch: list, batch_idx: int) -> pl.EvalResult:
-        loss, hiddens = self.calculate_batch(batch)
+        loss, calculations = self.calculate_batch(batch)
         result = pl.EvalResult(checkpoint_on=loss)
 
-        result.hiddens = hiddens
+        self.trainer.calculations = calculations
         return result

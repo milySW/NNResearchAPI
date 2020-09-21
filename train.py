@@ -38,7 +38,7 @@ def main(config_path: Path, dataset_path: Path, output_path: Path) -> None:
         torch.backends.cudnn.deterministic = True
         torch.backends.cudnn.benchmark = False
 
-    train_loader, test_loader, val_loader = create_loaders(
+    train_loader, val_loader, test_loader = create_loaders(
         path_to_data=dataset_path,
         loading_func=config.training.loader_func,
         bs=config.training.batch_size,
@@ -59,7 +59,7 @@ def main(config_path: Path, dataset_path: Path, output_path: Path) -> None:
         profiler=True,
         callbacks=config.callbacks.value_list(),
     )
-    trainer.fit(model, train_loader, test_loader)
+    trainer.fit(model, train_loader, val_loader)
 
 
 def log_parser(args):

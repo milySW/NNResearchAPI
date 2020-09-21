@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import List
 from shutil import rmtree, copytree
 import operator
 
@@ -14,7 +15,9 @@ from src.losses import BaseLoss
 class CollectBest:
     """Callback collecting best metrics."""
 
-    def __init__(self):
+    def __init__(self, variants: str = ["val"]):
+        self.check_variant(variants=variants)
+        self.variants = variants
         super().__init__()
 
         self.best_index = "best"
@@ -25,9 +28,24 @@ class CollectBest:
 
     def check_conflicts(self, trainer: Trainer, callback: Callback):
         condition = any(type(i) == callback for i in trainer.callbacks)
-        info = "Don't use {} wrapper with parent callback {}"
+        info = "Don't use {} wrapper with parent callback {}."
         names = self.__class__.__name__, callback.__name__
         assert not condition, info.format(*names)
+
+    @staticmethod
+    def check_variant(variants: List[str]):
+        supported = ["val", "test", ""]
+        info = f"Variants not supported. Supported variants: {supported}"
+
+        con = [True if variant in supported else False for variant in variants]
+        assert all(con), info
+
+    def condtition(self, col: str):
+        return any(True for variant in self.variants if variant in col)
+
+    @staticmethod
+    def extract_name(name: str):
+        return name.rsplit("_", 1)[0].split("_", 1)[-1]
 
     def get_paths(self, model_root_dir: Path, name: str):
         metric_subdir = self.best_dir_path / f"{self.best_index}_{name}"
@@ -69,7 +87,7 @@ class CollectBest:
 
     def get_extremum(self, name: str) -> str:
 
-        metric_name = name.rsplit("_", 1)[0]
+        metric_name = self.extract_name(name)
         var = self.metrics.get(metric_name, {})
         extremum = var.get("metric", BaseLoss).extremum
 
@@ -111,7 +129,8 @@ class CollectBest:
     def collect_best_metrics(self, trainer: Trainer):
         self.save_final_metrics()
 
-        for name in self.data_frame.columns:
+        cols = [col for col in self.data_frame.columns if self.condtition(col)]
+        for name in cols:
             extremum = self.get_extremum(name)
 
             self.collect_best_metric(name=name, extremum=extremum)

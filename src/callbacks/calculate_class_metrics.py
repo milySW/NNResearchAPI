@@ -50,18 +50,14 @@ class CalculateClassMetrics(CalculateMetrics):
         return round(stat.item(), 4)
 
     def calculate(
-        self,
-        series: pd.Series,
-        name: str,
-        metric_data: Dict[str, Tuple[BaseMetric, dict, Any]],
+        self, name: str, metric_data: Dict[str, Tuple[BaseMetric, dict, Any]],
     ) -> pd.Series:
 
         metric, _, kwargs = metric_data.values()
         for group in range(self.classes):
-            series[f"{name}_{group}"] = self.calculate_metric(
+            self.series[f"{name}_{group}"] = self.calculate_metric(
                 metric=metric, kwargs=kwargs, group=group,
             )
-        return series
 
     def on_train_start(self, trainer: Trainer, pl_module: LitModel):
         _, y = trainer.train_dataloader.dataset.pop()
@@ -69,6 +65,8 @@ class CalculateClassMetrics(CalculateMetrics):
 
         super().on_train_start(trainer=trainer, pl_module=pl_module)
 
-    def on_epoch_end(self, trainer: Trainer, pl_module: LitModel):
-        series = self.calculate_metrics()
-        self.load_save_dataframe(series=series)
+    def manage_metrics(self, trainer: Trainer, prefix: str):
+        self.calculate_metrics(prefix=prefix)
+
+    def log_metrics(self, **kwargs):
+        pass
