@@ -116,16 +116,22 @@ dependencies:
   - pip:
       - absl-py==0.10.0
       - cachetools==4.1.1
+      - cfgv==3.2.0
       - commonmark==0.9.1
       - dill==0.3.2
+      - distlib==0.3.1
+      - filelock==3.0.12
       - future==0.18.2
       - google-auth==1.20.1
       - google-auth-oauthlib==0.4.1
       - groundwork-sphinx-theme==1.1.1
       - grpcio==1.31.0
+      - identify==1.5.4
       - logger==1.4
       - markdown==3.2.2
+      - nodeenv==1.5.0
       - oauthlib==3.1.0
+      - pre-commit==2.7.1
       - protobuf==3.13.0
       - pyasn1==0.4.8
       - pyasn1-modules==0.2.8
@@ -147,5 +153,6 @@ dependencies:
       - tensorboard-plugin-wit==1.7.0
       - torchsummary==1.5.1
       - tqdm==4.48.2
+      - virtualenv==20.0.31
       - werkzeug==1.0.1
 prefix: C:\Users\Milosz\anaconda3\envs\diffusion_modes_dnn_architecture
