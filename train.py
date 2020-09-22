@@ -2,6 +2,7 @@ import sys
 from pathlib import Path
 
 import torch
+import numpy as np
 
 from src.trainer.trainer import Trainer
 from src.models import get_model
@@ -32,11 +33,12 @@ def main(config_path: Path, dataset_path: Path, output_path: Path) -> None:
     manual_seed = config.training.seed
 
     if manual_seed is not None:
-        # logger.info(f"Seed the RNG for all devices with {manual_seed}")
+        logger.info(f"Seed the RNG for all devices with {manual_seed}")
         torch.manual_seed(manual_seed)
         # see https://pytorch.org/docs/stable/notes/randomness.html
         torch.backends.cudnn.deterministic = True
         torch.backends.cudnn.benchmark = False
+        np.random.seed(manual_seed)
 
     train_loader, val_loader, test_loader = create_loaders(
         path_to_data=dataset_path,
