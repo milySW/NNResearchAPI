@@ -4,6 +4,17 @@ from pytorch_lightning.callbacks import progress
 
 
 class LightProgressBar(progress.ProgressBar):
+    """
+    Callback logging progresss bar. Wrapper for progress.ProgressBar,
+    which provides progress bar hidding after operation end.
+
+    Output:
+
+        - `metrics_all.csv`: metrics calculated for every epoch
+        - `metrics_last.csv`: final metrics
+
+    """
+
     def init_train_tqdm(self) -> progress.tqdm:
         bar = progress.tqdm(
             desc="Training",

@@ -1,6 +1,5 @@
-from typing import Dict, Tuple, Any
+from typing import Dict, Tuple, Any, List
 
-import pandas as pd
 import numpy as np
 from pytorch_lightning.trainer.trainer import Trainer
 
@@ -30,18 +29,21 @@ class CalculateClassMetrics(CalculateMetrics):
         self.classes: int = NotImplemented
 
     @property
-    def cols(self):
+    def cols(self) -> List[str]:
         cols = self.metrics.keys()
         cols = cols * self.classes
         cols = [f"{name}_{i%self.classes}" for i, name in enumerate(cols)]
         return cols
 
     @property
-    def plots(self):
+    def plots(self) -> List[bool]:
         plots = [metric["plot"] for metric in self.metrics.values()]
         return plots * self.classes
 
-    def calculate_metric(self, metric: BaseMetric, kwargs: dict, group: int):
+    def calculate_metric(
+        self, metric: BaseMetric, kwargs: Dict[str, Any], group: int
+    ) -> float:
+
         indices = np.where(self.labels == group)
         preds = self.preds[indices]
         labels = self.labels[indices]
@@ -50,8 +52,8 @@ class CalculateClassMetrics(CalculateMetrics):
         return round(stat.item(), 4)
 
     def calculate(
-        self, name: str, metric_data: Dict[str, Tuple[BaseMetric, dict, Any]],
-    ) -> pd.Series:
+        self, name: str, metric_data: Dict[str, Tuple[BaseMetric, dict, Any]]
+    ):
 
         metric, _, kwargs = metric_data.values()
         for group in range(self.classes):

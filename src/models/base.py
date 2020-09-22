@@ -1,7 +1,11 @@
+from typing import List, Tuple, Dict, Union
+
 import pytorch_lightning as pl
 import torch
 
+from src.metrics import BaseMetric
 from src.optimizers import BaseOptim
+from src.optimizers.schedulers import BaseScheduler
 
 
 class LitModel(pl.LightningModule):
@@ -10,29 +14,29 @@ class LitModel(pl.LightningModule):
         super().__init__()
 
     @property
-    def loss_function(self):
+    def loss_function(self) -> BaseMetric:
         return self.config.training.loss
 
     @property
-    def metrics(self):
+    def metrics(self) -> Dict[str, Dict[str, Union[dict, BaseMetric, bool]]]:
         return self.config.metrics.to_dict()
 
     @property
-    def optim(self):
+    def optim(self) -> List[BaseOptim]:
         return self.config.optimizers
 
     @property
     def model_gen(self):
-        NotImplemented
+        return NotImplemented
 
     @property
     def model_disc(self):
-        NotImplemented
+        return NotImplemented
 
     def forward(self, x: torch.Tensor):
         return NotImplemented
 
-    def configure_optimizers(self) -> BaseOptim:
+    def configure_optimizers(self) -> Tuple[BaseOptim, List[BaseScheduler]]:
         """
         Set optimizers and learning-rate schedulers
         passed to config as DefaultOptimizer.
@@ -43,11 +47,11 @@ class LitModel(pl.LightningModule):
         opts = self.optim.optimizers
 
         optimizers = self.optim.get_optimizers(opts.items(), models)
-        schedulers = self.optim.get_schedulers(optimizers)
+        schedulers = self.optim.get_scheds(optimizers)
 
         return list(optimizers.values()), schedulers
 
-    def calculate_batch(self, batch: list) -> torch.tensor:
+    def calculate_batch(self, batch: list) -> torch.Tensor:
         x, y = batch
         y_hat = self(x.float())
 

@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List, Tuple, Dict, Any
+from typing import List, Tuple, Dict, Any, Union
 
 from tabulate import tabulate
 from pytorch_lightning.callbacks.base import Callback
@@ -45,19 +45,15 @@ class CalculateMetrics(Callback):
         self.metrics: Tuple[Dict] = NotImplemented
 
     @property
-    def all_path(self):
+    def all_path(self) -> Path:
         return self.metrics_dir / self.all_file_name
 
     @property
-    def last_path(self):
+    def last_path(self) -> Path:
         return self.metrics_dir / self.last_file_name
 
     @property
-    def cols(self):
-        return self.metrics.keys()
-
-    @property
-    def plots(self):
+    def plots(self) -> List[bool]:
         plots = [metric["plot"] for metric in self.metrics.values()]
         return plots + [True] * (len(self.data_frame.columns) - len(plots))
 
@@ -72,8 +68,8 @@ class CalculateMetrics(Callback):
         self.data_frame.to_csv(self.all_path)
 
     def calculate(
-        self, name: str, metric_data: Dict[str, Tuple[BaseMetric, dict, Any]],
-    ) -> pd.Series:
+        self, name: str, metric_data: Dict[str, Tuple[BaseMetric, dict, Any]]
+    ):
 
         metric, _, kwargs = metric_data.values()
         stat = metric(*kwargs)(self.preds, self.labels)
@@ -105,7 +101,7 @@ class CalculateMetrics(Callback):
         for names, flag in zip(group.groups.values(), self.plots):
             self.plot_metric(names) if flag else None
 
-    def log_metrics(self, epoch, width=12):
+    def log_metrics(self, epoch: int, width: Union[float, int] = 12):
         columns_number = len(self.series)
         total_width = columns_number * (width + 2) + 2 * (columns_number - 1)
 
@@ -139,7 +135,7 @@ class CalculateMetrics(Callback):
         self.series[f"{prefix}loss"] = round(self.losses.mean().item(), 4)
 
     @staticmethod
-    def sorted_series(series: pd.Series):
+    def sorted_series(series: pd.Series) -> pd.Series:
         cols = series.index.tolist()
         cols = sorted(cols, key=lambda x: x.split("_")[-1])
         return series[cols]

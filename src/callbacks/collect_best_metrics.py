@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import List
+from typing import List, Tuple
 from shutil import rmtree, copytree
 import operator
 
@@ -30,6 +30,7 @@ class CollectBest:
         condition = any(type(i) == callback for i in trainer.callbacks)
         info = "Don't use {} wrapper with parent callback {}."
         names = self.__class__.__name__, callback.__name__
+
         assert not condition, info.format(*names)
 
     @staticmethod
@@ -47,7 +48,8 @@ class CollectBest:
     def extract_name(name: str):
         return name.rsplit("_", 1)[0].split("_", 1)[-1]
 
-    def get_paths(self, model_root_dir: Path, name: str):
+    def get_paths(self, model_root_dir: Path, name: str) -> Tuple[Path, Path]:
+
         metric_subdir = self.best_dir_path / f"{self.best_index}_{name}"
         best_metric_dir = model_root_dir / metric_subdir
         best_file = best_metric_dir / self.subdir / self.last_file_name
@@ -57,9 +59,13 @@ class CollectBest:
     def get_new_metric(self, data: dict, root_dir: Path):
         new_metric = pd.DataFrame(data=data)
         new_metric = new_metric.rename_axis(index=self.best_index)
+
         return new_metric
 
-    def add_new_metric(self, new_metric: pd.DataFrame, best_metric_dir: Path):
+    def add_new_metric(
+        self, new_metric: pd.DataFrame, best_metric_dir: Path
+    ) -> pd.DataFrame:
+
         hist = pd.read_csv(best_metric_dir / self.history_filename)
         hist = hist.set_index(self.best_index)
 
@@ -75,7 +81,7 @@ class CollectBest:
         copytree(self.last_path.parent.parent, best_dir)
         history.to_csv(best_dir / self.history_filename)
 
-    def prepare_vars(self, name: str):
+    def prepare(self, name: str) -> Tuple[float, pd.DataFrame, Path, Path]:
         stat = float(self.data_frame.tail(1)[name].values.item())
         root_dir = self.metrics_dir.parent.parent
         best_metric_dir, best_file = self.get_paths(root_dir, name)
@@ -111,7 +117,7 @@ class CollectBest:
             self.replace_best_dir(history, best_metric_dir)
 
     def collect_best_metric(self, name: str, extremum: str):
-        stat, new, best_metric_dir, best_file = self.prepare_vars(name)
+        stat, new, best_metric_dir, best_file = self.prepare(name)
 
         if best_file.is_file():
             self.collect(
