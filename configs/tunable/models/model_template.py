@@ -1,5 +1,5 @@
-from configs import BaseConfig
+import configs
 
 
-class DefaultModel(BaseConfig):
+class DefaultModel(configs.BaseConfig):
     name: str

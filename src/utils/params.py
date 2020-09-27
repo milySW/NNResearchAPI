@@ -1,5 +1,6 @@
-from argparse import ArgumentParser
+import sys
 
+from argparse import ArgumentParser, Namespace
 from pathlib import Path
 
 
@@ -34,3 +35,13 @@ class ParamsBuilder(ArgumentParser):
         self.add_argument(
             "--model_path", type=Path, help=info, required=False,
         )
+
+    @staticmethod
+    def log_parser(args: Namespace, width: int = 20):
+        def l_align(string: str, width=width) -> str:
+            return str(string).ljust(width)
+
+        args_items = args.__dict__.items()
+        args = [f"{l_align(k)}: {l_align(v)} \n" for k, v in args_items]
+        sys.stdout.write("\nParsed arguments:\n")
+        sys.stdout.write(f"{''.join(args)} \n")

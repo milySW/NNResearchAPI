@@ -1,9 +1,15 @@
-from pathlib import Path
+from __future__ import annotations
+
 import importlib
-from typing import Any, Tuple, Callable
+
+from pathlib import Path
+from typing import Any, Generator, Tuple
 
 import numpy as np
+
 from torch.utils.data.dataloader import DataLoader
+
+import configs
 
 
 def load_variable(variable_name: str, path: Path) -> Any:
@@ -33,7 +39,7 @@ def load_default_sets(path_to_data: Path) -> Tuple[np.array, ...]:
     return sets
 
 
-def create_loader(
+def get_loader(
     x_data: np.array, labels: np.array, shuffle: bool, batch_size: int
 ) -> DataLoader:
     data = list(zip(x_data, labels))
@@ -41,13 +47,16 @@ def create_loader(
     return loader
 
 
-def create_loaders(
-    path_to_data: Path, loading_func: Callable = load_default_sets, bs: int = 1
-) -> Tuple[DataLoader, ...]:
+def get_loaders(
+    path_to_data: Path, config: configs.DefaultConfig
+) -> Generator[DataLoader]:
+
+    loading_func = config.training.loader_func
+    bs = config.training.batch_size
 
     sets = loading_func(path_to_data)
     for key, data_set in sets.items():
         shuffle = True if key == "train" else False
-        loader = create_loader(*data_set, shuffle=shuffle, batch_size=bs)
+        loader = get_loader(*data_set, shuffle=shuffle, batch_size=bs)
 
         yield loader

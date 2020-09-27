@@ -1,13 +1,14 @@
 from typing import Tuple
 
-import torch.nn as nn
 import torch
+import torch.nn as nn
+
+import configs
 
 from src.models.base import LitModel
-from configs import DefaultModel
 
 
-class DefaultResnet(DefaultModel):
+class DefaultResnet(configs.DefaultModel):
     """
     Config responsible for setting parameters for :class:`ResNet` architecture.
 

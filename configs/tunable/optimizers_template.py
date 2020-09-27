@@ -1,9 +1,10 @@
-from configs import BaseConfig
+import configs
+
 from src.optimizers import Adam
 from src.optimizers.schedulers import BaseScheduler, ExponentialLR
 
 
-class SchedulerCommonKwargs(BaseConfig):
+class SchedulerCommonKwargs(configs.BaseConfig):
     """Class storing default parameters common for all schedulers"""
 
     scheduler: BaseScheduler = None
@@ -13,7 +14,7 @@ class SchedulerCommonKwargs(BaseConfig):
     monitor: str = "val_loss"
 
 
-class DefaultOptimizers(BaseConfig):
+class DefaultOptimizers(configs.BaseConfig):
     """
     Config responsible for passing optimizers of :class:`BaseOptimizer` type.
     Providing new optimizers require adding new class field as dict
@@ -33,7 +34,7 @@ class DefaultOptimizers(BaseConfig):
     adam = dict(optimizer=Adam, kwargs={}, character="normal")
 
 
-class DefaultSchedulers(BaseConfig):
+class DefaultSchedulers(configs.BaseConfig):
     """
     Config responsible for passing schedulers of :class:`BaseScheduler` type.
     Providing new schedulers require adding new class field as dict with same

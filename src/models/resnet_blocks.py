@@ -1,11 +1,15 @@
+from __future__ import annotations
+
 from typing import Tuple
 
 import torch
+
 from torch import nn
 
-from src.models.utils import conv_layer
+import configs
+
 from src.models.base import LitModel
-from configs import DefaultConfig, DefaultResnet
+from src.models.utils import conv_layer
 
 
 class XResNetBlock(LitModel):
@@ -24,7 +28,7 @@ class XResNetBlock(LitModel):
 
     def __init__(
         self,
-        config: DefaultConfig,
+        config: configs.DefaultConfig,
         expansion: int,
         n_inputs: int,
         n_filters: int,
@@ -112,9 +116,11 @@ class XResNet(LitModel):
 
     """
 
-    def __init__(self, expansion: int, layers: Tuple, config: DefaultConfig):
+    def __init__(
+        self, expansion: int, layers_list: Tuple, config: configs.DefaultConfig
+    ):
         assert (
-            config.model == DefaultResnet
+            config.model == configs.DefaultResnet
         ), "Passed config is not for RESNET architecutre!"
         self.config = config
         model = config.model
@@ -147,7 +153,7 @@ class XResNet(LitModel):
                 activation=model.activation,
                 config=self.config,
             )
-            for i, layer in enumerate(layers)
+            for i, layer in enumerate(layers_list)
         ]
 
         self.x_res_net = nn.ModuleList(
@@ -180,7 +186,7 @@ class XResNet(LitModel):
         n_blocks: nn.Module,
         stride: int,
         activation: nn.Module,
-        config: DefaultConfig,
+        config: configs.DefaultConfig,
     ) -> nn.Sequential:
         return nn.Sequential(
             *[

@@ -1,7 +1,9 @@
-from typing import List, Tuple, Dict, Union
+from typing import Dict, List, Tuple, Union
 
 import pytorch_lightning as pl
 import torch
+
+from torch.utils.data.dataloader import DataLoader
 
 from src.metrics import BaseMetric
 from src.optimizers import BaseOptim
@@ -35,6 +37,10 @@ class LitModel(pl.LightningModule):
 
     def forward(self, x: torch.Tensor):
         return NotImplemented
+
+    def set_example(self, train_loader: DataLoader, dtype=torch.float32):
+        example = train_loader.dataset[0][0][None]
+        self.example_input_array = torch.tensor(example, dtype=dtype)
 
     def configure_optimizers(self) -> Tuple[BaseOptim, List[BaseScheduler]]:
         """

@@ -1,12 +1,13 @@
-from configs import BaseConfig
+import configs
+
 from src.callbacks import (
-    LightProgressBar,
-    CollectBestMetrics,
     CollectBestClassMetrics,
+    CollectBestMetrics,
+    LightProgressBar,
 )
 
 
-class DefaultCallbacks(BaseConfig):
+class DefaultCallbacks(configs.BaseConfig):
     """
     Config responsible for passing callbacks of :class:`BaseCallback` type.
     Providing new callbacks require adding new class field field with any name

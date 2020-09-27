@@ -1,7 +1,11 @@
+from __future__ import annotations
+
+import configs
+
 from src.models.resnet_blocks import XResNet
 
 
-def get_model(config):
+def get_model(config: configs.DefaultConfig):
     name = config.model.name
 
     models = dict(
@@ -13,11 +17,11 @@ def get_model(config):
     )
 
     kwargs = dict(
-        xresnet18=dict(expansion=1, layers=(2, 2, 2, 2), config=config),
-        xresnet34=dict(expansion=1, layers=(3, 4, 6, 3), config=config),
-        xresnet50=dict(expansion=4, layers=(3, 4, 6, 3), config=config),
-        xresnet101=dict(expansion=4, layers=(3, 4, 23, 3), config=config),
-        xresnet152=dict(expansion=4, layers=(3, 8, 36, 3), config=config),
+        xresnet18=dict(expansion=1, layers_list=(2, 2, 2, 2), config=config),
+        xresnet34=dict(expansion=1, layers_list=(3, 4, 6, 3), config=config),
+        xresnet50=dict(expansion=4, layers_list=(3, 4, 6, 3), config=config),
+        xresnet101=dict(expansion=4, layers_list=(3, 4, 23, 3), config=config),
+        xresnet152=dict(expansion=4, layers_list=(3, 8, 36, 3), config=config),
     )
 
     assert name in models.keys(), "Could not find model name"
