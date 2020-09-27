@@ -115,6 +115,7 @@ dependencies:
   - zstd=1.4.5=h04227a9_0
   - pip:
       - absl-py==0.10.0
+      - autoflake==1.4
       - cachetools==4.1.1
       - cfgv==3.2.0
       - commonmark==0.9.1
@@ -127,6 +128,7 @@ dependencies:
       - groundwork-sphinx-theme==1.1.1
       - grpcio==1.31.0
       - identify==1.5.4
+      - isort==5.5.3
       - logger==1.4
       - markdown==3.2.2
       - nodeenv==1.5.0
