@@ -2,6 +2,7 @@ import sys
 
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
+from typing import Any
 
 
 class ParamsBuilder(ArgumentParser):
@@ -29,6 +30,13 @@ class ParamsBuilder(ArgumentParser):
             "--output_path", type=Path, help=info, required=True,
         )
 
+    def add_root_argument(
+        self, info: str = "The path to the root folder for the subprocess"
+    ) -> ArgumentParser:
+        self.add_argument(
+            "--root_path", type=Path, help=info, required=True,
+        )
+
     def add_model_argument(
         self, info: str = "Path to model saved in file"
     ) -> ArgumentParser:
@@ -36,12 +44,24 @@ class ParamsBuilder(ArgumentParser):
             "--model_path", type=Path, help=info, required=False,
         )
 
+    def add_experiments_collection_argument(
+        self, info: str = "List of relative paths to experiments"
+    ) -> ArgumentParser:
+        self.add_argument(
+            "--experiments_collection", type=str, help=info, required=True,
+        )
+
     @staticmethod
-    def log_parser(args: Namespace, width: int = 20):
+    def log_parser(args: Namespace, width: int = 20, delimeter: str = ""):
         def l_align(string: str, width=width) -> str:
             return str(string).ljust(width)
 
-        args_items = args.__dict__.items()
-        args = [f"{l_align(k)}: {l_align(v)} \n" for k, v in args_items]
+        def listed(var: Any):
+            if delimeter and isinstance(var, str):
+                var = "".join(["\n- ", var.replace(delimeter, "\n-")])
+            return var
+
+        items = args.__dict__.items()
+        args = [f"{l_align(k)}: {l_align(listed(v))} \n" for k, v in items]
         sys.stdout.write("\nParsed arguments:\n")
         sys.stdout.write(f"{''.join(args)} \n")

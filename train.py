@@ -12,14 +12,13 @@ logger = get_logger("Trainer")
 
 
 @timespan("Training")
-def main(config_path: Path, dataset_path: Path, output_path: Path) -> None:
+def main(config_path: Path, dataset_path: Path) -> None:
     """
     Main function responsible for training classification model.
 
     Arguments:
         Path config_path: path to main config (of :class:`DefaultConfig` class)
         Path dataset_path: path to dataset
-        Path output_path: path to directory where experiment will be saved
 
     """
 
@@ -41,7 +40,6 @@ if __name__ == "__main__":
     parser = ParamsBuilder("Single-particle tracking data clssification train")
     parser.add_config_argument()
     parser.add_dataset_argument()
-    parser.add_output_argument()
 
     args, _ = parser.parse_known_args()
     parser.log_parser(args)

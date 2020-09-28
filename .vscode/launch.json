@@ -14,8 +14,6 @@
                 "configs/main/config.py",
                 "--dataset_path",
                 ".data",
-                "--output_path",
-                "d"
             ],
             "justMyCode": false,
             "cwd": "${workspaceFolder}",
@@ -23,6 +21,27 @@
                 "hidden": false,
                 "group": "",
                 "order": 1
+            }
+        },
+        {
+            "name": "compare plots",
+            "type": "python",
+            "request": "launch",
+            "module": "compare_plots",
+            "args": [
+                "--root_path",
+                ".data/models",
+                "--output_path",
+                ".data/models/!comparison_plots",
+                "--experiments_collection",
+                "xresnet18/1, xresnet18/2, xresnet18/3"
+            ],
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}",
+            "presentation": {
+                "hidden": false,
+                "group": "",
+                "order": 2
             }
         },
     ]
