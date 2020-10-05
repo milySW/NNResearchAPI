@@ -33,7 +33,11 @@
                 ".data/models",
                 "--output_path",
                 ".data/models/!comparison_plots",
-                "--experiments_collection",
+                "--prefix",
+                "val",
+                "--supported_files",
+                "metrics_all.csv, metrics_group_all.csv",
+                "--experiments",
                 "xresnet18/1, xresnet18/2, xresnet18/3"
             ],
             "justMyCode": false,

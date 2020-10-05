@@ -1,15 +1,16 @@
 from pathlib import Path
-from typing import List, Tuple, Dict, Any, Union
+from typing import Any, Dict, List, Tuple, Union
 
-from tabulate import tabulate
+import pandas as pd
+import torch
+
 from pytorch_lightning.callbacks.base import Callback
 from pytorch_lightning.trainer.trainer import Trainer
-import torch
-import pandas as pd
-import matplotlib.pyplot as plt
+from tabulate import tabulate
 
-from src.models.base import LitModel
 from src.metrics import BaseMetric
+from src.models.base import LitModel
+from src.utils.plots import save_columns_plot
 
 
 class CalculateMetrics(Callback):
@@ -84,22 +85,18 @@ class CalculateMetrics(Callback):
         last = self.data_frame.tail(1).rename_axis(index=self.index_name)
         last.to_csv(self.last_path)
 
-    def plot_metric(self, names: List[str]):
+    def save_plot(self, df: pd.DataFrame, names: List[str], root_dir: Path):
+        save_columns_plot(df, names, root_dir)
+
+    def save_plots(self):
         plot_root_dir = self.metrics_dir.parent / self.plot_dir
         plot_root_dir.mkdir(parents=True, exist_ok=True)
 
-        plt.figure()
-        for name in names:
-            plt.plot(self.data_frame[name], label=name)
-        plt.legend(loc="best")
-        plt.savefig(plot_root_dir / f"{names[0]}.png", transparent=True)
-
-    def plot_metrics(self):
         df = self.data_frame
         group = df.groupby(lambda x: x.rsplit("_", maxsplit=1)[-1], axis=1)
 
         for names, flag in zip(group.groups.values(), self.plots):
-            self.plot_metric(names) if flag else None
+            self.save_plot(df, names, plot_root_dir) if flag else None
 
     def log_metrics(self, epoch: int, width: Union[float, int] = 12):
         columns_number = len(self.series)
@@ -203,4 +200,4 @@ class CalculateMetrics(Callback):
 
     def on_train_end(self, trainer: Trainer, pl_module: LitModel):
         self.save_final_metrics()
-        self.plot_metrics()
+        self.save_plots()

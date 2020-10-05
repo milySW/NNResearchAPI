@@ -44,11 +44,25 @@ class ParamsBuilder(ArgumentParser):
             "--model_path", type=Path, help=info, required=False,
         )
 
-    def add_experiments_collection_argument(
+    def add_experiments_argument(
         self, info: str = "List of relative paths to experiments"
     ) -> ArgumentParser:
         self.add_argument(
-            "--experiments_collection", type=str, help=info, required=True,
+            "--experiments", type=str, help=info, required=True,
+        )
+
+    def add_prefix_argument(
+        self, info: str = "Prefix for data taken into account."
+    ) -> ArgumentParser:
+        self.add_argument(
+            "--prefix", type=str, help=info, required=False,
+        )
+
+    def add_supported_files_argument(
+        self, info: str = "Names of files necessary for tool usage."
+    ) -> ArgumentParser:
+        self.add_argument(
+            "--supported_files", type=str, help=info, required=True,
         )
 
     @staticmethod
@@ -57,11 +71,11 @@ class ParamsBuilder(ArgumentParser):
             return str(string).ljust(width)
 
         def listed(var: Any):
-            if delimeter and isinstance(var, str):
+            if delimeter and isinstance(var, str) and delimeter in var:
                 var = "".join(["\n- ", var.replace(delimeter, "\n-")])
             return var
 
         items = args.__dict__.items()
-        args = [f"{l_align(k)}: {l_align(listed(v))} \n" for k, v in items]
+        args = [f"{l_align(k)} {l_align(listed(v))} \n" for k, v in items]
         sys.stdout.write("\nParsed arguments:\n")
         sys.stdout.write(f"{''.join(args)} \n")
