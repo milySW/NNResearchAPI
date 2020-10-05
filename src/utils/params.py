@@ -10,42 +10,42 @@ class ParamsBuilder(ArgumentParser):
         super().__init__(description=description)
 
     def add_config_argument(
-        self, info: str = "Path to .py config file"
+        self, info: str = "Path to .py config file."
     ) -> ArgumentParser:
         self.add_argument(
             "--config_path", type=Path, help=info, required=True,
         )
 
     def add_dataset_argument(
-        self, info: str = "Path to dataset directory"
+        self, info: str = "Path to dataset directory."
     ) -> ArgumentParser:
         self.add_argument(
             "--dataset_path", type=Path, help=info, required=False,
         )
 
     def add_output_argument(
-        self, info: str = "Path to output directory"
+        self, info: str = "Path to output directory."
     ) -> ArgumentParser:
         self.add_argument(
             "--output_path", type=Path, help=info, required=True,
         )
 
     def add_root_argument(
-        self, info: str = "The path to the root folder for the subprocess"
+        self, info: str = "Path to the root folder for the subprocess."
     ) -> ArgumentParser:
         self.add_argument(
             "--root_path", type=Path, help=info, required=True,
         )
 
     def add_model_argument(
-        self, info: str = "Path to model saved in file"
+        self, info: str = "Path to model saved in file."
     ) -> ArgumentParser:
         self.add_argument(
             "--model_path", type=Path, help=info, required=False,
         )
 
     def add_experiments_argument(
-        self, info: str = "List of relative paths to experiments"
+        self, info: str = "Relative paths to experiments separated by a coma."
     ) -> ArgumentParser:
         self.add_argument(
             "--experiments", type=str, help=info, required=True,

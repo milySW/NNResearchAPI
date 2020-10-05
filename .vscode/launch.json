@@ -8,7 +8,7 @@
             "name": "train",
             "type": "python",
             "request": "launch",
-            "module": "train",
+            "module": "tools.train",
             "args": [
                 "--config_path",
                 "configs/main/config.py",
@@ -27,7 +27,7 @@
             "name": "compare plots",
             "type": "python",
             "request": "launch",
-            "module": "compare_plots",
+            "module": "tools.compare_plots",
             "args": [
                 "--root_path",
                 ".data/models",

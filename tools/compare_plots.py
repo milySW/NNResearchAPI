@@ -15,6 +15,18 @@ def main(
     supported_files: str,
     prefix: str,
 ):
+    """
+    Function responsible for saving plots containing
+    info about metric values in every experiment.
+
+    Arguments:
+        Path root_path: Path to the root folder for the subprocess
+        Path output_path: Path to output directory
+        str experiments: Relative paths to experiments separated by a coma
+        str supported_files: Names of files necessary for tool usage
+        str prefix: Prefix for data taken into account
+    """
+
     logger.info("Start generating plots")
     output = output_path / get_name_from_names(experiments)
     experiments = unpack_paths(root_path, experiments, supported_files)

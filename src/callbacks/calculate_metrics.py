@@ -21,8 +21,8 @@ class CalculateMetrics(Callback):
 
     Output:
 
-        - `metrics_all.csv`: metrics calculated for every epoch
-        - `metrics_last.csv`: final metrics
+        - `metrics_all.csv`: Metrics calculated for every epoch
+        - `metrics_last.csv`: Final metrics
 
     """
 

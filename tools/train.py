@@ -17,8 +17,8 @@ def main(config_path: Path, dataset_path: Path) -> None:
     Main function responsible for training classification model.
 
     Arguments:
-        Path config_path: path to main config (of :class:`DefaultConfig` class)
-        Path dataset_path: path to dataset
+        Path config_path: Path to main config (of :class:`DefaultConfig` class)
+        Path dataset_path: Path to dataset
 
     """
 

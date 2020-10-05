@@ -1,11 +1,12 @@
-from typing import Dict, Tuple, Any, List
+from typing import Any, Dict, List, Tuple
 
 import numpy as np
+
 from pytorch_lightning.trainer.trainer import Trainer
 
 from src.callbacks import CalculateMetrics
-from src.models.base import LitModel
 from src.metrics import BaseMetric
+from src.models.base import LitModel
 
 
 class CalculateClassMetrics(CalculateMetrics):
@@ -16,8 +17,8 @@ class CalculateClassMetrics(CalculateMetrics):
 
     Output:
 
-        - `metrics_group_all.csv`: metrics calculated for every epoch
-        - `metrics_group_last.csv`: final metrics
+        - `metrics_group_all.csv`: Metrics calculated for every epoch
+        - `metrics_group_last.csv`: Final metrics
 
     """
 

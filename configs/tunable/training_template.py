@@ -20,7 +20,7 @@ class DefaultTraining(configs.BaseConfig):
         int seed: Random seed for whole project
         Callable loader_func: Function loading data from folder ".data"
         BaseLoss loss: Name of loss function
-        str experiments_dir: path to root directory of model experiments
+        str experiments_dir: Path to root directory of model experiments
 
         str weigths_summary: Prints a summary of the weights
             when training begins. Supported options:

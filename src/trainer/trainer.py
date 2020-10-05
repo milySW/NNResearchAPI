@@ -13,18 +13,39 @@ from src.utils.collections import filter_class
 
 
 class Trainer(PLTrainer):
+    """
+    Customize every aspect of training via flags
+
+    Parameters:
+        int max_epochs: Number of epochs in training
+        str default_root_dir: Path to root directory of model experiments
+        bool checkpoint_callback: Parameter responsible for saving model
+        list callbacks: List of callbacks used with training
+        bool logger: Flag responsible for default progress bar
+        gpus:  Which GPUs to train on.
+
+        profiler: To profile individual steps during training
+            and assist in identifying bottlenecks.
+
+        str weigths_summary: Prints a summary of the weights
+            when training begins. Supported options:
+
+            - `top`: only the top-level modules will be recorded
+            - `full`: summarizes all layers and their submodules
+    """
+
     def __init__(self, config: configs.DefaultConfig, *args, **kwargs):
         self.setup_trainer(config)
 
         super().__init__(
-            logger=self.logger,
             max_epochs=self.epochs,
             default_root_dir=self.root_dir,
             checkpoint_callback=self.checkpoint_callback,
-            weights_summary=self.weights_summary,
+            callbacks=self.callbacks,
+            logger=self.logger,
             gpus=self.gpus,
             profiler=True,
-            callbacks=self.callbacks,
+            weights_summary=self.weights_summary,
             *args,
             **kwargs
         )
