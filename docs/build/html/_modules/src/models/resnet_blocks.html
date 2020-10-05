@@ -85,11 +85,12 @@
                 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../configs.html">Configs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../trainer.html">Trainer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../losses.html">Losses</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../metrics.html">Metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../optimizers.html">Optimizers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../callbacks.html">Callbacks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../train.html">Train</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tools.html">Tools</a></li>
 </ul>
 
             
@@ -149,14 +150,18 @@
            <div itemprop="articleBody">
             
   <h1>Source code for src.models.resnet_blocks</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
 
 <span class="kn">import</span> <span class="nn">torch</span>
+
 <span class="kn">from</span> <span class="nn">torch</span> <span class="kn">import</span> <span class="n">nn</span>
 
-<span class="kn">from</span> <span class="nn">src.models.utils</span> <span class="kn">import</span> <span class="n">conv_layer</span>
+<span class="kn">import</span> <span class="nn">configs</span>
+
 <span class="kn">from</span> <span class="nn">src.models.base</span> <span class="kn">import</span> <span class="n">LitModel</span>
-<span class="kn">from</span> <span class="nn">configs</span> <span class="kn">import</span> <span class="n">DefaultConfig</span><span class="p">,</span> <span class="n">DefaultResnet</span>
+<span class="kn">from</span> <span class="nn">src.models.utils</span> <span class="kn">import</span> <span class="n">conv_layer</span>
 
 
 <div class="viewcode-block" id="XResNetBlock"><a class="viewcode-back" href="../../../models.html#src.models.resnet_blocks.XResNetBlock">[docs]</a><span class="k">class</span> <span class="nc">XResNetBlock</span><span class="p">(</span><span class="n">LitModel</span><span class="p">):</span>
@@ -175,6 +180,7 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
+        <span class="n">config</span><span class="p">:</span> <span class="n">configs</span><span class="o">.</span><span class="n">DefaultConfig</span><span class="p">,</span>
         <span class="n">expansion</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">n_inputs</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">n_filters</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -182,6 +188,7 @@
         <span class="n">activation</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
     <span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
 
         <span class="n">n_inputs</span> <span class="o">=</span> <span class="n">n_inputs</span> <span class="o">*</span> <span class="n">expansion</span>
         <span class="n">n_filters</span> <span class="o">=</span> <span class="n">n_filters</span> <span class="o">*</span> <span class="n">expansion</span>
@@ -261,9 +268,11 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expansion</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">layers</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">DefaultConfig</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">expansion</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">layers_list</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="n">configs</span><span class="o">.</span><span class="n">DefaultConfig</span>
+    <span class="p">):</span>
         <span class="k">assert</span> <span class="p">(</span>
-            <span class="n">config</span><span class="o">.</span><span class="n">model</span> <span class="o">==</span> <span class="n">DefaultResnet</span>
+            <span class="n">config</span><span class="o">.</span><span class="n">model</span> <span class="o">==</span> <span class="n">configs</span><span class="o">.</span><span class="n">DefaultResnet</span>
         <span class="p">),</span> <span class="s2">&quot;Passed config is not for RESNET architecutre!&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">config</span>
         <span class="n">model</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">model</span>
@@ -294,8 +303,9 @@
                 <span class="n">n_blocks</span><span class="o">=</span><span class="n">layer</span><span class="p">,</span>
                 <span class="n">stride</span><span class="o">=</span><span class="mi">1</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">2</span><span class="p">,</span>
                 <span class="n">activation</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">activation</span><span class="p">,</span>
+                <span class="n">config</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">layer</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">layers</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">layer</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">layers_list</span><span class="p">)</span>
         <span class="p">]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">x_res_net</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">(</span>
@@ -328,6 +338,7 @@
         <span class="n">n_blocks</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span>
         <span class="n">stride</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
         <span class="n">activation</span><span class="p">:</span> <span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">,</span>
+        <span class="n">config</span><span class="p">:</span> <span class="n">configs</span><span class="o">.</span><span class="n">DefaultConfig</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
             <span class="o">*</span><span class="p">[</span>
@@ -337,6 +348,7 @@
                     <span class="n">n_filters</span><span class="o">=</span><span class="n">n_filters</span><span class="p">,</span>
                     <span class="n">stride</span><span class="o">=</span><span class="n">stride</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">1</span><span class="p">,</span>
                     <span class="n">activation</span><span class="o">=</span><span class="n">activation</span><span class="p">,</span>
+                    <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span>
                 <span class="p">)</span>
                 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_blocks</span><span class="p">)</span>
             <span class="p">]</span>

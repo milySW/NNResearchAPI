@@ -84,11 +84,12 @@
                 <ul>
 <li class="toctree-l1"><a class="reference internal" href="configs.html">Configs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="trainer.html">Trainer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="losses.html">Losses</a></li>
 <li class="toctree-l1"><a class="reference internal" href="metrics.html">Metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimizers.html">Optimizers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="callbacks.html">Callbacks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="train.html">Train</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools.html">Tools</a></li>
 </ul>
 
             
@@ -154,6 +155,7 @@
  | <a href="#C"><strong>C</strong></a>
  | <a href="#D"><strong>D</strong></a>
  | <a href="#E"><strong>E</strong></a>
+ | <a href="#G"><strong>G</strong></a>
  | <a href="#I"><strong>I</strong></a>
  | <a href="#K"><strong>K</strong></a>
  | <a href="#L"><strong>L</strong></a>
@@ -217,21 +219,27 @@
 </li>
       <li><a href="callbacks.html#src.callbacks.CalculateMetrics">CalculateMetrics (class in src.callbacks)</a>
 </li>
+      <li><a href="trainer.html#src.trainer.Trainer.params.callbacks">callbacks (src.trainer.Trainer parameter)</a>
+</li>
       <li><a href="configs.html#configs.DefaultOptimizers.params.character">character (configs.DefaultOptimizers parameter)</a>
 </li>
       <li><a href="configs.html#configs.DefaultTraining.params.checkpoint_callback">checkpoint_callback (configs.DefaultTraining parameter)</a>
+
+      <ul>
+        <li><a href="trainer.html#src.trainer.Trainer.params.checkpoint_callback">(src.trainer.Trainer parameter)</a>
 </li>
+      </ul></li>
       <li><a href="callbacks.html#src.callbacks.CollectBestClassMetrics">CollectBestClassMetrics (class in src.callbacks)</a>
-</li>
-      <li><a href="callbacks.html#src.callbacks.CollectBestMetrics">CollectBestMetrics (class in src.callbacks)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="callbacks.html#src.callbacks.CollectBestMetrics">CollectBestMetrics (class in src.callbacks)</a>
+</li>
       <li><a href="configs.html#configs.DefaultSchedulers.params.common_kwargs">common_kwargs (configs.DefaultSchedulers parameter)</a>
 </li>
       <li><a href="models.html#src.models.resnet_blocks.XResNet.params.config">config (src.models.resnet_blocks.XResNet parameter)</a>
 </li>
-      <li><a href="train.html#train.main.params.config_path">config_path (train.main parameter)</a>
+      <li><a href="tools.html#tools.train.main.params.config_path">config_path (tools.train.main parameter)</a>
 </li>
       <li>
     configs
@@ -250,16 +258,18 @@
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="train.html#train.main.params.dataset_path">dataset_path (train.main parameter)</a>
+      <li><a href="tools.html#tools.train.main.params.dataset_path">dataset_path (tools.train.main parameter)</a>
+</li>
+      <li><a href="trainer.html#src.trainer.Trainer.params.default_root_dir">default_root_dir (src.trainer.Trainer parameter)</a>
 </li>
       <li><a href="configs.html#configs.DefaultCallbacks">DefaultCallbacks (class in configs)</a>
 </li>
       <li><a href="configs.html#configs.DefaultMetrics">DefaultMetrics (class in configs)</a>
 </li>
-      <li><a href="configs.html#configs.DefaultOptimizers">DefaultOptimizers (class in configs)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="configs.html#configs.DefaultOptimizers">DefaultOptimizers (class in configs)</a>
+</li>
       <li><a href="configs.html#configs.DefaultResnet">DefaultResnet (class in configs)</a>
 </li>
       <li><a href="configs.html#configs.DefaultSchedulers">DefaultSchedulers (class in configs)</a>
@@ -278,14 +288,30 @@
 </li>
       <li><a href="optimizers.html#src.optimizers.adam.Adam.params.eps">eps (src.optimizers.adam.Adam parameter)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="configs.html#configs.DefaultResnet.params.expansion">expansion (configs.DefaultResnet parameter)</a>
 
       <ul>
         <li><a href="models.html#src.models.resnet_blocks.XResNet.params.expansion">(src.models.resnet_blocks.XResNet parameter)</a>
 </li>
         <li><a href="models.html#src.models.resnet_blocks.XResNetBlock.params.expansion">(src.models.resnet_blocks.XResNetBlock parameter)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="tools.html#tools.compare_plots.main.params.experiments">experiments (tools.compare_plots.main parameter)</a>
+</li>
+      <li><a href="configs.html#configs.DefaultTraining.params.experiments_dir">experiments_dir (configs.DefaultTraining parameter)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="G">G</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="configs.html#configs.DefaultTraining.params.gpus">gpus (configs.DefaultTraining parameter)</a>
+
+      <ul>
+        <li><a href="trainer.html#src.trainer.Trainer.params.gpus">(src.trainer.Trainer parameter)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -326,9 +352,11 @@
 </li>
       <li><a href="configs.html#configs.DefaultResnet.params.layers">layers (configs.DefaultResnet parameter)</a>
 </li>
+      <li><a href="configs.html#configs.DefaultTraining.params.loader_func">loader_func (configs.DefaultTraining parameter)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="configs.html#configs.DefaultTraining.params.loader_func">loader_func (configs.DefaultTraining parameter)</a>
+      <li><a href="trainer.html#src.trainer.Trainer.params.logger">logger (src.trainer.Trainer parameter)</a>
 </li>
       <li><a href="configs.html#configs.DefaultTraining.params.loss">loss (configs.DefaultTraining parameter)</a>
 </li>
@@ -340,7 +368,13 @@
 <h2 id="M">M</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="train.html#train.main">main() (in module train)</a>
+      <li><a href="tools.html#tools.compare_plots.main">main() (in module tools.compare_plots)</a>
+
+      <ul>
+        <li><a href="tools.html#tools.train.main">(in module tools.train)</a>
+</li>
+      </ul></li>
+      <li><a href="trainer.html#src.trainer.Trainer.params.max_epochs">max_epochs (src.trainer.Trainer parameter)</a>
 </li>
       <li><a href="configs.html#configs.DefaultMetrics.params.metric">metric (configs.DefaultMetrics parameter)</a>
 </li>
@@ -360,7 +394,9 @@
 </li>
         <li><a href="optimizers.html#module-src.optimizers.adam">src.optimizers.adam</a>
 </li>
-        <li><a href="train.html#module-train">train</a>
+        <li><a href="tools.html#module-tools.compare_plots">tools.compare_plots</a>
+</li>
+        <li><a href="tools.html#module-tools.train">tools.train</a>
 </li>
       </ul></li>
   </ul></td>
@@ -395,7 +431,7 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="train.html#train.main.params.output_path">output_path (train.main parameter)</a>
+      <li><a href="tools.html#tools.compare_plots.main.params.output_path">output_path (tools.compare_plots.main parameter)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -405,10 +441,18 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="optimizers.html#src.optimizers.adam.Adam.params.params">params (src.optimizers.adam.Adam parameter)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="configs.html#configs.DefaultMetrics.params.plot">plot (configs.DefaultMetrics parameter)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="tools.html#tools.compare_plots.main.params.prefix">prefix (tools.compare_plots.main parameter)</a>
+</li>
+      <li><a href="configs.html#configs.DefaultTraining.params.profiler">profiler (configs.DefaultTraining parameter)</a>
+
+      <ul>
+        <li><a href="trainer.html#src.trainer.Trainer.params.profiler">(src.trainer.Trainer parameter)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -420,6 +464,8 @@
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="losses.html#src.losses.cross_entropy.CrossEntropyLoss.params.reduction">reduction (src.losses.cross_entropy.CrossEntropyLoss parameter)</a>
+</li>
+      <li><a href="tools.html#tools.compare_plots.main.params.root_path">root_path (tools.compare_plots.main parameter)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -477,6 +523,8 @@
         <li><a href="models.html#src.models.utils.conv_layer.params.stride">(src.models.utils.conv_layer parameter)</a>
 </li>
       </ul></li>
+      <li><a href="tools.html#tools.compare_plots.main.params.supported_files">supported_files (tools.compare_plots.main parameter)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -484,12 +532,23 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li>
-    train
+    tools.compare_plots
 
       <ul>
-        <li><a href="train.html#module-train">module</a>
+        <li><a href="tools.html#module-tools.compare_plots">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    tools.train
+
+      <ul>
+        <li><a href="tools.html#module-tools.train">module</a>
+</li>
+      </ul></li>
+      <li><a href="trainer.html#src.trainer.Trainer">Trainer (class in src.trainer)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -506,10 +565,16 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="losses.html#src.losses.cross_entropy.CrossEntropyLoss.params.weight">weight (src.losses.cross_entropy.CrossEntropyLoss parameter)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="optimizers.html#src.optimizers.adam.Adam.params.weight_decay">weight_decay (src.optimizers.adam.Adam parameter)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="configs.html#configs.DefaultTraining.params.weigths_summary">weigths_summary (configs.DefaultTraining parameter)</a>
+
+      <ul>
+        <li><a href="trainer.html#src.trainer.Trainer.params.weigths_summary">(src.trainer.Trainer parameter)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 

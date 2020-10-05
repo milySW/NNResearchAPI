@@ -85,11 +85,12 @@
                 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../configs.html">Configs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../trainer.html">Trainer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../losses.html">Losses</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../metrics.html">Metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../optimizers.html">Optimizers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../callbacks.html">Callbacks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../train.html">Train</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tools.html">Tools</a></li>
 </ul>
 
             
@@ -151,14 +152,15 @@
   <h1>Source code for configs.tunable.models.resnet_template</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span>
 
-<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
 <span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+
+<span class="kn">import</span> <span class="nn">configs</span>
 
 <span class="kn">from</span> <span class="nn">src.models.base</span> <span class="kn">import</span> <span class="n">LitModel</span>
-<span class="kn">from</span> <span class="nn">configs</span> <span class="kn">import</span> <span class="n">DefaultModel</span>
 
 
-<div class="viewcode-block" id="DefaultResnet"><a class="viewcode-back" href="../../../../configs.html#configs.DefaultResnet">[docs]</a><span class="k">class</span> <span class="nc">DefaultResnet</span><span class="p">(</span><span class="n">DefaultModel</span><span class="p">):</span>
+<div class="viewcode-block" id="DefaultResnet"><a class="viewcode-back" href="../../../../configs.html#configs.DefaultResnet">[docs]</a><span class="k">class</span> <span class="nc">DefaultResnet</span><span class="p">(</span><span class="n">configs</span><span class="o">.</span><span class="n">DefaultModel</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Config responsible for setting parameters for :class:`ResNet` architecture.</span>
 

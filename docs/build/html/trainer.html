@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Python Module Index &mdash; NNResearchAPI 0.0.1 documentation</title>
+  <title>Trainer &mdash; NNResearchAPI 0.0.1 documentation</title>
   
 
   
@@ -36,9 +36,8 @@
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="NNResearchAPI 0.0.1 documentation" href="index.html"/>
- 
-
-
+        <link rel="next" title="Losses" href="losses.html"/>
+        <link rel="prev" title="Models" href="models.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -84,10 +83,12 @@
           
             
             
-                <ul>
+                <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="configs.html">Configs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="models.html">Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="trainer.html">Trainer</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Trainer</a><ul class="simple">
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="losses.html">Losses</a></li>
 <li class="toctree-l1"><a class="reference internal" href="metrics.html">Metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimizers.html">Optimizers</a></li>
@@ -134,12 +135,14 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Python Module Index</li>
+      <li>Trainer</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
+            <a href="_sources/trainer.rst.txt" rel="nofollow"> View page source</a>
+          
         
       </li>
     
@@ -149,78 +152,52 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
+  <div class="section" id="trainer">
+<h1>Trainer<a class="headerlink" href="#trainer" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<dl class="py class">
+<dt id="src.trainer.Trainer">
+<em class="property">class </em><code class="sig-prename descclassname">src.trainer.</code><code class="sig-name descname">Trainer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config</span><span class="p">:</span> <span class="n">configs.main.config_template.DefaultConfig</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/trainer/trainer.html#Trainer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.trainer.Trainer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Customize every aspect of training via flags</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="src.trainer.Trainer.params.max_epochs"></span><strong>max_epochs</strong><a class="paramlink headerlink reference internal" href="#src.trainer.Trainer.params.max_epochs">¶</a> (<em>int</em>) – Number of epochs in training</p></li>
+<li><p><span class="target" id="src.trainer.Trainer.params.default_root_dir"></span><strong>default_root_dir</strong><a class="paramlink headerlink reference internal" href="#src.trainer.Trainer.params.default_root_dir">¶</a> (<em>str</em>) – Path to root directory of model experiments</p></li>
+<li><p><span class="target" id="src.trainer.Trainer.params.checkpoint_callback"></span><strong>checkpoint_callback</strong><a class="paramlink headerlink reference internal" href="#src.trainer.Trainer.params.checkpoint_callback">¶</a> (<em>bool</em>) – Parameter responsible for saving model</p></li>
+<li><p><span class="target" id="src.trainer.Trainer.params.callbacks"></span><strong>callbacks</strong><a class="paramlink headerlink reference internal" href="#src.trainer.Trainer.params.callbacks">¶</a> (<em>list</em>) – List of callbacks used with training</p></li>
+<li><p><span class="target" id="src.trainer.Trainer.params.logger"></span><strong>logger</strong><a class="paramlink headerlink reference internal" href="#src.trainer.Trainer.params.logger">¶</a> (<em>bool</em>) – Flag responsible for default progress bar</p></li>
+<li><p><span class="target" id="src.trainer.Trainer.params.gpus"></span><strong>gpus</strong><a class="paramlink headerlink reference internal" href="#src.trainer.Trainer.params.gpus">¶</a> – Which GPUs to train on.</p></li>
+<li><p><span class="target" id="src.trainer.Trainer.params.profiler"></span><strong>profiler</strong><a class="paramlink headerlink reference internal" href="#src.trainer.Trainer.params.profiler">¶</a> – To profile individual steps during training
+and assist in identifying bottlenecks.</p></li>
+<li><p><span class="target" id="src.trainer.Trainer.params.weigths_summary"></span><strong>weigths_summary</strong><a class="paramlink headerlink reference internal" href="#src.trainer.Trainer.params.weigths_summary">¶</a> (<em>str</em>) – <p>Prints a summary of the weights
+when training begins. Supported options:</p>
+<ul>
+<li><p><cite>top</cite>: only the top-level modules will be recorded</p></li>
+<li><p><cite>full</cite>: summarizes all layers and their submodules</p></li>
+</ul>
+</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
-   <h1>Python Module Index</h1>
-
-   <div class="modindex-jumpbox">
-   <a href="#cap-c"><strong>c</strong></a> | 
-   <a href="#cap-s"><strong>s</strong></a> | 
-   <a href="#cap-t"><strong>t</strong></a>
-   </div>
-
-   <table class="indextable modindextable">
-     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
-     <tr class="cap" id="cap-c"><td></td><td>
-       <strong>c</strong></td><td></td></tr>
-     <tr>
-       <td></td>
-       <td>
-       <a href="configs.html#module-configs"><code class="xref">configs</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
-     <tr class="cap" id="cap-s"><td></td><td>
-       <strong>s</strong></td><td></td></tr>
-     <tr>
-       <td><img src="_static/minus.png" class="toggler"
-              id="toggle-1" style="display: none" alt="-" /></td>
-       <td>
-       <code class="xref">src</code></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="losses.html#module-src.losses.cross_entropy"><code class="xref">src.losses.cross_entropy</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="metrics.html#module-src.metrics.accuracy"><code class="xref">src.metrics.accuracy</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="models.html#module-src.models.utils"><code class="xref">src.models.utils</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-1">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="optimizers.html#module-src.optimizers.adam"><code class="xref">src.optimizers.adam</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="pcap"><td></td><td>&#160;</td><td></td></tr>
-     <tr class="cap" id="cap-t"><td></td><td>
-       <strong>t</strong></td><td></td></tr>
-     <tr>
-       <td><img src="_static/minus.png" class="toggler"
-              id="toggle-2" style="display: none" alt="-" /></td>
-       <td>
-       <code class="xref">tools</code></td><td>
-       <em></em></td></tr>
-     <tr class="cg-2">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="tools.html#module-tools.compare_plots"><code class="xref">tools.compare_plots</code></a></td><td>
-       <em></em></td></tr>
-     <tr class="cg-2">
-       <td></td>
-       <td>&#160;&#160;&#160;
-       <a href="tools.html#module-tools.train"><code class="xref">tools.train</code></a></td><td>
-       <em></em></td></tr>
-   </table>
+</div>
 
 
            </div>
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="losses.html" class="btn btn-neutral float-right" title="Losses" accesskey="n">Next →</a>
+      
+      
+        <a href="models.html" class="btn btn-neutral" title="Models" accesskey="p">← Previous</a>
+      
+    </div>
   
 
   <hr/>

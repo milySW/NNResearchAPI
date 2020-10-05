@@ -85,11 +85,12 @@
                 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../configs.html">Configs</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../trainer.html">Trainer</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../losses.html">Losses</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../metrics.html">Metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../optimizers.html">Optimizers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../callbacks.html">Callbacks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../train.html">Train</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tools.html">Tools</a></li>
 </ul>
 
             
@@ -149,19 +150,22 @@
            <div itemprop="articleBody">
             
   <h1>Source code for configs.tunable.callbacks_template</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">configs</span> <span class="kn">import</span> <span class="n">BaseConfig</span>
+<span></span><span class="kn">import</span> <span class="nn">configs</span>
+
 <span class="kn">from</span> <span class="nn">src.callbacks</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">CollectBestMetrics</span><span class="p">,</span>
     <span class="n">CollectBestClassMetrics</span><span class="p">,</span>
+    <span class="n">CollectBestMetrics</span><span class="p">,</span>
+    <span class="n">LightProgressBar</span><span class="p">,</span>
 <span class="p">)</span>
 
 
-<div class="viewcode-block" id="DefaultCallbacks"><a class="viewcode-back" href="../../../configs.html#configs.DefaultCallbacks">[docs]</a><span class="k">class</span> <span class="nc">DefaultCallbacks</span><span class="p">(</span><span class="n">BaseConfig</span><span class="p">):</span>
+<div class="viewcode-block" id="DefaultCallbacks"><a class="viewcode-back" href="../../../configs.html#configs.DefaultCallbacks">[docs]</a><span class="k">class</span> <span class="nc">DefaultCallbacks</span><span class="p">(</span><span class="n">configs</span><span class="o">.</span><span class="n">BaseConfig</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Config responsible for passing callbacks of :class:`BaseCallback` type.</span>
 <span class="sd">    Providing new callbacks require adding new class field field with any name</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="n">bar</span> <span class="o">=</span> <span class="n">LightProgressBar</span><span class="p">()</span>
     <span class="n">best_class_metric</span> <span class="o">=</span> <span class="n">CollectBestClassMetrics</span><span class="p">()</span>
     <span class="n">best_metric</span> <span class="o">=</span> <span class="n">CollectBestMetrics</span><span class="p">()</span></div>
 </pre></div>

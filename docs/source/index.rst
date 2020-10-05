@@ -11,11 +11,12 @@ NNResearchAPI's documentation
 
    configs
    models
+   trainer
    losses
    metrics
    optimizers
    callbacks
-   train   
+   tools 
 
 
 Indices and tables
