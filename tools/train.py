@@ -1,9 +1,9 @@
 from pathlib import Path
 
-from src.models import get_model
-from src.trainer.trainer import Trainer
+from src import models
+from src.trainer import trainer
+from src.utils.configurations import setup
 from src.utils.decorators import timespan
-from src.utils.externals_configurations import set_deterministic_environment
 from src.utils.loaders import get_loaders, load_variable
 from src.utils.logging import get_logger
 from src.utils.params import ParamsBuilder
@@ -12,28 +12,32 @@ logger = get_logger("Trainer")
 
 
 @timespan("Training")
-def main(config_path: Path, dataset_path: Path) -> None:
+def main(config_path: Path, dataset_path: Path) -> Path:
     """
     Main function responsible for training classification model.
 
     Arguments:
         Path config_path: Path to main config (of :class:`DefaultConfig` class)
         Path dataset_path: Path to dataset
-
     """
 
     config = load_variable("config", config_path)
-    model = get_model(config)
-    manual_seed = config.training.seed
+    model = models.get_model(config)
 
-    if manual_seed is not None:
-        set_deterministic_environment(manual_seed, logger)
+    train = config.training
+    setup(train_config=train, logger=logger)
 
-    train_loader, val_loader, test_loader = get_loaders(dataset_path, config)
-    model.set_example(train_loader)
+    params = dataset_path, train.loader_func, train.batch_size, train.dtype
+    train_loader, val_loader, test_loader = get_loaders(*params)
+    model.set_example(train_loader, dtype=train.dtype)
 
-    trainer = Trainer(config=config)
-    trainer.fit(model, train_loader, val_loader)
+    learner = trainer.Trainer(config=config)
+    learner.fit(model, train_loader, val_loader)
+
+    if train.test and train.save:
+        learner.test(test_dataloaders=test_loader)
+
+    return Path(learner.checkpoint_callback.best_model_path)
 
 
 if __name__ == "__main__":

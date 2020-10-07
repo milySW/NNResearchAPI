@@ -1,3 +1,6 @@
+from pathlib import Path
+
+import numpy as np
 import torch
 import torch.nn as nn
 
@@ -45,3 +48,8 @@ def conv_layer(
     if use_activation:
         layers.append(activation)
     return nn.Sequential(*layers)
+
+
+def save_prediction(predictions: np.ndarray, output_path: Path):
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    np.save(output_path, predictions.data.cpu().numpy())

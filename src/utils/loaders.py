@@ -1,15 +1,12 @@
-from __future__ import annotations
-
 import importlib
 
 from pathlib import Path
-from typing import Any, Generator, Tuple
+from typing import Any, Callable, Generator, List, Tuple
 
 import numpy as np
+import torch
 
 from torch.utils.data.dataloader import DataLoader
-
-import configs
 
 
 def load_variable(variable_name: str, path: Path) -> Any:
@@ -19,24 +16,45 @@ def load_variable(variable_name: str, path: Path) -> Any:
     return getattr(module, variable_name)
 
 
-def load_custom_sets(data_path: Path, *args, **kwargs) -> Tuple[np.array, ...]:
+def load_custom_sets(
+    path: Path, dtype=torch.dtype, *args, **kwargs
+) -> Tuple[np.array, ...]:
     return NotImplemented
 
 
-def load_default_sets(path_to_data: Path) -> Tuple[np.array, ...]:
-    X_train = np.expand_dims(np.load(path_to_data / "X_train.npy"), axis=1)
-    y_train = np.load(path_to_data / "y_train.npy")
+def load_custom_set(
+    path: Path, dtype=torch.dtype, *args, **kwargs
+) -> Tuple[np.array, ...]:
+    return NotImplemented
 
-    X_test = np.expand_dims(np.load(path_to_data / "X_test.npy"), axis=1)
-    y_test = np.load(path_to_data / "y_test.npy")
 
-    X_val = np.load(path_to_data / "X_val.npy")
-    y_val = np.load(path_to_data / "y_val.npy")
+def load_default_sets(path: Path, dtype=torch.dtype) -> Tuple[np.array, ...]:
+    X_train, y_train = load_set(path, ["X_train.npy", "y_train.npy"], dtype)
+    X_val, y_val = load_set(path, ["X_val.npy", "y_val.npy"], dtype)
+    X_test, y_test = load_set(path, ["X_test.npy", "y_test.npy"], dtype)
 
-    train, test, valid = (X_train, y_train), (X_test, y_test), (X_val, y_val)
+    train, test, valid = (X_train, y_train), (X_val, y_val), (X_test, y_test)
     sets = dict(train=train, test=test, valid=valid)
 
     return sets
+
+
+def load_set(
+    path: Path, set_names: List[str], dtype: torch.dtype = torch.float32
+) -> Tuple[torch.Tensor]:
+
+    X = load_x(path / set_names[0])
+    y = load_y(path / set_names[1])
+
+    return X, y
+
+
+def load_x(path: Path, dtype: torch.dtype = torch.float32) -> torch.Tensor:
+    return torch.tensor(np.expand_dims(np.load(path), axis=1), dtype=dtype)
+
+
+def load_y(path: Path, dtype: torch.dtype = torch.float32) -> torch.Tensor:
+    return torch.tensor(np.load(path), dtype=dtype)
 
 
 def get_loader(
@@ -48,13 +66,10 @@ def get_loader(
 
 
 def get_loaders(
-    path_to_data: Path, config: configs.DefaultConfig
-) -> Generator[DataLoader]:
+    path_to_data: Path, loading_func: Callable, bs: int, dtype: torch.dtype
+) -> Generator[DataLoader, Path, None]:
 
-    loading_func = config.training.loader_func
-    bs = config.training.batch_size
-
-    sets = loading_func(path_to_data)
+    sets = loading_func(path_to_data, dtype)
     for key, data_set in sets.items():
         shuffle = True if key == "train" else False
         loader = get_loader(*data_set, shuffle=shuffle, batch_size=bs)

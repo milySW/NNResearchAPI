@@ -62,11 +62,12 @@ class CalculateMetrics(Callback):
         self.data_frame = pd.DataFrame()
         self.data_frame.to_csv(self.all_path)
 
-    def load_save_dataframe(self):
+    def load_save_dataframe(self, save=True):
         data_frame = self.data_frame.append(self.series, ignore_index=True)
         data_frame = data_frame.rename_axis(index=self.index_name)
         self.data_frame = data_frame[self.series.index.tolist()]
-        self.data_frame.to_csv(self.all_path)
+        if save:
+            self.data_frame.to_csv(self.all_path)
 
     def calculate(
         self, name: str, metric_data: Dict[str, Tuple[BaseMetric, dict, Any]]
@@ -201,3 +202,8 @@ class CalculateMetrics(Callback):
     def on_train_end(self, trainer: Trainer, pl_module: LitModel):
         self.save_final_metrics()
         self.save_plots()
+
+    def on_test_end(self, trainer: Trainer, pl_module: LitModel):
+        self.series = self.sorted_series(series=self.series)
+        self.load_save_dataframe(save=False)
+        self.save_final_metrics()

@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, Iterable, List, Optional
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -64,3 +64,10 @@ def save_csv_plots(data: Dict[str, Path], output: Path, prefix: str):
             continue
 
         save_column_plot(dataframe_dict, col, output)
+
+
+def save_data_plot(data: Iterable, path: Path):
+    plt.figure()
+    plt.plot(*data)
+
+    plt.savefig(path, transparent=True)

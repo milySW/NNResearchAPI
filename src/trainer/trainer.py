@@ -65,7 +65,7 @@ class Trainer(PLTrainer):
         self.gpus = config.training.gpus
         self.weights_summary = config.training.weights_summary
         self.epochs = config.training.epochs
-        self.checkpoint_callback = config.training.checkpoint_callback
+        self.checkpoint_callback = config.training.save
         self.callbacks = config.callbacks.value_list()
         self.logger = None if self.set_logger else True
         self.root_dir = self.create_save_path(self.root(config))

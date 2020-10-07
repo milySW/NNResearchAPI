@@ -1,14 +1,17 @@
 import inspect
+
 from pathlib import Path
 from shutil import copy
+from typing import Optional
 
 from configs import (
     BaseConfig,
-    DefaultTraining,
+    DefaultCallbacks,
+    DefaultEvaluations,
+    DefaultMetrics,
     DefaultModel,
     DefaultOptimizersAndSchedulers,
-    DefaultMetrics,
-    DefaultCallbacks,
+    DefaultTraining,
 )
 
 
@@ -20,12 +23,14 @@ class DefaultConfig(BaseConfig):
         optimizers: DefaultOptimizersAndSchedulers,
         metrics: DefaultMetrics,
         callbacks: DefaultCallbacks,
+        evaluations: Optional[DefaultEvaluations],
     ):
         self.model = model
         self.training = training
         self.optimizers = optimizers
         self.metrics = metrics
         self.callbacks = callbacks
+        self.evaluations = evaluations
 
     def save_configs(self, output_dir: Path):
         for name, attribute in self.__dict__.items():

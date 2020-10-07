@@ -1,5 +1,9 @@
 from __future__ import annotations
 
+from pathlib import Path
+
+import torch
+
 import configs
 
 from src.models.resnet_blocks import XResNet
@@ -26,3 +30,9 @@ def get_model(config: configs.DefaultConfig):
 
     assert name in models.keys(), "Could not find model name"
     return models[name](**kwargs[name])
+
+
+def load_model(config, model_path: Path):
+    model = get_model(config)
+    model.load_state_dict(torch.load(model_path)["state_dict"])
+    return model

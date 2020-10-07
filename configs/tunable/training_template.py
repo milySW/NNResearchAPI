@@ -1,5 +1,7 @@
 from typing import Callable, List, Optional, Union
 
+import torch
+
 from pytorch_lightning.profiler import BaseProfiler
 
 import configs
@@ -16,11 +18,13 @@ class DefaultTraining(configs.BaseConfig):
 
         int epochs: Number of epochs in training
         int batch_size: Number of elements in one batch
-        bool checkpoint_callback: Parameter responsible for saving model
+        bool save: Parameter responsible for saving model
         int seed: Random seed for whole project
+        torch.dtype dtype: Type of dats used with model
         Callable loader_func: Function loading data from folder ".data"
         BaseLoss loss: Name of loss function
         str experiments_dir: Path to root directory of model experiments
+        bool test: Flag responsible for calculating test set
 
         str weigths_summary: Prints a summary of the weights
             when training begins. Supported options:
@@ -38,11 +42,13 @@ class DefaultTraining(configs.BaseConfig):
 
     epochs: int = 2
     batch_size: int = 128
-    checkpoint_callback: bool = False
+    save: bool = True
     seed: int = 42
+    dtype: torch.dtype = torch.float32
     loader_func: Callable = load_default_sets
     loss: BaseLoss = CrossEntropyLoss()
     experiments_dir: str = ".data/models"
+    test: bool = True
     weights_summary: Optional[str] = "full"
     gpus: Optional[Union[List[int], str, int]] = -1
     profiler: Optional[Union[BaseProfiler, bool]] = True

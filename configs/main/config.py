@@ -1,12 +1,12 @@
 from configs import (
-    DefaultConfig,
-    DefaultTraining,
-    DefaultResnet,
-    DefaultOptimizersAndSchedulers,
-    DefaultMetrics,
     DefaultCallbacks,
+    DefaultConfig,
+    DefaultEvaluations,
+    DefaultMetrics,
+    DefaultOptimizersAndSchedulers,
+    DefaultResnet,
+    DefaultTraining,
 )
-
 
 config = DefaultConfig(
     model=DefaultResnet,
@@ -14,4 +14,5 @@ config = DefaultConfig(
     optimizers=DefaultOptimizersAndSchedulers,
     metrics=DefaultMetrics,
     callbacks=DefaultCallbacks,
+    evaluations=DefaultEvaluations,
 )

@@ -23,6 +23,27 @@ class ParamsBuilder(ArgumentParser):
             "--dataset_path", type=Path, help=info, required=False,
         )
 
+    def add_data_argument(
+        self, info: str = "Path to file containing data."
+    ) -> ArgumentParser:
+        self.add_argument(
+            "--data_path", type=Path, help=info, required=False,
+        )
+
+    def add_input_argument(
+        self, info: str = "Path to file with input data."
+    ) -> ArgumentParser:
+        self.add_argument(
+            "--input_path", type=str, help=info, required=False,
+        )
+
+    def add_predict_argument(
+        self, info: str = "Path to file with model predictions."
+    ) -> ArgumentParser:
+        self.add_argument(
+            "--predict_path", type=Path, help=info, required=False,
+        )
+
     def add_output_argument(
         self, info: str = "Path to output directory."
     ) -> ArgumentParser:

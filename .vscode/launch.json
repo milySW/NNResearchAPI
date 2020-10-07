@@ -19,8 +19,83 @@
             "cwd": "${workspaceFolder}",
             "presentation": {
                 "hidden": false,
-                "group": "",
+                "group": "1. Main Tools",
                 "order": 1
+            }
+        },
+        {
+            "name": "predict",
+            "type": "python",
+            "request": "launch",
+            "module": "tools.predict",
+            "args": [
+                "--config_path",
+                "configs/main/config.py",
+                "--input_path",
+                ".data/x_test.npy",
+                "--model_path",
+                ".data/models/xresnet18/31/checkpoints/epoch=1.ckpt",
+                "--predict_path",
+                ".data/predictions/predictions.npy"
+            ],
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}",
+            "presentation": {
+                "hidden": false,
+                "group": "1. Main Tools",
+                "order": 2
+            }
+        },
+        {
+            "name": "evaluate",
+            "type": "python",
+            "request": "launch",
+            "module": "tools.evaluate",
+            "args": [
+                "--config_path",
+                "configs/main/config.py",
+                "--input_path",
+                ".data/X_test.npy",
+                "--data_path",
+                ".data/y_test.npy",
+                "--predict_path",
+                ".data/predictions/predictions.npy",
+                "--output_path",
+                ".data/evaluations"
+            ],
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}",
+            "presentation": {
+                "hidden": false,
+                "group": "1. Main Tools",
+                "order": 3
+            }
+        },
+        {
+            "name": "train + predict + evaluate",
+            "type": "python",
+            "request": "launch",
+            "module": "tools.pipeline",
+            "args": [
+                "--config_path",
+                "configs/main/config.py",
+                "--dataset_path",
+                ".data",
+                "--input_path",
+                ".data/X_test.npy",
+                "--data_path",
+                ".data/y_test.npy",
+                "--predict_path",
+                "predictions/predictions.npy",
+                "--output_path",
+                "evaluations"
+            ],
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}",
+            "presentation": {
+                "hidden": false,
+                "group": "2. Pipelines",
+                "order": 4
             }
         },
         {
@@ -44,8 +119,8 @@
             "cwd": "${workspaceFolder}",
             "presentation": {
                 "hidden": false,
-                "group": "",
-                "order": 2
+                "group": "3. Additional Tools",
+                "order": 5
             }
         },
     ]
