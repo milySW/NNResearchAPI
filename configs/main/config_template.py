@@ -7,10 +7,11 @@ from typing import Optional
 from configs import (
     BaseConfig,
     DefaultCallbacks,
-    DefaultEvaluations,
+    DefaultEvaluation,
     DefaultMetrics,
     DefaultModel,
     DefaultOptimizersAndSchedulers,
+    DefaultPrediction,
     DefaultTraining,
 )
 
@@ -23,13 +24,15 @@ class DefaultConfig(BaseConfig):
         optimizers: DefaultOptimizersAndSchedulers,
         metrics: DefaultMetrics,
         callbacks: DefaultCallbacks,
-        evaluations: Optional[DefaultEvaluations],
+        prediction: Optional[DefaultPrediction],
+        evaluations: Optional[DefaultEvaluation],
     ):
         self.model = model
         self.training = training
         self.optimizers = optimizers
         self.metrics = metrics
         self.callbacks = callbacks
+        self.prediction = prediction
         self.evaluations = evaluations
 
     def save_configs(self, output_dir: Path):

@@ -10,12 +10,12 @@ Architecture templates
 .. autoclass:: configs.DefaultResnet
 
 
-Callbacks templates
+Callbacks template
 ------------------------------------------------
 .. autoclass:: configs.DefaultCallbacks
 
 
-Metrics templates
+Metrics template
 ------------------------------------------------
 .. autoclass:: configs.DefaultMetrics
 
@@ -27,11 +27,17 @@ Optimizers templates
 .. autoclass:: configs.DefaultSchedulers
 
 
-Training templates
+Training template
 ------------------------------------------------
 .. autoclass:: configs.DefaultTraining
 
 
+Prediction template
+------------------------------------------------
+.. autoclass:: configs.DefaultPrediction
 
+Evaluation template
+------------------------------------------------
+.. autoclass:: configs.DefaultEvaluation
 
 

@@ -1,7 +1,12 @@
 from pathlib import Path
 
+import torch
+
+from tqdm import tqdm
+
 from src.models import load_model
 from src.models.utils import save_prediction
+from src.utils.collections import batch_list
 from src.utils.decorators import timespan
 from src.utils.loaders import load_variable, load_x
 from src.utils.logging import get_logger
@@ -23,14 +28,22 @@ def main(
         Path model_path: Path to trained model
         Path predict_path: Path to output directory
     """
+
     config = load_variable("config", config_path)
     dtype = config.training.dtype
 
-    model = load_model(config, model_path)
     x = load_x(input_path, dtype=dtype)
+    batches = batch_list(x, config.prediction.batch_size)
 
+    model = load_model(config, model_path)
     model.eval()
-    save_prediction(predictions=model(x), output_path=predict_path)
+
+    all_preds = torch.tensor([])
+    for input_data in tqdm(batches, desc="Predictions"):
+        predictions = model(input_data)
+        all_preds = torch.cat([all_preds, predictions])
+
+    save_prediction(predictions=all_preds, output_path=predict_path)
 
 
 if __name__ == "__main__":

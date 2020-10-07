@@ -33,3 +33,16 @@ def unpack_paths(
 
     roots = {exp: root_path / exp / "metrics" for exp in experiments}
     return (add_path_to_dict(roots, filename) for filename in supported_files)
+
+
+def batch_generator(
+    iterable: Iterable, batch_size: int
+) -> Generator[Iterable, None, None]:
+
+    length = len(iterable)
+    for start in range(0, length, batch_size):
+        yield iterable[slice(start, min(start + batch_size, length))]
+
+
+def batch_list(iterable: Iterable, batch_size: int) -> List[Iterable]:
+    return list(batch_generator(iterable=iterable, batch_size=batch_size))

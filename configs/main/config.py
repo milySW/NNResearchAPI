@@ -1,9 +1,10 @@
 from configs import (
     DefaultCallbacks,
     DefaultConfig,
-    DefaultEvaluations,
+    DefaultEvaluation,
     DefaultMetrics,
     DefaultOptimizersAndSchedulers,
+    DefaultPrediction,
     DefaultResnet,
     DefaultTraining,
 )
@@ -14,5 +15,6 @@ config = DefaultConfig(
     optimizers=DefaultOptimizersAndSchedulers,
     metrics=DefaultMetrics,
     callbacks=DefaultCallbacks,
-    evaluations=DefaultEvaluations,
+    prediction=DefaultPrediction,
+    evaluations=DefaultEvaluation,
 )

@@ -2,4 +2,6 @@ from abc import ABC
 
 
 class BaseEvaluation(ABC):
-    pass
+    @property
+    def name(self):
+        return self.__class__.__name__

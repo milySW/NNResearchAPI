@@ -34,9 +34,12 @@ def main(
     targets = load_y(data_path)
     predictions = load_y(predict_path)
 
-    for evaluator in tqdm(config.evaluations.value_list(), desc="Evaluations"):
-        for prediction, target in zip(predictions, targets):
+    for evaluator in config.evaluations.value_list():
+        name = evaluator.name
+
+        for prediction, target in tqdm(zip(predictions, targets), desc=name):
             evaluator(prediction, target)
+
         evaluator.manage_evals(predictions, targets, data, output_path)
 
 

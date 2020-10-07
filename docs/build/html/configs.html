@@ -86,10 +86,12 @@
                 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Configs</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#architecture-templates">Architecture templates</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#callbacks-templates">Callbacks templates</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#metrics-templates">Metrics templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#callbacks-template">Callbacks template</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#metrics-template">Metrics template</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#optimizers-templates">Optimizers templates</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#training-templates">Training templates</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#training-template">Training template</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#prediction-template">Prediction template</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#evaluation-template">Evaluation template</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="models.html">Models</a></li>
@@ -98,7 +100,9 @@
 <li class="toctree-l1"><a class="reference internal" href="metrics.html">Metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimizers.html">Optimizers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="callbacks.html">Callbacks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tools.html">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools.html">Main Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools.html#pipelines">Pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools.html#additional-tools">Additional tools</a></li>
 </ul>
 
             
@@ -185,8 +189,8 @@
 </dd></dl>
 
 </div>
-<div class="section" id="callbacks-templates">
-<h2>Callbacks templates<a class="headerlink" href="#callbacks-templates" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="callbacks-template">
+<h2>Callbacks template<a class="headerlink" href="#callbacks-template" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="configs.DefaultCallbacks">
 <em class="property">class </em><code class="sig-prename descclassname">configs.</code><code class="sig-name descname">DefaultCallbacks</code><a class="reference internal" href="_modules/configs/tunable/callbacks_template.html#DefaultCallbacks"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#configs.DefaultCallbacks" title="Permalink to this definition">¶</a></dt>
@@ -195,8 +199,8 @@ Providing new callbacks require adding new class field field with any name</p>
 </dd></dl>
 
 </div>
-<div class="section" id="metrics-templates">
-<h2>Metrics templates<a class="headerlink" href="#metrics-templates" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="metrics-template">
+<h2>Metrics template<a class="headerlink" href="#metrics-template" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="configs.DefaultMetrics">
 <em class="property">class </em><code class="sig-prename descclassname">configs.</code><code class="sig-name descname">DefaultMetrics</code><a class="reference internal" href="_modules/configs/tunable/metrics_template.html#DefaultMetrics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#configs.DefaultMetrics" title="Permalink to this definition">¶</a></dt>
@@ -260,8 +264,8 @@ name as field name of optimizer, which has to be used with scheduler.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="training-templates">
-<h2>Training templates<a class="headerlink" href="#training-templates" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="training-template">
+<h2>Training template<a class="headerlink" href="#training-template" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="configs.DefaultTraining">
 <em class="property">class </em><code class="sig-prename descclassname">configs.</code><code class="sig-name descname">DefaultTraining</code><a class="reference internal" href="_modules/configs/tunable/training_template.html#DefaultTraining"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#configs.DefaultTraining" title="Permalink to this definition">¶</a></dt>
@@ -291,6 +295,30 @@ and assist in identifying bottlenecks.</p></li>
 </ul>
 </dd>
 </dl>
+</dd></dl>
+
+</div>
+<div class="section" id="prediction-template">
+<h2>Prediction template<a class="headerlink" href="#prediction-template" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="configs.DefaultPrediction">
+<em class="property">class </em><code class="sig-prename descclassname">configs.</code><code class="sig-name descname">DefaultPrediction</code><a class="reference internal" href="_modules/configs/tunable/prediction_template.html#DefaultPrediction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#configs.DefaultPrediction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Config responsible for setting prediction parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><span class="target" id="configs.DefaultPrediction.params.batch_size"></span><strong>batch_size</strong><a class="paramlink headerlink reference internal" href="#configs.DefaultPrediction.params.batch_size">¶</a> (<em>int</em>) – Number of elements in one batch</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="evaluation-template">
+<h2>Evaluation template<a class="headerlink" href="#evaluation-template" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="configs.DefaultEvaluation">
+<em class="property">class </em><code class="sig-prename descclassname">configs.</code><code class="sig-name descname">DefaultEvaluation</code><a class="reference internal" href="_modules/configs/tunable/evaluation_template.html#DefaultEvaluation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#configs.DefaultEvaluation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Config responsible for evaluations of <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseEvaluation</span></code> type.
+Providing new evaluation require adding new class field field with any name</p>
 </dd></dl>
 
 </div>
