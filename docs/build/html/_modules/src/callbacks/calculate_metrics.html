@@ -90,7 +90,9 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../metrics.html">Metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../optimizers.html">Optimizers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../callbacks.html">Callbacks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../tools.html">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tools.html">Main Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tools.html#pipelines">Pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tools.html#additional-tools">Additional tools</a></li>
 </ul>
 
             
@@ -214,11 +216,12 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">data_frame</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data_frame</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_path</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">load_save_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">load_save_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="n">data_frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_frame</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">series</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">data_frame</span> <span class="o">=</span> <span class="n">data_frame</span><span class="o">.</span><span class="n">rename_axis</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">index_name</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data_frame</span> <span class="o">=</span> <span class="n">data_frame</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">series</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">tolist</span><span class="p">()]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">data_frame</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">save</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_frame</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_path</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">calculate</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">metric_data</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">BaseMetric</span><span class="p">,</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span>
@@ -352,7 +355,12 @@
 
     <span class="k">def</span> <span class="nf">on_train_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">:</span> <span class="n">Trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">:</span> <span class="n">LitModel</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">save_final_metrics</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">save_plots</span><span class="p">()</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_plots</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">on_test_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">:</span> <span class="n">Trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">:</span> <span class="n">LitModel</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">series</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorted_series</span><span class="p">(</span><span class="n">series</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">series</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_save_dataframe</span><span class="p">(</span><span class="n">save</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_final_metrics</span><span class="p">()</span></div>
 </pre></div>
 
            </div>

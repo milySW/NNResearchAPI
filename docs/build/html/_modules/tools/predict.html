@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>train &mdash; NNResearchAPI 0.0.1 documentation</title>
+  <title>tools.predict &mdash; NNResearchAPI 0.0.1 documentation</title>
   
 
   
@@ -24,22 +24,22 @@
 
   
   
-    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   
 
   
-    <link rel="stylesheet" href="../_static/sphinx_paramlinks.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/sphinx_paramlinks.css" type="text/css" />
   
 
   
         <link rel="index" title="Index"
-              href="../genindex.html"/>
-        <link rel="search" title="Search" href="../search.html"/>
-    <link rel="top" title="NNResearchAPI 0.0.1 documentation" href="../index.html"/>
-        <link rel="up" title="Module code" href="index.html"/> 
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="NNResearchAPI 0.0.1 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
 
   
-  <script src="../_static/js/modernizr.min.js"></script>
+  <script src="../../_static/js/modernizr.min.js"></script>
 
 </head>
 
@@ -55,7 +55,7 @@
           
 
           
-            <a href="../index.html" class="icon icon-home"> NNResearchAPI
+            <a href="../../index.html" class="icon icon-home"> NNResearchAPI
           
 
           
@@ -68,7 +68,7 @@
 
           
 <div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -83,16 +83,16 @@
             
             
                 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../configs.html">Configs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../models.html">Models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../trainer.html">Trainer</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../losses.html">Losses</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../metrics.html">Metrics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../optimizers.html">Optimizers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../callbacks.html">Callbacks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tools.html">Main Tools</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tools.html#pipelines">Pipelines</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../tools.html#additional-tools">Additional tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../configs.html">Configs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../trainer.html">Trainer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../losses.html">Losses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../metrics.html">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../optimizers.html">Optimizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../callbacks.html">Callbacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tools.html">Main Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tools.html#pipelines">Pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tools.html#additional-tools">Additional tools</a></li>
 </ul>
 
             
@@ -107,7 +107,7 @@
       <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../index.html">NNResearchAPI</a>
+          <a href="../../index.html">NNResearchAPI</a>
         
       </nav>
 
@@ -132,11 +132,11 @@
 <div role="navigation" aria-label="breadcrumbs navigation">
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../index.html">Docs</a> &raquo;</li>
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
         
-          <li><a href="index.html">Module code</a> &raquo;</li>
+          <li><a href="../index.html">Module code</a> &raquo;</li>
         
-      <li>train</li>
+      <li>tools.predict</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -151,49 +151,48 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for train</h1><div class="highlight"><pre>
+  <h1>Source code for tools.predict</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">from</span> <span class="nn">src.models</span> <span class="kn">import</span> <span class="n">get_model</span>
-<span class="kn">from</span> <span class="nn">src.trainer.trainer</span> <span class="kn">import</span> <span class="n">Trainer</span>
+<span class="kn">from</span> <span class="nn">src.models</span> <span class="kn">import</span> <span class="n">load_model</span>
+<span class="kn">from</span> <span class="nn">src.models.utils</span> <span class="kn">import</span> <span class="n">save_prediction</span>
 <span class="kn">from</span> <span class="nn">src.utils.decorators</span> <span class="kn">import</span> <span class="n">timespan</span>
-<span class="kn">from</span> <span class="nn">src.utils.externals_configurations</span> <span class="kn">import</span> <span class="n">set_deterministic_environment</span>
-<span class="kn">from</span> <span class="nn">src.utils.loaders</span> <span class="kn">import</span> <span class="n">get_loaders</span><span class="p">,</span> <span class="n">load_variable</span>
+<span class="kn">from</span> <span class="nn">src.utils.loaders</span> <span class="kn">import</span> <span class="n">load_variable</span><span class="p">,</span> <span class="n">load_x</span>
 <span class="kn">from</span> <span class="nn">src.utils.logging</span> <span class="kn">import</span> <span class="n">get_logger</span>
 <span class="kn">from</span> <span class="nn">src.utils.params</span> <span class="kn">import</span> <span class="n">ParamsBuilder</span>
 
-<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="s2">&quot;Trainer&quot;</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="s2">&quot;Predictor&quot;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../tools.html#train.main">[docs]</a><span class="nd">@timespan</span><span class="p">(</span><span class="s2">&quot;Training&quot;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">config_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">dataset_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../tools.html#tools.predict.main">[docs]</a><span class="nd">@timespan</span><span class="p">(</span><span class="s2">&quot;Prediction&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span>
+    <span class="n">config_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">input_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">model_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">predict_path</span><span class="p">:</span> <span class="n">Path</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Main function responsible for training classification model.</span>
+<span class="sd">    Main function responsible for prediction with passed model.</span>
 
 <span class="sd">    Arguments:</span>
 <span class="sd">        Path config_path: Path to main config (of :class:`DefaultConfig` class)</span>
-<span class="sd">        Path dataset_path: Path to dataset</span>
-
+<span class="sd">        Path input_path: Path to file with input data</span>
+<span class="sd">        Path model_path: Path to trained model</span>
+<span class="sd">        Path predict_path: Path to output directory</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
     <span class="n">config</span> <span class="o">=</span> <span class="n">load_variable</span><span class="p">(</span><span class="s2">&quot;config&quot;</span><span class="p">,</span> <span class="n">config_path</span><span class="p">)</span>
-    <span class="n">model</span> <span class="o">=</span> <span class="n">get_model</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
-    <span class="n">manual_seed</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">training</span><span class="o">.</span><span class="n">seed</span>
+    <span class="n">dtype</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">training</span><span class="o">.</span><span class="n">dtype</span>
 
-    <span class="k">if</span> <span class="n">manual_seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">set_deterministic_environment</span><span class="p">(</span><span class="n">manual_seed</span><span class="p">,</span> <span class="n">logger</span><span class="p">)</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">load_model</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">model_path</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">load_x</span><span class="p">(</span><span class="n">input_path</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
 
-    <span class="n">train_loader</span><span class="p">,</span> <span class="n">val_loader</span><span class="p">,</span> <span class="n">test_loader</span> <span class="o">=</span> <span class="n">get_loaders</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">,</span> <span class="n">config</span><span class="p">)</span>
-    <span class="n">model</span><span class="o">.</span><span class="n">set_example</span><span class="p">(</span><span class="n">train_loader</span><span class="p">)</span>
-
-    <span class="n">trainer</span> <span class="o">=</span> <span class="n">Trainer</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">)</span>
-    <span class="n">trainer</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">train_loader</span><span class="p">,</span> <span class="n">val_loader</span><span class="p">)</span></div>
+    <span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+    <span class="n">save_prediction</span><span class="p">(</span><span class="n">predictions</span><span class="o">=</span><span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">output_path</span><span class="o">=</span><span class="n">predict_path</span><span class="p">)</span></div>
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">parser</span> <span class="o">=</span> <span class="n">ParamsBuilder</span><span class="p">(</span><span class="s2">&quot;Single-particle tracking data clssification train&quot;</span><span class="p">)</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">ParamsBuilder</span><span class="p">(</span><span class="s2">&quot;Model prediction&quot;</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_config_argument</span><span class="p">()</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_dataset_argument</span><span class="p">()</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_input_argument</span><span class="p">()</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_model_argument</span><span class="p">()</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_predict_argument</span><span class="p">()</span>
 
     <span class="n">args</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_known_args</span><span class="p">()</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">log_parser</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
@@ -231,24 +230,24 @@
 
     <script type="text/javascript">
         var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'../',
+            URL_ROOT:'../../',
             VERSION:'0.0.1',
             COLLAPSE_INDEX:false,
             FILE_SUFFIX:'.html',
             HAS_SOURCE: 'true'
         };
     </script>
-      <script type="text/javascript" src="../_static/jquery.js"></script>
-      <script type="text/javascript" src="../_static/underscore.js"></script>
-      <script type="text/javascript" src="../_static/doctools.js"></script>
-      <script type="text/javascript" src="../_static/language_data.js"></script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="../../_static/language_data.js"></script>
       <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   
 
   
   
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
   
 
   

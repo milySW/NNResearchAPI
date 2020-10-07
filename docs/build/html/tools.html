@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Tools &mdash; NNResearchAPI 0.0.1 documentation</title>
+  <title>Main Tools &mdash; NNResearchAPI 0.0.1 documentation</title>
   
 
   
@@ -90,8 +90,17 @@
 <li class="toctree-l1"><a class="reference internal" href="metrics.html">Metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimizers.html">Optimizers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="callbacks.html">Callbacks</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Tools</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Main Tools</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-tools.train">Train</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-tools.predict">Predict</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#module-tools.evaluate">Evaluate</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#pipelines">Pipelines</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#module-tools.pipeline">Train + Predict + Evaluate</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="#additional-tools">Additional tools</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-tools.compare_plots">Compare experiment plots</a></li>
 </ul>
 </li>
@@ -136,7 +145,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Tools</li>
+      <li>Main Tools</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -153,15 +162,15 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="tools">
-<h1>Tools<a class="headerlink" href="#tools" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="main-tools">
+<h1>Main Tools<a class="headerlink" href="#main-tools" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 </div>
 <div class="section" id="module-tools.train">
 <span id="train"></span><h2>Train<a class="headerlink" href="#module-tools.train" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="tools.train.main">
-<code class="sig-prename descclassname">tools.train.</code><code class="sig-name descname">main</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config_path</span><span class="p">:</span> <span class="n">pathlib.Path</span></em>, <em class="sig-param"><span class="n">dataset_path</span><span class="p">:</span> <span class="n">pathlib.Path</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/tools/train.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.train.main" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">tools.train.</code><code class="sig-name descname">main</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config_path</span><span class="p">:</span> <span class="n">pathlib.Path</span></em>, <em class="sig-param"><span class="n">dataset_path</span><span class="p">:</span> <span class="n">pathlib.Path</span></em><span class="sig-paren">)</span> &#x2192; pathlib.Path<a class="reference internal" href="_modules/tools/train.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.train.main" title="Permalink to this definition">¶</a></dt>
 <dd><p>Main function responsible for training classification model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -174,6 +183,72 @@
 </dd></dl>
 
 </div>
+<div class="section" id="module-tools.predict">
+<span id="predict"></span><h2>Predict<a class="headerlink" href="#module-tools.predict" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="tools.predict.main">
+<code class="sig-prename descclassname">tools.predict.</code><code class="sig-name descname">main</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config_path</span><span class="p">:</span> <span class="n">pathlib.Path</span></em>, <em class="sig-param"><span class="n">input_path</span><span class="p">:</span> <span class="n">pathlib.Path</span></em>, <em class="sig-param"><span class="n">model_path</span><span class="p">:</span> <span class="n">pathlib.Path</span></em>, <em class="sig-param"><span class="n">predict_path</span><span class="p">:</span> <span class="n">pathlib.Path</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/tools/predict.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.predict.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main function responsible for prediction with passed model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="tools.predict.main.params.config_path"></span><strong>config_path</strong><a class="paramlink headerlink reference internal" href="#tools.predict.main.params.config_path">¶</a> (<em>Path</em>) – Path to main config (of <code class="xref py py-class docutils literal notranslate"><span class="pre">DefaultConfig</span></code> class)</p></li>
+<li><p><span class="target" id="tools.predict.main.params.input_path"></span><strong>input_path</strong><a class="paramlink headerlink reference internal" href="#tools.predict.main.params.input_path">¶</a> (<em>Path</em>) – Path to file with input data</p></li>
+<li><p><span class="target" id="tools.predict.main.params.model_path"></span><strong>model_path</strong><a class="paramlink headerlink reference internal" href="#tools.predict.main.params.model_path">¶</a> (<em>Path</em>) – Path to trained model</p></li>
+<li><p><span class="target" id="tools.predict.main.params.predict_path"></span><strong>predict_path</strong><a class="paramlink headerlink reference internal" href="#tools.predict.main.params.predict_path">¶</a> (<em>Path</em>) – Path to output directory</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-tools.evaluate">
+<span id="evaluate"></span><h2>Evaluate<a class="headerlink" href="#module-tools.evaluate" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="tools.evaluate.main">
+<code class="sig-prename descclassname">tools.evaluate.</code><code class="sig-name descname">main</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config_path</span><span class="p">:</span> <span class="n">pathlib.Path</span></em>, <em class="sig-param"><span class="n">data_path</span><span class="p">:</span> <span class="n">pathlib.Path</span></em>, <em class="sig-param"><span class="n">input_path</span><span class="p">:</span> <span class="n">pathlib.Path</span></em>, <em class="sig-param"><span class="n">predict_path</span><span class="p">:</span> <span class="n">pathlib.Path</span></em>, <em class="sig-param"><span class="n">output_path</span><span class="p">:</span> <span class="n">pathlib.Path</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/tools/evaluate.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.evaluate.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main function responsible for evaluation with passed model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="tools.evaluate.main.params.config_path"></span><strong>config_path</strong><a class="paramlink headerlink reference internal" href="#tools.evaluate.main.params.config_path">¶</a> (<em>Path</em>) – Path to main config (of <code class="xref py py-class docutils literal notranslate"><span class="pre">DefaultConfig</span></code> class)</p></li>
+<li><p><span class="target" id="tools.evaluate.main.params.data_path"></span><strong>data_path</strong><a class="paramlink headerlink reference internal" href="#tools.evaluate.main.params.data_path">¶</a> (<em>Path</em>) – Path to file containing data</p></li>
+<li><p><span class="target" id="tools.evaluate.main.params.input_path"></span><strong>input_path</strong><a class="paramlink headerlink reference internal" href="#tools.evaluate.main.params.input_path">¶</a> (<em>Path</em>) – Path to file with input data</p></li>
+<li><p><span class="target" id="tools.evaluate.main.params.predict_path"></span><strong>predict_path</strong><a class="paramlink headerlink reference internal" href="#tools.evaluate.main.params.predict_path">¶</a> (<em>Path</em>) – Path to file with model predictions</p></li>
+<li><p><span class="target" id="tools.evaluate.main.params.output_path"></span><strong>output_path</strong><a class="paramlink headerlink reference internal" href="#tools.evaluate.main.params.output_path">¶</a> (<em>Path</em>) – Path to output directory</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="pipelines">
+<h1>Pipelines<a class="headerlink" href="#pipelines" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-tools.pipeline">
+<span id="train-predict-evaluate"></span><h2>Train + Predict + Evaluate<a class="headerlink" href="#module-tools.pipeline" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="tools.pipeline.main">
+<code class="sig-prename descclassname">tools.pipeline.</code><code class="sig-name descname">main</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config_path</span><span class="p">:</span> <span class="n">pathlib.Path</span></em>, <em class="sig-param"><span class="n">dataset_path</span><span class="p">:</span> <span class="n">pathlib.Path</span></em>, <em class="sig-param"><span class="n">data_path</span><span class="p">:</span> <span class="n">pathlib.Path</span></em>, <em class="sig-param"><span class="n">predict_path</span><span class="p">:</span> <span class="n">pathlib.Path</span></em>, <em class="sig-param"><span class="n">input_path</span><span class="p">:</span> <span class="n">pathlib.Path</span></em>, <em class="sig-param"><span class="n">output_path</span><span class="p">:</span> <span class="n">pathlib.Path</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="_modules/tools/pipeline.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#tools.pipeline.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main function responsible for prediction with passed model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="tools.pipeline.main.params.config_path"></span><strong>config_path</strong><a class="paramlink headerlink reference internal" href="#tools.pipeline.main.params.config_path">¶</a> (<em>Path</em>) – Path to main config (of <code class="xref py py-class docutils literal notranslate"><span class="pre">DefaultConfig</span></code> class)</p></li>
+<li><p><span class="target" id="tools.pipeline.main.params.dataset_path"></span><strong>dataset_path</strong><a class="paramlink headerlink reference internal" href="#tools.pipeline.main.params.dataset_path">¶</a> (<em>Path</em>) – Path to dataset</p></li>
+<li><p><span class="target" id="tools.pipeline.main.params.data_path"></span><strong>data_path</strong><a class="paramlink headerlink reference internal" href="#tools.pipeline.main.params.data_path">¶</a> (<em>Path</em>) – Path to file containing data</p></li>
+<li><p><span class="target" id="tools.pipeline.main.params.predict_path"></span><strong>predict_path</strong><a class="paramlink headerlink reference internal" href="#tools.pipeline.main.params.predict_path">¶</a> (<em>Path</em>) – Path to file with model predictions</p></li>
+<li><p><span class="target" id="tools.pipeline.main.params.input_path"></span><strong>input_path</strong><a class="paramlink headerlink reference internal" href="#tools.pipeline.main.params.input_path">¶</a> (<em>Path</em>) – Path to file with input data</p></li>
+<li><p><span class="target" id="tools.pipeline.main.params.output_path"></span><strong>output_path</strong><a class="paramlink headerlink reference internal" href="#tools.pipeline.main.params.output_path">¶</a> (<em>Path</em>) – Path to output directory</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="additional-tools">
+<h1>Additional tools<a class="headerlink" href="#additional-tools" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="module-tools.compare_plots">
 <span id="compare-experiment-plots"></span><h2>Compare experiment plots<a class="headerlink" href="#module-tools.compare_plots" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">

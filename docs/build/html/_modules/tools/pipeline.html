@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>tools.compare_plots &mdash; NNResearchAPI 0.0.1 documentation</title>
+  <title>tools.pipeline &mdash; NNResearchAPI 0.0.1 documentation</title>
   
 
   
@@ -136,7 +136,7 @@
         
           <li><a href="../index.html">Module code</a> &raquo;</li>
         
-      <li>tools.compare_plots</li>
+      <li>tools.pipeline</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -151,56 +151,74 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for tools.compare_plots</h1><div class="highlight"><pre>
+  <h1>Source code for tools.pipeline</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">from</span> <span class="nn">src.utils.collections</span> <span class="kn">import</span> <span class="n">unpack_paths</span>
+<span class="kn">from</span> <span class="nn">src.utils.decorators</span> <span class="kn">import</span> <span class="n">timespan</span>
 <span class="kn">from</span> <span class="nn">src.utils.logging</span> <span class="kn">import</span> <span class="n">get_logger</span>
 <span class="kn">from</span> <span class="nn">src.utils.params</span> <span class="kn">import</span> <span class="n">ParamsBuilder</span>
-<span class="kn">from</span> <span class="nn">src.utils.plots</span> <span class="kn">import</span> <span class="n">get_name_from_names</span><span class="p">,</span> <span class="n">save_csv_plots</span>
+<span class="kn">from</span> <span class="nn">tools.evaluate</span> <span class="kn">import</span> <span class="n">main</span> <span class="k">as</span> <span class="n">evaluate</span>
+<span class="kn">from</span> <span class="nn">tools.predict</span> <span class="kn">import</span> <span class="n">main</span> <span class="k">as</span> <span class="n">predict</span>
+<span class="kn">from</span> <span class="nn">tools.train</span> <span class="kn">import</span> <span class="n">main</span> <span class="k">as</span> <span class="n">train</span>
 
-<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="s2">&quot;Comparator&quot;</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="s2">&quot;Pipeline&quot;</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../tools.html#tools.compare_plots.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span>
-    <span class="n">root_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../tools.html#tools.pipeline.main">[docs]</a><span class="nd">@timespan</span><span class="p">(</span><span class="s2">&quot;Training + Prediction + Evaluation&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">main</span><span class="p">(</span>
+    <span class="n">config_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">dataset_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">data_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">predict_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
+    <span class="n">input_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
     <span class="n">output_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span>
-    <span class="n">experiments</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">supported_files</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-<span class="p">):</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Function responsible for saving plots containing</span>
-<span class="sd">    info about metric values in every experiment.</span>
+<span class="sd">    Main function responsible for prediction with passed model.</span>
 
 <span class="sd">    Arguments:</span>
-<span class="sd">        Path root_path: Path to the root folder for the subprocess</span>
+<span class="sd">        Path config_path: Path to main config (of :class:`DefaultConfig` class)</span>
+<span class="sd">        Path dataset_path: Path to dataset</span>
+<span class="sd">        Path data_path: Path to file containing data</span>
+<span class="sd">        Path predict_path: Path to file with model predictions</span>
+<span class="sd">        Path input_path: Path to file with input data</span>
 <span class="sd">        Path output_path: Path to output directory</span>
-<span class="sd">        str experiments: Relative paths to experiments separated by a coma</span>
-<span class="sd">        str supported_files: Names of files necessary for tool usage</span>
-<span class="sd">        str prefix: Prefix for data taken into account</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Start generating plots&quot;</span><span class="p">)</span>
-    <span class="n">output</span> <span class="o">=</span> <span class="n">output_path</span> <span class="o">/</span> <span class="n">get_name_from_names</span><span class="p">(</span><span class="n">experiments</span><span class="p">)</span>
-    <span class="n">experiments</span> <span class="o">=</span> <span class="n">unpack_paths</span><span class="p">(</span><span class="n">root_path</span><span class="p">,</span> <span class="n">experiments</span><span class="p">,</span> <span class="n">supported_files</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Trainer&quot;</span><span class="p">)</span>
+    <span class="n">model_path</span> <span class="o">=</span> <span class="n">train</span><span class="p">(</span><span class="n">config_path</span><span class="o">=</span><span class="n">config_path</span><span class="p">,</span> <span class="n">dataset_path</span><span class="o">=</span><span class="n">dataset_path</span><span class="p">)</span>
+    <span class="n">root</span> <span class="o">=</span> <span class="n">model_path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span>
 
-    <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">experiments</span><span class="p">:</span>
-        <span class="n">save_csv_plots</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">group</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="n">prefix</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Predictor&quot;</span><span class="p">)</span>
+    <span class="n">predict</span><span class="p">(</span>
+        <span class="n">config_path</span><span class="o">=</span><span class="n">config_path</span><span class="p">,</span>
+        <span class="n">input_path</span><span class="o">=</span><span class="n">input_path</span><span class="p">,</span>
+        <span class="n">model_path</span><span class="o">=</span><span class="n">model_path</span><span class="p">,</span>
+        <span class="n">predict_path</span><span class="o">=</span><span class="n">root</span> <span class="o">/</span> <span class="n">predict_path</span><span class="p">,</span>
+    <span class="p">)</span>
 
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;End generating plots&quot;</span><span class="p">)</span></div>
+    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Evaluator&quot;</span><span class="p">)</span>
+    <span class="n">evaluate</span><span class="p">(</span>
+        <span class="n">config_path</span><span class="o">=</span><span class="n">config_path</span><span class="p">,</span>
+        <span class="n">data_path</span><span class="o">=</span><span class="n">data_path</span><span class="p">,</span>
+        <span class="n">input_path</span><span class="o">=</span><span class="n">input_path</span><span class="p">,</span>
+        <span class="n">predict_path</span><span class="o">=</span><span class="n">root</span> <span class="o">/</span> <span class="n">predict_path</span><span class="p">,</span>
+        <span class="n">output_path</span><span class="o">=</span><span class="n">root</span> <span class="o">/</span> <span class="n">output_path</span><span class="p">,</span>
+    <span class="p">)</span></div>
 
 
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">parser</span> <span class="o">=</span> <span class="n">ParamsBuilder</span><span class="p">(</span><span class="s2">&quot;Metrics results comparison plots&quot;</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_root_argument</span><span class="p">()</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">ParamsBuilder</span><span class="p">(</span><span class="s2">&quot;Pipeline&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_config_argument</span><span class="p">()</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_dataset_argument</span><span class="p">()</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_data_argument</span><span class="p">()</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_predict_argument</span><span class="p">()</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_input_argument</span><span class="p">()</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_output_argument</span><span class="p">()</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_prefix_argument</span><span class="p">()</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_supported_files_argument</span><span class="p">()</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_experiments_argument</span><span class="p">()</span>
 
     <span class="n">args</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_known_args</span><span class="p">()</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">log_parser</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">delimeter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">log_parser</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
 
     <span class="n">main</span><span class="p">(</span><span class="o">**</span><span class="nb">vars</span><span class="p">(</span><span class="n">args</span><span class="p">))</span>
 </pre></div>

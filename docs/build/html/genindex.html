@@ -89,7 +89,9 @@
 <li class="toctree-l1"><a class="reference internal" href="metrics.html">Metrics</a></li>
 <li class="toctree-l1"><a class="reference internal" href="optimizers.html">Optimizers</a></li>
 <li class="toctree-l1"><a class="reference internal" href="callbacks.html">Callbacks</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tools.html">Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools.html">Main Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools.html#pipelines">Pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tools.html#additional-tools">Additional tools</a></li>
 </ul>
 
             
@@ -223,24 +225,28 @@
 </li>
       <li><a href="configs.html#configs.DefaultOptimizers.params.character">character (configs.DefaultOptimizers parameter)</a>
 </li>
-      <li><a href="configs.html#configs.DefaultTraining.params.checkpoint_callback">checkpoint_callback (configs.DefaultTraining parameter)</a>
-
-      <ul>
-        <li><a href="trainer.html#src.trainer.Trainer.params.checkpoint_callback">(src.trainer.Trainer parameter)</a>
+      <li><a href="trainer.html#src.trainer.Trainer.params.checkpoint_callback">checkpoint_callback (src.trainer.Trainer parameter)</a>
 </li>
-      </ul></li>
       <li><a href="callbacks.html#src.callbacks.CollectBestClassMetrics">CollectBestClassMetrics (class in src.callbacks)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="callbacks.html#src.callbacks.CollectBestMetrics">CollectBestMetrics (class in src.callbacks)</a>
 </li>
       <li><a href="configs.html#configs.DefaultSchedulers.params.common_kwargs">common_kwargs (configs.DefaultSchedulers parameter)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="models.html#src.models.resnet_blocks.XResNet.params.config">config (src.models.resnet_blocks.XResNet parameter)</a>
 </li>
-      <li><a href="tools.html#tools.train.main.params.config_path">config_path (tools.train.main parameter)</a>
+      <li><a href="tools.html#tools.evaluate.main.params.config_path">config_path (tools.evaluate.main parameter)</a>
+
+      <ul>
+        <li><a href="tools.html#tools.pipeline.main.params.config_path">(tools.pipeline.main parameter)</a>
 </li>
+        <li><a href="tools.html#tools.predict.main.params.config_path">(tools.predict.main parameter)</a>
+</li>
+        <li><a href="tools.html#tools.train.main.params.config_path">(tools.train.main parameter)</a>
+</li>
+      </ul></li>
       <li>
     configs
 
@@ -258,16 +264,26 @@
 <h2 id="D">D</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="tools.html#tools.train.main.params.dataset_path">dataset_path (tools.train.main parameter)</a>
+      <li><a href="tools.html#tools.evaluate.main.params.data_path">data_path (tools.evaluate.main parameter)</a>
+
+      <ul>
+        <li><a href="tools.html#tools.pipeline.main.params.data_path">(tools.pipeline.main parameter)</a>
 </li>
+      </ul></li>
+      <li><a href="tools.html#tools.pipeline.main.params.dataset_path">dataset_path (tools.pipeline.main parameter)</a>
+
+      <ul>
+        <li><a href="tools.html#tools.train.main.params.dataset_path">(tools.train.main parameter)</a>
+</li>
+      </ul></li>
       <li><a href="trainer.html#src.trainer.Trainer.params.default_root_dir">default_root_dir (src.trainer.Trainer parameter)</a>
 </li>
       <li><a href="configs.html#configs.DefaultCallbacks">DefaultCallbacks (class in configs)</a>
 </li>
-      <li><a href="configs.html#configs.DefaultMetrics">DefaultMetrics (class in configs)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="configs.html#configs.DefaultMetrics">DefaultMetrics (class in configs)</a>
+</li>
       <li><a href="configs.html#configs.DefaultOptimizers">DefaultOptimizers (class in configs)</a>
 </li>
       <li><a href="configs.html#configs.DefaultResnet">DefaultResnet (class in configs)</a>
@@ -277,6 +293,8 @@
       <li><a href="configs.html#configs.DefaultTraining">DefaultTraining (class in configs)</a>
 </li>
       <li><a href="configs.html#configs.DefaultResnet.params.depth">depth (configs.DefaultResnet parameter)</a>
+</li>
+      <li><a href="configs.html#configs.DefaultTraining.params.dtype">dtype (configs.DefaultTraining parameter)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -322,10 +340,18 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="losses.html#src.losses.cross_entropy.CrossEntropyLoss.params.ignore_index">ignore_index (src.losses.cross_entropy.CrossEntropyLoss parameter)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="configs.html#configs.DefaultResnet.params.in_channels">in_channels (configs.DefaultResnet parameter)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="tools.html#tools.evaluate.main.params.input_path">input_path (tools.evaluate.main parameter)</a>
+
+      <ul>
+        <li><a href="tools.html#tools.pipeline.main.params.input_path">(tools.pipeline.main parameter)</a>
+</li>
+        <li><a href="tools.html#tools.predict.main.params.input_path">(tools.predict.main parameter)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -371,6 +397,12 @@
       <li><a href="tools.html#tools.compare_plots.main">main() (in module tools.compare_plots)</a>
 
       <ul>
+        <li><a href="tools.html#tools.evaluate.main">(in module tools.evaluate)</a>
+</li>
+        <li><a href="tools.html#tools.pipeline.main">(in module tools.pipeline)</a>
+</li>
+        <li><a href="tools.html#tools.predict.main">(in module tools.predict)</a>
+</li>
         <li><a href="tools.html#tools.train.main">(in module tools.train)</a>
 </li>
       </ul></li>
@@ -379,6 +411,8 @@
       <li><a href="configs.html#configs.DefaultMetrics.params.metric">metric (configs.DefaultMetrics parameter)</a>
 </li>
       <li><a href="configs.html#configs.DefaultResnet.params.model">model (configs.DefaultResnet parameter)</a>
+</li>
+      <li><a href="tools.html#tools.predict.main.params.model_path">model_path (tools.predict.main parameter)</a>
 </li>
       <li>
     module
@@ -395,6 +429,12 @@
         <li><a href="optimizers.html#module-src.optimizers.adam">src.optimizers.adam</a>
 </li>
         <li><a href="tools.html#module-tools.compare_plots">tools.compare_plots</a>
+</li>
+        <li><a href="tools.html#module-tools.evaluate">tools.evaluate</a>
+</li>
+        <li><a href="tools.html#module-tools.pipeline">tools.pipeline</a>
+</li>
+        <li><a href="tools.html#module-tools.predict">tools.predict</a>
 </li>
         <li><a href="tools.html#module-tools.train">tools.train</a>
 </li>
@@ -429,10 +469,14 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="configs.html#configs.DefaultResnet.params.out_channels">out_channels (configs.DefaultResnet parameter)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="tools.html#tools.compare_plots.main.params.output_path">output_path (tools.compare_plots.main parameter)</a>
+
+      <ul>
+        <li><a href="tools.html#tools.evaluate.main.params.output_path">(tools.evaluate.main parameter)</a>
 </li>
+        <li><a href="tools.html#tools.pipeline.main.params.output_path">(tools.pipeline.main parameter)</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -443,6 +487,14 @@
 </li>
       <li><a href="configs.html#configs.DefaultMetrics.params.plot">plot (configs.DefaultMetrics parameter)</a>
 </li>
+      <li><a href="tools.html#tools.evaluate.main.params.predict_path">predict_path (tools.evaluate.main parameter)</a>
+
+      <ul>
+        <li><a href="tools.html#tools.pipeline.main.params.predict_path">(tools.pipeline.main parameter)</a>
+</li>
+        <li><a href="tools.html#tools.predict.main.params.predict_path">(tools.predict.main parameter)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="tools.html#tools.compare_plots.main.params.prefix">prefix (tools.compare_plots.main parameter)</a>
@@ -473,6 +525,8 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="configs.html#configs.DefaultTraining.params.save">save (configs.DefaultTraining parameter)</a>
+</li>
       <li><a href="configs.html#configs.DefaultOptimizers.params.scheduler">scheduler (configs.DefaultOptimizers parameter)</a>
 
       <ul>
@@ -531,6 +585,8 @@
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="configs.html#configs.DefaultTraining.params.test">test (configs.DefaultTraining parameter)</a>
+</li>
       <li>
     tools.compare_plots
 
@@ -538,8 +594,29 @@
         <li><a href="tools.html#module-tools.compare_plots">module</a>
 </li>
       </ul></li>
+      <li>
+    tools.evaluate
+
+      <ul>
+        <li><a href="tools.html#module-tools.evaluate">module</a>
+</li>
+      </ul></li>
+      <li>
+    tools.pipeline
+
+      <ul>
+        <li><a href="tools.html#module-tools.pipeline">module</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    tools.predict
+
+      <ul>
+        <li><a href="tools.html#module-tools.predict">module</a>
+</li>
+      </ul></li>
       <li>
     tools.train
 
