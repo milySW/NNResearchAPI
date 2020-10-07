@@ -27,8 +27,8 @@ def main(
         Path config_path: Path to main config (of :class:`DefaultConfig` class)
         Path dataset_path: Path to dataset
         Path data_path: Path to file containing data
-        Path input_path: Path to file with input data
         Path predict_path: Path to file with model predictions
+        Path input_path: Path to file with input data
         Path output_path: Path to output directory
     """
 
