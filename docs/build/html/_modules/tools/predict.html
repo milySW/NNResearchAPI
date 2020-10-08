@@ -154,16 +154,17 @@
   <h1>Source code for tools.predict</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
-<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
 <span class="kn">import</span> <span class="nn">torch</span>
+
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
 
 <span class="kn">from</span> <span class="nn">src.models</span> <span class="kn">import</span> <span class="n">load_model</span>
 <span class="kn">from</span> <span class="nn">src.models.utils</span> <span class="kn">import</span> <span class="n">save_prediction</span>
+<span class="kn">from</span> <span class="nn">src.utils.collections</span> <span class="kn">import</span> <span class="n">batch_list</span>
 <span class="kn">from</span> <span class="nn">src.utils.decorators</span> <span class="kn">import</span> <span class="n">timespan</span>
 <span class="kn">from</span> <span class="nn">src.utils.loaders</span> <span class="kn">import</span> <span class="n">load_variable</span><span class="p">,</span> <span class="n">load_x</span>
 <span class="kn">from</span> <span class="nn">src.utils.logging</span> <span class="kn">import</span> <span class="n">get_logger</span>
 <span class="kn">from</span> <span class="nn">src.utils.params</span> <span class="kn">import</span> <span class="n">ParamsBuilder</span>
-<span class="kn">from</span> <span class="nn">src.utils.collections</span> <span class="kn">import</span> <span class="n">batch_list</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">get_logger</span><span class="p">(</span><span class="s2">&quot;Predictor&quot;</span><span class="p">)</span>
 

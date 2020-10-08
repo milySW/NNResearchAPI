@@ -152,13 +152,12 @@
            <div itemprop="articleBody">
             
   <h1>Source code for configs.tunable.optimizers_template</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">configs</span>
-
+<span></span><span class="kn">from</span> <span class="nn">configs.base.base</span> <span class="kn">import</span> <span class="n">BaseConfig</span>
 <span class="kn">from</span> <span class="nn">src.optimizers</span> <span class="kn">import</span> <span class="n">Adam</span>
 <span class="kn">from</span> <span class="nn">src.optimizers.schedulers</span> <span class="kn">import</span> <span class="n">BaseScheduler</span><span class="p">,</span> <span class="n">ExponentialLR</span>
 
 
-<div class="viewcode-block" id="SchedulerCommonKwargs"><a class="viewcode-back" href="../../../configs.html#configs.SchedulerCommonKwargs">[docs]</a><span class="k">class</span> <span class="nc">SchedulerCommonKwargs</span><span class="p">(</span><span class="n">configs</span><span class="o">.</span><span class="n">BaseConfig</span><span class="p">):</span>
+<div class="viewcode-block" id="SchedulerCommonKwargs"><a class="viewcode-back" href="../../../configs.html#configs.SchedulerCommonKwargs">[docs]</a><span class="k">class</span> <span class="nc">SchedulerCommonKwargs</span><span class="p">(</span><span class="n">BaseConfig</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Class storing default parameters common for all schedulers&quot;&quot;&quot;</span>
 
     <span class="n">scheduler</span><span class="p">:</span> <span class="n">BaseScheduler</span> <span class="o">=</span> <span class="kc">None</span>
@@ -168,7 +167,7 @@
     <span class="n">monitor</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;val_loss&quot;</span></div>
 
 
-<div class="viewcode-block" id="DefaultOptimizers"><a class="viewcode-back" href="../../../configs.html#configs.DefaultOptimizers">[docs]</a><span class="k">class</span> <span class="nc">DefaultOptimizers</span><span class="p">(</span><span class="n">configs</span><span class="o">.</span><span class="n">BaseConfig</span><span class="p">):</span>
+<div class="viewcode-block" id="DefaultOptimizers"><a class="viewcode-back" href="../../../configs.html#configs.DefaultOptimizers">[docs]</a><span class="k">class</span> <span class="nc">DefaultOptimizers</span><span class="p">(</span><span class="n">BaseConfig</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Config responsible for passing optimizers of :class:`BaseOptimizer` type.</span>
 <span class="sd">    Providing new optimizers require adding new class field as dict</span>
@@ -180,15 +179,15 @@
 
 <span class="sd">        BaseOptim scheduler: optimizer class</span>
 <span class="sd">        dict kwargs: dict with parameters for optimizer class</span>
-<span class="sd">        str character: &#39;normal&#39; for standard model, \</span>
-<span class="sd">        &#39;disc&#39; for discriminator in GAN model, &#39;gen&#39; for generator in GAN model</span>
+<span class="sd">        str character: &#39;normal&#39; for standard model,&#39;disc&#39; for discriminator</span>
+<span class="sd">            in GAN model, &#39;gen&#39; for generator in GAN model</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">adam</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">optimizer</span><span class="o">=</span><span class="n">Adam</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{},</span> <span class="n">character</span><span class="o">=</span><span class="s2">&quot;normal&quot;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="DefaultSchedulers"><a class="viewcode-back" href="../../../configs.html#configs.DefaultSchedulers">[docs]</a><span class="k">class</span> <span class="nc">DefaultSchedulers</span><span class="p">(</span><span class="n">configs</span><span class="o">.</span><span class="n">BaseConfig</span><span class="p">):</span>
+<div class="viewcode-block" id="DefaultSchedulers"><a class="viewcode-back" href="../../../configs.html#configs.DefaultSchedulers">[docs]</a><span class="k">class</span> <span class="nc">DefaultSchedulers</span><span class="p">(</span><span class="n">BaseConfig</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Config responsible for passing schedulers of :class:`BaseScheduler` type.</span>
 <span class="sd">    Providing new schedulers require adding new class field as dict with same</span>

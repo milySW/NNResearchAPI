@@ -3,12 +3,11 @@ from typing import Tuple
 import torch
 import torch.nn as nn
 
-import configs
-
+from configs.tunable.models.model_template import DefaultModel
 from src.models.base import LitModel
 
 
-class DefaultResnet(configs.DefaultModel):
+class DefaultResnet(DefaultModel):
     """
     Config responsible for setting parameters for :class:`ResNet` architecture.
 

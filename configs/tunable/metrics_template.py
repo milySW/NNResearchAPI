@@ -1,9 +1,8 @@
-import configs
-
+from configs.base.base import BaseConfig
 from src.metrics import Accuracy
 
 
-class DefaultMetrics(configs.BaseConfig):
+class DefaultMetrics(BaseConfig):
     """
     Config responsible for passing metrics of :class:`BaseMetric` type.
     Providing new metrics require adding new class field as dict with any name

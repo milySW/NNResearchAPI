@@ -1,5 +1,4 @@
-import itertools
-
+from itertools import count, permutations
 from pathlib import Path
 from typing import Tuple
 
@@ -34,7 +33,7 @@ class TopLosses(BaseEvaluation):
 
     @property
     def conns(self):
-        return list(itertools.permutations(self.unique, 2))
+        return list(permutations(self.unique, 2))
 
     @property
     def freq(self):
@@ -88,20 +87,20 @@ class TopLosses(BaseEvaluation):
             self.save_report(output_path=output_path)
 
         if self.save_plots:
-            self.save_data_to_png(data, output_path=output_path)
+            self.save_trajectories_to_png(data, output_path=output_path)
 
     def log_reports(self):
         for df in [self.top_losses_df, self.freq_data_df, self.con_data_df]:
             print("\n", df.to_string(index=False))
 
-    def save_data_to_png(self, data: torch.Tensor, output_path: Path):
-        root = output_path / self.folder_name / "data"
+    def save_trajectories_to_png(self, data: torch.Tensor, output_path: Path):
+        root = output_path / self.folder_name / "trajectories"
         root.mkdir(parents=True, exist_ok=True)
 
-        zipped_data = zip(self.preds, self.targets, self.losses, data)
+        zipped_data = zip(count(), self.preds, self.targets, self.losses, data)
 
-        for pred, target, loss, volume in zipped_data:
-            name = f"target={target}_pred={pred}_loss={loss}.png"
+        for i, pred, target, loss, volume in zipped_data:
+            name = f"top={i + 1}_target={target}_pred={pred}_loss={loss}.png"
             save_data_plot(data=volume.squeeze().T, path=root / name)
 
     def save_report(self, output_path: Path):

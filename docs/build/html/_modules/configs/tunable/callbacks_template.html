@@ -152,8 +152,7 @@
            <div itemprop="articleBody">
             
   <h1>Source code for configs.tunable.callbacks_template</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">configs</span>
-
+<span></span><span class="kn">from</span> <span class="nn">configs.base.base</span> <span class="kn">import</span> <span class="n">BaseConfig</span>
 <span class="kn">from</span> <span class="nn">src.callbacks</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">CollectBestClassMetrics</span><span class="p">,</span>
     <span class="n">CollectBestMetrics</span><span class="p">,</span>
@@ -161,7 +160,7 @@
 <span class="p">)</span>
 
 
-<div class="viewcode-block" id="DefaultCallbacks"><a class="viewcode-back" href="../../../configs.html#configs.DefaultCallbacks">[docs]</a><span class="k">class</span> <span class="nc">DefaultCallbacks</span><span class="p">(</span><span class="n">configs</span><span class="o">.</span><span class="n">BaseConfig</span><span class="p">):</span>
+<div class="viewcode-block" id="DefaultCallbacks"><a class="viewcode-back" href="../../../configs.html#configs.DefaultCallbacks">[docs]</a><span class="k">class</span> <span class="nc">DefaultCallbacks</span><span class="p">(</span><span class="n">BaseConfig</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Config responsible for passing callbacks of :class:`BaseCallback` type.</span>
 <span class="sd">    Providing new callbacks require adding new class field field with any name</span>

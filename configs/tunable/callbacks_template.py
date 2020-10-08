@@ -1,5 +1,4 @@
-import configs
-
+from configs.base.base import BaseConfig
 from src.callbacks import (
     CollectBestClassMetrics,
     CollectBestMetrics,
@@ -7,7 +6,7 @@ from src.callbacks import (
 )
 
 
-class DefaultCallbacks(configs.BaseConfig):
+class DefaultCallbacks(BaseConfig):
     """
     Config responsible for passing callbacks of :class:`BaseCallback` type.
     Providing new callbacks require adding new class field field with any name

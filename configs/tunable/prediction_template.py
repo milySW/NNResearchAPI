@@ -1,7 +1,7 @@
-import configs
+from configs.base.base import BaseConfig
 
 
-class DefaultPrediction(configs.BaseConfig):
+class DefaultPrediction(BaseConfig):
     """
     Config responsible for setting prediction parameters.
 

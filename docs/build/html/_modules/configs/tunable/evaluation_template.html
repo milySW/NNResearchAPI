@@ -152,13 +152,12 @@
            <div itemprop="articleBody">
             
   <h1>Source code for configs.tunable.evaluation_template</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">configs</span>
-
+<span></span><span class="kn">from</span> <span class="nn">configs.base.base</span> <span class="kn">import</span> <span class="n">BaseConfig</span>
 <span class="kn">from</span> <span class="nn">src.evaluations</span> <span class="kn">import</span> <span class="n">TopLosses</span>
 <span class="kn">from</span> <span class="nn">src.losses</span> <span class="kn">import</span> <span class="n">CrossEntropyLoss</span>
 
 
-<div class="viewcode-block" id="DefaultEvaluation"><a class="viewcode-back" href="../../../configs.html#configs.DefaultEvaluation">[docs]</a><span class="k">class</span> <span class="nc">DefaultEvaluation</span><span class="p">(</span><span class="n">configs</span><span class="o">.</span><span class="n">BaseConfig</span><span class="p">):</span>
+<div class="viewcode-block" id="DefaultEvaluation"><a class="viewcode-back" href="../../../configs.html#configs.DefaultEvaluation">[docs]</a><span class="k">class</span> <span class="nc">DefaultEvaluation</span><span class="p">(</span><span class="n">BaseConfig</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Config responsible for evaluations of :class:`BaseEvaluation` type.</span>
 <span class="sd">    Providing new evaluation require adding new class field field with any name</span>

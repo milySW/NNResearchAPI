@@ -158,13 +158,12 @@
 
 <span class="kn">from</span> <span class="nn">pytorch_lightning.profiler</span> <span class="kn">import</span> <span class="n">BaseProfiler</span>
 
-<span class="kn">import</span> <span class="nn">configs</span>
-
+<span class="kn">from</span> <span class="nn">configs.base.base</span> <span class="kn">import</span> <span class="n">BaseConfig</span>
 <span class="kn">from</span> <span class="nn">src.losses</span> <span class="kn">import</span> <span class="n">BaseLoss</span><span class="p">,</span> <span class="n">CrossEntropyLoss</span>
 <span class="kn">from</span> <span class="nn">src.utils.loaders</span> <span class="kn">import</span> <span class="n">load_default_sets</span>
 
 
-<div class="viewcode-block" id="DefaultTraining"><a class="viewcode-back" href="../../../configs.html#configs.DefaultTraining">[docs]</a><span class="k">class</span> <span class="nc">DefaultTraining</span><span class="p">(</span><span class="n">configs</span><span class="o">.</span><span class="n">BaseConfig</span><span class="p">):</span>
+<div class="viewcode-block" id="DefaultTraining"><a class="viewcode-back" href="../../../configs.html#configs.DefaultTraining">[docs]</a><span class="k">class</span> <span class="nc">DefaultTraining</span><span class="p">(</span><span class="n">BaseConfig</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Config responsible for setting parameters common for every architecture.</span>
 

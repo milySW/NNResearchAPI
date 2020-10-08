@@ -4,13 +4,12 @@ import torch
 
 from pytorch_lightning.profiler import BaseProfiler
 
-import configs
-
+from configs.base.base import BaseConfig
 from src.losses import BaseLoss, CrossEntropyLoss
 from src.utils.loaders import load_default_sets
 
 
-class DefaultTraining(configs.BaseConfig):
+class DefaultTraining(BaseConfig):
     """
     Config responsible for setting parameters common for every architecture.
 

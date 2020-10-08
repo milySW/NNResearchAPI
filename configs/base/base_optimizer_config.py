@@ -1,15 +1,18 @@
 from typing import Dict, ItemsView, List, Optional
 
-import configs
-
+from configs.base.base import BaseConfig
+from configs.tunable.optimizers_template import (
+    DefaultOptimizers,
+    DefaultSchedulers,
+)
 from src.models.base import LitModel
 from src.optimizers import BaseOptim
 from src.optimizers.schedulers import BaseScheduler
 
 
-class DefaultOptimizersAndSchedulers(configs.BaseConfig):
-    optimizers: Dict[str, BaseOptim] = configs.DefaultOptimizers.to_dict()
-    schedulers: Dict[str, BaseScheduler] = configs.DefaultSchedulers.to_dict()
+class DefaultOptimizersAndSchedulers(BaseConfig):
+    optimizers: Dict[str, BaseOptim] = DefaultOptimizers.to_dict()
+    schedulers: Dict[str, BaseScheduler] = DefaultSchedulers.to_dict()
 
     @classmethod
     def get_optimizer(cls, opt: dict, models: dict) -> BaseOptim:
