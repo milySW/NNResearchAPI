@@ -5,6 +5,7 @@ from shutil import copy
 from typing import Optional
 
 from configs.base.base import BaseConfig
+from configs.base.base_hooks_config import DefaultBindedHooks
 from configs.base.base_optimizer_config import DefaultOptimizersAndSchedulers
 from configs.tunable.callbacks_template import DefaultCallbacks
 from configs.tunable.evaluation_template import DefaultEvaluation
@@ -22,6 +23,7 @@ class DefaultConfig(BaseConfig):
         optimizers: DefaultOptimizersAndSchedulers,
         metrics: DefaultMetrics,
         callbacks: DefaultCallbacks,
+        hooks: DefaultBindedHooks,
         prediction: Optional[DefaultPrediction],
         evaluations: Optional[DefaultEvaluation],
     ):
@@ -30,6 +32,7 @@ class DefaultConfig(BaseConfig):
         self.optimizers = optimizers
         self.metrics = metrics
         self.callbacks = callbacks
+        self.hooks = hooks
         self.prediction = prediction
         self.evaluations = evaluations
 

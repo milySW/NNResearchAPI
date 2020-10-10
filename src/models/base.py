@@ -1,10 +1,12 @@
-from typing import Dict, List, Tuple, Union
+from typing import Any, Dict, List, Tuple, Union
 
 import pytorch_lightning as pl
 import torch
 
+from pytorch_lightning.utilities import AMPType
 from torch.utils.data.dataloader import DataLoader
 
+from src.losses import BaseLoss
 from src.metrics import BaseMetric
 from src.optimizers import BaseOptim
 from src.optimizers.schedulers import BaseScheduler
@@ -26,6 +28,10 @@ class LitModel(pl.LightningModule):
     @property
     def optim(self) -> List[BaseOptim]:
         return self.config.optimizers
+
+    @property
+    def hooks(self):
+        return self.config.hooks()
 
     @property
     def model_gen(self):
@@ -95,3 +101,115 @@ class LitModel(pl.LightningModule):
 
         self.trainer.calculations = calculations
         return result
+
+    def setup(self, stage: str):
+        self.hooks.setup(stage)
+
+    def teardown(self, stage: str):
+        self.hooks.teardown(stage)
+
+    def on_fit_start(self):
+        self.hooks.on_fit_start()
+
+    def on_fit_end(self):
+        self.hooks.on_fit_end()
+
+    def on_train_start(self) -> None:
+        self.hooks.on_train_start()
+
+    def on_train_end(self) -> None:
+        self.hooks.on_train_end()
+
+    def on_pretrain_routine_start(self) -> None:
+        self.hooks.on_pretrain_routine_start()
+
+    def on_pretrain_routine_end(self) -> None:
+        self.hooks.on_pretrain_routine_end()
+
+    def on_train_batch_start(
+        self, batch: Any, batch_idx: int, dataloader_idx: int
+    ) -> None:
+        self.hooks.on_train_batch_start(batch, batch_idx, dataloader_idx)
+
+    def on_train_batch_end(
+        self, batch: Any, batch_idx: int, dataloader_idx: int
+    ) -> None:
+        self.hooks.on_train_batch_end(batch, batch_idx, dataloader_idx)
+
+    def on_validation_batch_start(
+        self, batch: Any, batch_idx: int, dataloader_idx: int
+    ) -> None:
+        self.hooks.on_validation_batch_start(batch, batch_idx, dataloader_idx)
+
+    def on_validation_batch_end(
+        self, batch: Any, batch_idx: int, dataloader_idx: int
+    ) -> None:
+        self.hooks.on_validation_batch_end(batch, batch_idx, dataloader_idx)
+
+    def on_test_batch_start(
+        self, batch: Any, batch_idx: int, dataloader_idx: int
+    ) -> None:
+        self.hooks.on_test_batch_start(batch, batch_idx, dataloader_idx)
+
+    def on_test_batch_end(
+        self, batch: Any, batch_idx: int, dataloader_idx: int
+    ) -> None:
+        self.hooks.on_test_batch_end(batch, batch_idx, dataloader_idx)
+
+    def on_epoch_start(self) -> None:
+        self.hooks.on_epoch_start()
+
+    def on_epoch_end(self) -> None:
+        self.hooks.on_epoch_end()
+
+    def on_train_epoch_start(self) -> None:
+        self.hooks.on_train_epoch_start()
+
+    def on_train_epoch_end(self) -> None:
+        self.hooks.on_train_epoch_end
+
+    def on_validation_epoch_start(self) -> None:
+        self.hooks.on_validation_epoch_start
+
+    def on_validation_epoch_end(self) -> None:
+        self.hooks.on_validation_epoch_end
+
+    def on_test_epoch_start(self) -> None:
+        self.hooks.on_test_epoch_start()
+
+    def on_test_epoch_end(self) -> None:
+        self.hooks.on_test_epoch_end
+
+    def on_pre_performance_check(self) -> None:
+        self.hooks.on_pre_performance_check()
+
+    def on_post_performance_check(self) -> None:
+        self.hooks.on_post_performance_check()
+
+    def on_before_zero_grad(self, optim: BaseOptim) -> None:
+        self.hooks.on_before_zero_grad(optim)
+
+    def on_after_backward(self) -> None:
+        self.hooks.on_after_backward()
+
+    def backward(
+        self, trainer, loss: torch.Tensor, optim: BaseOptim, optim_idx: int
+    ) -> None:
+        self.hooks.backward(trainer, loss, optim, optim_idx)
+
+    def amp_scale_loss(
+        self,
+        unscaled_loss: BaseLoss,
+        optim: BaseOptim,
+        optim_idx: int,
+        amp_backend: AMPType,
+    ):
+        return self.hooks.amp_scale_loss(
+            unscaled_loss=unscaled_loss,
+            optimizer=optim,
+            optimizers_idx=optim_idx,
+            amp_backend=amp_backend,
+        )
+
+    def transfer_batch_to_device(self, batch: Any, dev: torch.device) -> Any:
+        return self.hooks.transfer_batch_to_device(batch, dev)

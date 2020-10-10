@@ -35,7 +35,7 @@ class DefaultOptimizers(BaseConfig):
 
 class DefaultSchedulers(BaseConfig):
     """
-    Config responsible for passing schedulers of :class:`BaseScheduler` type.
+    Config responsible for passing schedulers of :class:`BaseScheduler`.
     Providing new schedulers require adding new class field as dict with same
     name as field name of optimizer, which has to be used with scheduler.
 

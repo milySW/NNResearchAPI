@@ -4,7 +4,7 @@ from src.metrics import Accuracy
 
 class DefaultMetrics(BaseConfig):
     """
-    Config responsible for passing metrics of :class:`BaseMetric` type.
+    Config responsible for passing metrics of :class:`BaseMetric`.
     Providing new metrics require adding new class field as dict with any name
 
     Underneath description of field parameters

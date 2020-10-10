@@ -1,4 +1,5 @@
 from configs import (
+    DefaultBindedHooks,
     DefaultCallbacks,
     DefaultConfig,
     DefaultEvaluation,
@@ -15,6 +16,7 @@ config = DefaultConfig(
     optimizers=DefaultOptimizersAndSchedulers,
     metrics=DefaultMetrics,
     callbacks=DefaultCallbacks,
+    hooks=DefaultBindedHooks,
     prediction=DefaultPrediction,
     evaluations=DefaultEvaluation,
 )
