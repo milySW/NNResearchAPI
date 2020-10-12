@@ -15,6 +15,7 @@ from configs.tunable.optimizers_template import (
 )
 from configs.tunable.prediction_template import DefaultPrediction
 from configs.tunable.training_template import DefaultTraining
+from configs.tunable.transformation_template import DefaultTransformations
 
 __all__ = [
     "BaseConfig",
@@ -26,6 +27,7 @@ __all__ = [
     "DefaultMetrics",
     "DefaultCallbacks",
     "DefaultHooks",
+    "DefaultTransformations",
     "DefaultBindedHooks",
     "DefaultOptimizers",
     "DefaultSchedulers",

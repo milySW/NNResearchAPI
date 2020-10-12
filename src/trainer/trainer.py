@@ -34,7 +34,7 @@ class Trainer(PLTrainer):
             - `full`: summarizes all layers and their submodules
     """
 
-    def __init__(self, config: configs.DefaultConfig, *args, **kwargs):
+    def __init__(self, config: configs.DefaultConfig, **kwargs):
         self.setup_trainer(config)
 
         super().__init__(
@@ -46,7 +46,6 @@ class Trainer(PLTrainer):
             gpus=self.gpus,
             profiler=True,
             weights_summary=self.weights_summary,
-            *args,
             **kwargs
         )
 

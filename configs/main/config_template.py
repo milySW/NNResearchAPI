@@ -2,7 +2,6 @@ import inspect
 
 from pathlib import Path
 from shutil import copy
-from typing import Optional
 
 from configs.base.base import BaseConfig
 from configs.base.base_hooks_config import DefaultBindedHooks
@@ -13,6 +12,7 @@ from configs.tunable.metrics_template import DefaultMetrics
 from configs.tunable.models.model_template import DefaultModel
 from configs.tunable.prediction_template import DefaultPrediction
 from configs.tunable.training_template import DefaultTraining
+from configs.tunable.transformation_template import DefaultTransformations
 
 
 class DefaultConfig(BaseConfig):
@@ -24,8 +24,9 @@ class DefaultConfig(BaseConfig):
         metrics: DefaultMetrics,
         callbacks: DefaultCallbacks,
         hooks: DefaultBindedHooks,
-        prediction: Optional[DefaultPrediction],
-        evaluations: Optional[DefaultEvaluation],
+        transformations: DefaultTransformations,
+        prediction: DefaultPrediction,
+        evaluations: DefaultEvaluation,
     ):
         self.model = model
         self.training = training
@@ -33,6 +34,7 @@ class DefaultConfig(BaseConfig):
         self.metrics = metrics
         self.callbacks = callbacks
         self.hooks = hooks
+        self.transformations = transformations
         self.prediction = prediction
         self.evaluations = evaluations
 

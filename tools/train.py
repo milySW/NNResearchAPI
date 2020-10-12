@@ -27,8 +27,7 @@ def main(config_path: Path, dataset_path: Path) -> Path:
     train = config.training
     setup(train_config=train, logger=logger)
 
-    params = dataset_path, train.loader_func, train.batch_size, train.dtype
-    train_loader, val_loader, test_loader = get_loaders(*params)
+    train_loader, val_loader, test_loader = get_loaders(dataset_path, config)
     model.set_example(train_loader, dtype=train.dtype)
 
     learner = trainer.Trainer(config=config)

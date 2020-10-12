@@ -8,6 +8,7 @@ from configs import (
     DefaultPrediction,
     DefaultResnet,
     DefaultTraining,
+    DefaultTransformations,
 )
 
 config = DefaultConfig(
@@ -17,6 +18,7 @@ config = DefaultConfig(
     metrics=DefaultMetrics,
     callbacks=DefaultCallbacks,
     hooks=DefaultBindedHooks,
+    transformations=DefaultTransformations,
     prediction=DefaultPrediction,
     evaluations=DefaultEvaluation,
 )
