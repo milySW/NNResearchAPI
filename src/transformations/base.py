@@ -22,24 +22,10 @@ class BaseTransformation(ABC):
     def name(self):
         return self.__class__.__name__
 
-    @property
-    def transformation_sets(self):
-        return dict(train=self.train, valid=self.valid, test=self.test)
+    def transformation(self, data: Iterable):
+        return NotImplemented
 
-    def __call__(self, data: Iterable, ds_type: str):
-        if ds_type == "train" and self.train:
-            return self.apply_transformations(data)
-
-        elif ds_type == "valid" and self.train:
-            return self.apply_transformations(data)
-
-        elif ds_type == "test" and self.train:
-            return self.apply_transformations(data)
-
-        else:
-            return data
-
-    def apply_transformations(self, data: Iterable):
+    def __call__(self, data: Iterable):
         x, y = data
 
         if self.x:
