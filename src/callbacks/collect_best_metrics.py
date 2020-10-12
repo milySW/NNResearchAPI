@@ -1,15 +1,18 @@
-from pathlib import Path
-from typing import List, Tuple
-from shutil import rmtree, copytree
 import operator
 
-import pandas as pd
-from pytorch_lightning.trainer.trainer import Trainer
-from pytorch_lightning.callbacks.base import Callback
+from pathlib import Path
+from shutil import copytree, rmtree
+from typing import List, Tuple
 
-from src.callbacks import CalculateMetrics, CalculateClassMetrics
-from src.models.base import LitModel
+import pandas as pd
+
+from pytorch_lightning.callbacks.base import Callback
+from pytorch_lightning.trainer.trainer import Trainer
+
+from src.callbacks.calculate_class_metrics import CalculateClassMetrics
+from src.callbacks.calculate_metrics import CalculateMetrics
 from src.losses import BaseLoss
+from src.models.base import LitModel
 
 
 class CollectBest:

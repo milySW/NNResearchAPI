@@ -14,6 +14,7 @@ logger = get_logger("Selective Bakckpropagation Hook")
 class SelectiveBackprop(BaseHook):
     """
     Implemented according to paper https://arxiv.org/pdf/1910.00762.pdf
+
     Key idea:
         Train only on part of batch to speed up the training.
         Calculate loss value with forward pass (which is roughly 3 times

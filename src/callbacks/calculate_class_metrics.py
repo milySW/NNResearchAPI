@@ -4,7 +4,7 @@ import numpy as np
 
 from pytorch_lightning.trainer.trainer import Trainer
 
-from src.callbacks import CalculateMetrics
+from src.callbacks.calculate_metrics import CalculateMetrics
 from src.metrics import BaseMetric
 from src.models.base import LitModel
 

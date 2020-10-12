@@ -6,7 +6,9 @@
 /setup/.config
 /.vscode/.ropeproject
 /lightning_logs
-/docs/
+/docs/build
+/docs/_build
+/docs/source/_static
 
 __pycache__/
 .ipynb_checkpoints
