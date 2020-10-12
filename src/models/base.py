@@ -31,7 +31,9 @@ class LitModel(pl.LightningModule):
 
     @property
     def hooks(self):
-        return self.config.hooks()
+        hook = self.config.hooks()
+        hook.pl_module = self
+        return hook
 
     @property
     def model_gen(self):
@@ -63,9 +65,15 @@ class LitModel(pl.LightningModule):
 
         return list(optimizers.values()), schedulers
 
-    def calculate_batch(self, batch: list) -> torch.Tensor:
+    def standard_calculate_batch(
+        self, batch: list, precalculated_preds: torch.Tensor = None
+    ) -> torch.Tensor:
+
         x, y = batch
-        y_hat = self(x.float())
+        if precalculated_preds is not None:
+            y_hat = precalculated_preds
+        else:
+            y_hat = self(x.float())
 
         labels = torch.argmax(y.squeeze(), 1)
         preds = torch.argmax(y_hat.squeeze(), 1)
@@ -81,22 +89,29 @@ class LitModel(pl.LightningModule):
 
         return loss, calculations
 
+    def calculate_batch(self, batch: list, step: str) -> torch.Tensor:
+
+        if output := self.hooks.calculate_batch(batch=batch, step=step):
+            return output
+        else:
+            return self.standard_calculate_batch(batch=batch)
+
     def training_step(self, batch: list, batch_idx: int) -> pl.TrainResult:
-        loss, calculations = self.calculate_batch(batch)
+        loss, calculations = self.calculate_batch(batch, step="train")
         result = pl.TrainResult(loss)
 
         self.trainer.calculations = calculations
         return result
 
     def validation_step(self, batch: list, batch_idx: int) -> pl.EvalResult:
-        loss, calculations = self.calculate_batch(batch)
+        loss, calculations = self.calculate_batch(batch, step="validation")
         result = pl.EvalResult(checkpoint_on=loss)
 
         self.trainer.calculations = calculations
         return result
 
     def test_step(self, batch: list, batch_idx: int) -> pl.EvalResult:
-        loss, calculations = self.calculate_batch(batch)
+        loss, calculations = self.calculate_batch(batch, step="test")
         result = pl.EvalResult(checkpoint_on=loss)
 
         self.trainer.calculations = calculations

@@ -1,5 +1,4 @@
 from functools import cached_property
-from inspect import ismethod
 from itertools import product
 from typing import Any, Callable, Dict, List, Optional
 
@@ -22,9 +21,24 @@ class DefaultBindedHooks(BaseConfig):
         self.check_for_collisions()
         self.log_if_collisions()
 
+        self._pl_module = None
+
+    @property
+    def pl_module(self):
+        return self._pl_module
+
+    @pl_module.setter
+    def pl_module(self, value):
+        self._pl_module = value
+
     @cached_property
     def unbindable_dict(self) -> Dict[str, int]:
-        return dict(backward=0, amp_scale_loss=0, transfer_batch_to_device=0)
+        return dict(
+            backward=0.0,
+            amp_scale_loss=0.0,
+            transfer_batch_to_device=0.0,
+            calculate_batch=0.0,
+        )
 
     def log_collision_info(self, name: str, n: int) -> str:
         return f"Hook {name} should has at most 1 implementation, provided {n}"
@@ -45,7 +59,12 @@ class DefaultBindedHooks(BaseConfig):
         params: List[Any] = [],
         backup_function: Optional[Callable] = None,
     ):
+        if not self.hooks and backup_function:
+            return backup_function(*params)
+
         for hook in self.hooks:
+            hook.pl_module = self.pl_module
+
             return self.call_if_exists(
                 obj=hook,
                 method_name=method_name,
@@ -60,9 +79,7 @@ class DefaultBindedHooks(BaseConfig):
         parameters: List[Any] = [],
         backup_function: Optional[Callable] = None,
     ):
-        if hasattr(obj, method_name) and ismethod(getattr(obj, method_name)):
-            return getattr(obj, method_name)(*parameters)
-        elif hasattr(obj, method_name) and backup_function:
+        if hasattr(obj, method_name):
             return getattr(obj, method_name)(*parameters)
         elif backup_function:
             return backup_function(*parameters)
@@ -191,3 +208,7 @@ class DefaultBindedHooks(BaseConfig):
             params=[batch, dev],
             backup_function=ModelHooks().transfer_batch_to_device,
         )
+
+    def calculate_batch(self, batch: list, step: str) -> torch.Tensor:
+        params = [batch, step]
+        return self.bind_identical_hooks("calculate_batch", params=params)

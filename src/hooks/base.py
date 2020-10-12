@@ -1,2 +1,2 @@
 class BaseHook:
-    pass
+    _pl_module = None

@@ -1,5 +1,4 @@
 from configs.base.base import BaseConfig
-from src.hooks import SelectiveBackprop
 
 
 class DefaultHooks(BaseConfig):
@@ -14,9 +13,9 @@ class DefaultHooks(BaseConfig):
         Since hook functions bind to each other and return a cumulative
         function, the objects provided in the configuration cannot together
         exceed the number of one implementations per functions in this set:
-        [`backward`, `amp_scale_loss`, `transfer_batch_to_device`].
-        The main reason is that each of these functions provides
+        [`calculate_batch`, `amp_scale_loss`, `transfer_batch_to_device`,
+        `backward`]. The main reason is that each of these functions provides
         certain behavior or returns certain data, which makes them unbindable.
     """
 
-    selective_backprop = SelectiveBackprop
+    # selective_backprop = SelectiveBackprop(min_sample=0.5, min_loss=0.8)
