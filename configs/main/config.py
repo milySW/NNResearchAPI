@@ -1,14 +1,16 @@
 from configs import (
+    DefaultAugmentations,
     DefaultBindedHooks,
     DefaultCallbacks,
     DefaultConfig,
     DefaultEvaluation,
     DefaultMetrics,
     DefaultOptimizersAndSchedulers,
+    DefaultPostprocessors,
     DefaultPrediction,
+    DefaultPreprocessors,
     DefaultResnet,
     DefaultTraining,
-    DefaultTransformations,
 )
 
 config = DefaultConfig(
@@ -18,7 +20,9 @@ config = DefaultConfig(
     metrics=DefaultMetrics,
     callbacks=DefaultCallbacks,
     hooks=DefaultBindedHooks,
-    transformations=DefaultTransformations,
+    preprocessors=DefaultPreprocessors,
+    augmentations=DefaultAugmentations,
+    postprocessors=DefaultPostprocessors,
     prediction=DefaultPrediction,
     evaluations=DefaultEvaluation,
 )

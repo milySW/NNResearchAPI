@@ -9,7 +9,7 @@ from src.callbacks import (
 class DefaultCallbacks(BaseConfig):
     """
     Config responsible for passing callbacks of :class:`BaseCallback`.
-    Providing new callbacks require adding new class field field with any name
+    Providing new callbacks require adding new class field with any name
     """
 
     bar = LightProgressBar()

@@ -4,7 +4,7 @@ from configs.base.base import BaseConfig
 class DefaultHooks(BaseConfig):
     """
     Config responsible for passing hooks of :class:`BaseHook`.
-    Providing new hooks require adding new class field field with any name.
+    Providing new hooks require adding new class field with any name.
     Functions implemented inside provided hooks will combine with each other
     depending on order. Finally, result functions will overwrite
     original hooks of `pytorch_lightning.LightningModule` class.

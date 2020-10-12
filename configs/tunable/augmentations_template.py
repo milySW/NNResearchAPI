@@ -2,10 +2,10 @@ from configs.base.base import BaseConfig
 from src.transformations import Flip
 
 
-class DefaultTransformations(BaseConfig):
+class DefaultAugmentations(BaseConfig):
     """
     Config responsible for transformations of :class:`BaseTransformation`.
-    Providing new transforms require adding new class field field with any name
+    Providing new transforms require adding new class field with any name
     """
 
     flip = Flip(x=True, y=False, dims=[1, 2])

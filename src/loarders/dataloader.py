@@ -29,10 +29,10 @@ class DataLoader(PLDataloader):
 
         self.batch_size = config.training.batch_size
         self.shuffle = True if ds_type == "train" else False
-        self.transformations = config.transformations.value_list()
+        self.preprocessors = config.preprocessors.value_list()
 
     def apply_tfms(self, data: Iterable, ds_type: str):
-        for transformation in self.transformations:
-            data = transformation(data, ds_type)
+        for preprocessor in self.preprocessors:
+            data = preprocessor(data, ds_type)
 
         return list(zip(data[0], data[1]))

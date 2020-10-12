@@ -2,6 +2,7 @@ from configs.base.base import BaseConfig
 from configs.base.base_hooks_config import DefaultBindedHooks
 from configs.base.base_optimizer_config import DefaultOptimizersAndSchedulers
 from configs.main.config_template import DefaultConfig
+from configs.tunable.augmentations_template import DefaultAugmentations
 from configs.tunable.callbacks_template import DefaultCallbacks
 from configs.tunable.evaluation_template import DefaultEvaluation
 from configs.tunable.hooks_template import DefaultHooks
@@ -13,9 +14,10 @@ from configs.tunable.optimizers_template import (
     DefaultSchedulers,
     SchedulerCommonKwargs,
 )
+from configs.tunable.postprocessors_template import DefaultPostprocessors
 from configs.tunable.prediction_template import DefaultPrediction
+from configs.tunable.preprocessors_template import DefaultPreprocessors
 from configs.tunable.training_template import DefaultTraining
-from configs.tunable.transformation_template import DefaultTransformations
 
 __all__ = [
     "BaseConfig",
@@ -27,7 +29,9 @@ __all__ = [
     "DefaultMetrics",
     "DefaultCallbacks",
     "DefaultHooks",
-    "DefaultTransformations",
+    "DefaultPreprocessors",
+    "DefaultAugmentations",
+    "DefaultPostprocessors",
     "DefaultBindedHooks",
     "DefaultOptimizers",
     "DefaultSchedulers",
