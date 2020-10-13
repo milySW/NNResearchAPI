@@ -36,6 +36,10 @@ class LitModel(pl.LightningModule):
         return hook
 
     @property
+    def augmentations(self):
+        return self.config.augmentations.value_list()
+
+    @property
     def model_gen(self):
         return NotImplemented
 
@@ -97,6 +101,9 @@ class LitModel(pl.LightningModule):
             return self.standard_calculate_batch(batch=batch)
 
     def training_step(self, batch: list, batch_idx: int) -> pl.TrainResult:
+        for tfms in self.augmentations:
+            batch = tfms(batch)
+
         loss, calculations = self.calculate_batch(batch, step="train")
         result = pl.TrainResult(loss)
 

@@ -11,6 +11,7 @@ from src.utils.decorators import timespan
 from src.utils.loaders import load_variable, load_x
 from src.utils.logging import get_logger
 from src.utils.params import ParamsBuilder
+from src.utils.transforms import pred_transform
 
 logger = get_logger("Predictor")
 
@@ -41,7 +42,9 @@ def main(
     all_preds = torch.tensor([])
     for input_data in tqdm(batches, desc="Predictions"):
         predictions = model(input_data)
-        all_preds = torch.cat([all_preds, predictions])
+        processed_preds = pred_transform(predictions, config.postprocesses)
+
+        all_preds = torch.cat([all_preds, processed_preds])
 
     save_prediction(predictions=all_preds, output_path=predict_path)
 

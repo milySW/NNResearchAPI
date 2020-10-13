@@ -11,4 +11,8 @@ class Flip(BaseTransformation):
         super().__init__(**kwargs)
 
     def transformation(self, data: Iterable):
-        return torch.flip(data, dims=self.dims)
+        return self.core_transofmation(data, dims=self.dims)
+
+    @staticmethod
+    def core_transofmation(data: Iterable, dims: List[int]):
+        return torch.flip(data, dims=dims)

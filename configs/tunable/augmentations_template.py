@@ -8,4 +8,4 @@ class DefaultAugmentations(BaseConfig):
     Providing new transforms require adding new class field with any name
     """
 
-    flip = Flip(x=True, y=False, dims=[1, 2])
+    flip = Flip(x=True, y=False, dims=[1, 2], ratio=0.5)
