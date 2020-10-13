@@ -2,17 +2,16 @@ from __future__ import annotations
 
 from typing import Iterable
 
-import tqdm
+import torch
 
 from configs import DefaultPostprocessors
 
 
-def pred_transform(data: Iterable, postprocessors: DefaultPostprocessors):
-    info = "Applying postprocessors ..."
+def pred_transform(preds: Iterable, postprocessors: DefaultPostprocessors):
     tfms_list = postprocessors.value_list()
-    disable = len(tfms_list) == 0
+    data = list([torch.zeros_like(preds), preds])
 
-    for tfms in tqdm(tfms_list, desc=info, disable=disable):
-        predictions = tfms(data)
+    for tfms in tfms_list:
+        _, predictions = tfms(data)
 
     return predictions

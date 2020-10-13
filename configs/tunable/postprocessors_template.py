@@ -1,5 +1,5 @@
 from configs.base.base import BaseConfig
-from src.transformations import Flip
+from src.transformations import ArgMax
 
 
 class DefaultPostprocessors(BaseConfig):
@@ -8,4 +8,4 @@ class DefaultPostprocessors(BaseConfig):
     Providing new postprocessor require adding new class field with any name
     """
 
-    flip = Flip(x=True, y=False, dims=[1, 2])
+    argmax = ArgMax(x=False, y=True)

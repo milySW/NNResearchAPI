@@ -42,7 +42,7 @@ def main(
     all_preds = torch.tensor([])
     for input_data in tqdm(batches, desc="Predictions"):
         predictions = model(input_data)
-        processed_preds = pred_transform(predictions, config.postprocesses)
+        processed_preds = pred_transform(predictions, config.postprocessors)
 
         all_preds = torch.cat([all_preds, processed_preds])
 
