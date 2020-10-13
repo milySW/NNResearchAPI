@@ -87,8 +87,8 @@
                 ".data/y_test.npy",
                 "--predict_path",
                 "predictions/predictions.npy",
-                "--output_path",
-                "evaluations"
+                "--evaluate_path",
+                "evaluations",
             ],
             "justMyCode": false,
             "cwd": "${workspaceFolder}",
@@ -106,7 +106,7 @@
             "args": [
                 "--root_path",
                 ".data/models",
-                "--output_path",
+                "--evaluate_path",
                 ".data/models/!comparison_plots",
                 "--prefix",
                 "val",

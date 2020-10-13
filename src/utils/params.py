@@ -65,6 +65,13 @@ class ParamsBuilder(ArgumentParser):
             "--model_path", type=Path, help=info, required=False,
         )
 
+    def add_evaluate_argument(
+        self, info: str = "Path to evaluation directory."
+    ) -> ArgumentParser:
+        self.add_argument(
+            "--evaluate_path", type=Path, help=info, required=False,
+        )
+
     def add_experiments_argument(
         self, info: str = "Relative paths to experiments separated by a coma."
     ) -> ArgumentParser:

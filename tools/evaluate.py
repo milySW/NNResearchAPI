@@ -16,7 +16,7 @@ def main(
     data_path: Path,
     input_path: Path,
     predict_path: Path,
-    output_path: Path,
+    evaluate_path: Path,
 ) -> None:
     """
     Main function responsible for evaluation with passed model.
@@ -40,7 +40,7 @@ def main(
         for prediction, target in tqdm(zip(predictions, targets), desc=name):
             evaluator(prediction, target)
 
-        evaluator.manage_evals(predictions, targets, data, output_path)
+        evaluator.manage_evals(predictions, targets, data, evaluate_path)
 
 
 if __name__ == "__main__":
@@ -49,7 +49,7 @@ if __name__ == "__main__":
     parser.add_data_argument()
     parser.add_input_argument()
     parser.add_predict_argument()
-    parser.add_output_argument()
+    parser.add_evaluate_argument()
 
     args, _ = parser.parse_known_args()
     parser.log_parser(args)

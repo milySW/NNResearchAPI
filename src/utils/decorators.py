@@ -1,4 +1,5 @@
 import sys
+
 from functools import wraps
 from time import time
 
@@ -16,7 +17,7 @@ def timespan(process_name: str):
             ts = time()
             result = f(*args, **kw)
             te = time()
-            sys.stdout.write(f"{process_name} took: {round(te - ts, 4)} sec")
+            sys.stdout.write(f"\n{process_name} took: {round(te - ts, 4)} sec")
             return result
 
         return wrap

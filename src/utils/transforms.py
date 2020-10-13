@@ -12,6 +12,6 @@ def pred_transform(preds: Iterable, postprocessors: DefaultPostprocessors):
     data = list([torch.zeros_like(preds), preds])
 
     for tfms in tfms_list:
-        _, predictions = tfms(data)
+        data = tfms(data)
 
-    return predictions
+    return data[1]
