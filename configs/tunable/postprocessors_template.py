@@ -8,4 +8,4 @@ class DefaultPostprocessors(BaseConfig):
     Providing new postprocessor require adding new class field with any name
     """
 
-    argmax = ArgMax(x=False, y=True)
+    argmax = ArgMax(x=False, y=True, dim=0, keepdim=True)

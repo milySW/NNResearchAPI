@@ -14,10 +14,11 @@ NNResearchAPI's documentation
    trainer
    losses
    metrics
+   transformations
    optimizers
    hooks
    callbacks
-   tools 
+   tools
 
 
 Indices and tables

@@ -45,4 +45,17 @@ Evaluation template
 ------------------------------------------------
 .. autoclass:: configs.DefaultEvaluation
 
+Preprocessors template
+------------------------------------------------
+.. autoclass:: configs.DefaultPreprocessors
+
+Augmentations template
+------------------------------------------------
+.. autoclass:: configs.DefaultAugmentations
+
+Postprocessors template
+------------------------------------------------
+.. autoclass:: configs.DefaultPostprocessors
+
+
 

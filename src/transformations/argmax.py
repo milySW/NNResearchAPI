@@ -6,12 +6,16 @@ from src.transformations.base import BaseTransformation
 
 
 class ArgMax(BaseTransformation):
-    def __init__(self, **kwargs):
+    __doc__ = torch.argmax.__doc__.replace("input", "data")
+
+    def __init__(self, dim: int, keepdim: bool, **kwargs):
+        self.dim = dim
+        self.keepdim = keepdim
         super().__init__(**kwargs)
 
-    def transformation(self, data: Iterable):
-        return self.core_transofmation(data)
+    def transformation(self, data: Iterable) -> torch.Tensor:
+        return self.core_transofmation(data, d=self.dim, keep=self.keepdim)
 
     @staticmethod
-    def core_transofmation(data: Iterable):
-        return torch.argmax(data).unsqueeze(dim=0)
+    def core_transofmation(data: Iterable, d: int, keep: bool) -> torch.Tensor:
+        return torch.argmax(data, dim=d, keepdim=keep)

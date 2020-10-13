@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from random import random
-from typing import Iterable
+from typing import Iterable, List
 
 
 class BaseTransformation(ABC):
@@ -25,14 +25,14 @@ class BaseTransformation(ABC):
     def name(self):
         return self.__class__.__name__
 
-    def transformation(self, data: Iterable, **kwargs):
+    def transformation(self, data: Iterable, **kwargs) -> List[Iterable]:
         return self.core_transofmation(data, **kwargs)
 
     @staticmethod
-    def core_transofmation(data: Iterable, **kwargs):
+    def core_transofmation(data: Iterable, **kwargs) -> List[Iterable]:
         return NotImplemented
 
-    def __call__(self, data: Iterable):
+    def __call__(self, data: Iterable) -> List[Iterable]:
         if self.ratio < random():
             return data
 
