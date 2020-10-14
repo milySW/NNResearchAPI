@@ -40,6 +40,7 @@ def save_column_plot(df_dict: Dict[str, pd.DataFrame], col: str, output: Path):
     plt.title(col)
 
     plt.savefig(output / f"{col}.png", transparent=True)
+    plt.close()
 
 
 def save_columns_plot(df: pd.DataFrame, names: List[str], root_dir: Path):
@@ -52,6 +53,7 @@ def save_columns_plot(df: pd.DataFrame, names: List[str], root_dir: Path):
     plt.title(names[0])
 
     plt.savefig(root_dir / f"{names[0]}.png", transparent=True)
+    plt.close()
 
 
 def save_csv_plots(data: Dict[str, Path], output: Path, prefix: str):
@@ -71,3 +73,4 @@ def save_data_plot(data: Iterable, path: Path):
     plt.plot(*data)
 
     plt.savefig(path, transparent=True)
+    plt.close()

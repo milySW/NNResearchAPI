@@ -34,7 +34,7 @@
                 "--input_path",
                 ".data/x_test.npy",
                 "--model_path",
-                ".data/models/xresnet18/31/checkpoints/epoch=1.ckpt",
+                ".data/models/xresnet18/1/checkpoints/epoch=1.ckpt",
                 "--predict_path",
                 ".data/predictions/predictions.npy"
             ],
@@ -60,7 +60,7 @@
                 ".data/y_test.npy",
                 "--predict_path",
                 ".data/predictions/predictions.npy",
-                "--output_path",
+                "--evaluate_path",
                 ".data/evaluations"
             ],
             "justMyCode": false,
@@ -106,7 +106,7 @@
             "args": [
                 "--root_path",
                 ".data/models",
-                "--evaluate_path",
+                "--output_path",
                 ".data/models/!comparison_plots",
                 "--prefix",
                 "val",

@@ -1,16 +1,10 @@
-from __future__ import annotations
-
 import importlib
 
 from pathlib import Path
-from typing import Any, Generator, List, Tuple
+from typing import Any, List, Tuple
 
 import numpy as np
 import torch
-
-import configs
-
-from src.loarders import DataLoader
 
 
 def load_variable(variable_name: str, path: Path) -> Any:
@@ -59,28 +53,3 @@ def load_x(path: Path, dtype: torch.dtype = torch.float32) -> torch.Tensor:
 
 def load_y(path: Path, dtype: torch.dtype = torch.float32) -> torch.Tensor:
     return torch.tensor(np.load(path), dtype=dtype)
-
-
-def get_loader(
-    x_data: np.array,
-    labels: np.array,
-    config: configs.DefaultConfig,
-    dataset_type: str = "train",
-) -> DataLoader:
-
-    data = [x_data, labels]
-    loader = DataLoader(dataset=data, config=config, dataset_type=dataset_type)
-    return loader
-
-
-def get_loaders(
-    path_to_data: Path, config: configs.DefaultConfig,
-) -> Generator[DataLoader, Path, None]:
-
-    loading_func = config.training.loader_func
-    dtype = config.training.dtype
-
-    sets = loading_func(path_to_data, dtype)
-    for key, data_set in sets.items():
-        loader = get_loader(*data_set, config=config, dataset_type=key)
-        yield loader

@@ -1,13 +1,13 @@
-from __future__ import annotations
-
 from functools import cached_property
+from pathlib import Path
 from typing import Any, Iterable
+
+import numpy as np
 
 from torch.utils.data.dataloader import DataLoader as PLDataloader
 from tqdm import tqdm
 
-import configs
-
+from configs import DefaultConfig
 from src.transformations import BaseTransformation
 from src.utils.logging import get_logger
 
@@ -16,14 +16,10 @@ logger = get_logger("PrepareDataloader")
 
 class DataLoader(PLDataloader):
     def __init__(
-        self,
-        dataset: Iterable,
-        config: configs.DefaultConfig,
-        dataset_type: str,
-        **kwargs,
+        self, dataset: Iterable, config: DefaultConfig, ds_type: str, **kwargs,
     ):
-        self.set_params(config=config, ds_type=dataset_type)
-        transformed_dataset = self.apply_tfms(dataset, dataset_type)
+        self.set_params(config=config, ds_type=ds_type)
+        transformed_dataset = self.apply_tfms(dataset, ds_type)
 
         super().__init__(
             dataset=transformed_dataset,
@@ -31,6 +27,29 @@ class DataLoader(PLDataloader):
             shuffle=self.shuffle,
             **kwargs,
         )
+
+    @classmethod
+    def get_loader(
+        cls,
+        x_data: np.array,
+        labels: np.array,
+        config: DefaultConfig,
+        dataset_type: str = "train",
+    ):
+        data = [x_data, labels]
+        loader = cls(dataset=data, config=config, ds_type=dataset_type)
+        return loader
+
+    @classmethod
+    def get_loaders(cls, path_to_data: Path, config: DefaultConfig):
+
+        loading_func = config.training.loader_func
+        dtype = config.training.dtype
+
+        sets = loading_func(path_to_data, dtype)
+        for key, data_set in sets.items():
+            loader = cls.get_loader(*data_set, config=config, dataset_type=key)
+            yield loader
 
     @cached_property
     def preprocessors(self):
@@ -40,7 +59,7 @@ class DataLoader(PLDataloader):
     def disable(self):
         return len(self.preprocessors) == 0
 
-    def set_params(self, config: configs.DefaultConfig, ds_type: str) -> Any:
+    def set_params(self, config: DefaultConfig, ds_type: str) -> Any:
 
         self.ds_type = ds_type
         self.batch_size = config.training.batch_size

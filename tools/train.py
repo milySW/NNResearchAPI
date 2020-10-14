@@ -1,10 +1,11 @@
 from pathlib import Path
 
 from src import models
+from src.loarders import DataLoader
 from src.trainer import trainer
 from src.utils.configurations import setup
 from src.utils.decorators import timespan
-from src.utils.loaders import get_loaders, load_variable
+from src.utils.loaders import load_variable
 from src.utils.logging import get_logger
 from src.utils.params import ParamsBuilder
 
@@ -27,9 +28,11 @@ def main(config_path: Path, dataset_path: Path) -> Path:
     train = config.training
     setup(train_config=train, logger=logger)
 
-    train_loader, val_loader, test_loader = get_loaders(dataset_path, config)
-    model.set_example(train_loader, dtype=train.dtype)
+    train_loader, val_loader, test_loader = DataLoader.get_loaders(
+        path_to_data=dataset_path, config=config
+    )
 
+    model.set_example(train_loader, dtype=train.dtype)
     learner = trainer.Trainer(config=config)
     learner.fit(model, train_loader, val_loader)
 
