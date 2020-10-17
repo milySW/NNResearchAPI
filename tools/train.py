@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from src import models
-from src.loarders import DataLoader
+from src.loaders import DataLoader
 from src.trainer import trainer
 from src.utils.configurations import setup
 from src.utils.decorators import timespan
