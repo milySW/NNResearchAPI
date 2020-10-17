@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import os
 
 from pathlib import Path
@@ -7,8 +5,7 @@ from pathlib import Path
 from pytorch_lightning import Trainer as PLTrainer
 from pytorch_lightning.callbacks.progress import ProgressBar
 
-import configs
-
+from configs import DefaultConfig
 from src.utils.collections import filter_class
 
 
@@ -34,7 +31,7 @@ class Trainer(PLTrainer):
             - `full`: summarizes all layers and their submodules
     """
 
-    def __init__(self, config: configs.DefaultConfig, **kwargs):
+    def __init__(self, config: DefaultConfig, **kwargs):
         self.setup_trainer(config)
 
         super().__init__(
@@ -49,7 +46,7 @@ class Trainer(PLTrainer):
             **kwargs
         )
 
-    def setup_trainer(self, config: configs.DefaultConfig):
+    def setup_trainer(self, config: DefaultConfig):
         self.set_params(config)
         config.save_configs(self.root_dir)
 
@@ -57,10 +54,10 @@ class Trainer(PLTrainer):
     def set_logger(self):
         return filter_class(self.callbacks, ProgressBar)
 
-    def root(self, config: configs.DefaultConfig) -> Path:
+    def root(self, config: DefaultConfig) -> Path:
         return Path(config.training.experiments_dir) / config.model.name
 
-    def set_params(self, config: configs.DefaultConfig):
+    def set_params(self, config: DefaultConfig):
         self.gpus = config.training.gpus
         self.weights_summary = config.training.weights_summary
         self.epochs = config.training.epochs

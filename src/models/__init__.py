@@ -1,15 +1,12 @@
-from __future__ import annotations
-
 from pathlib import Path
 
 import torch
 
-import configs
-
+from configs import DefaultConfig
 from src.models.resnet_blocks import XResNet
 
 
-def get_model(config: configs.DefaultConfig):
+def get_model(config: DefaultConfig):
     name = config.model.name
 
     models = dict(

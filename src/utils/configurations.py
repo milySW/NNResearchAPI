@@ -1,12 +1,10 @@
-from __future__ import annotations
-
 import logging
 
 import torch
 
 from pytorch_lightning import seed_everything
 
-import configs
+from configs import DefaultTraining
 
 
 def set_deterministic_environment(manual_seed: int, logger: logging.Logger):
@@ -17,7 +15,7 @@ def set_deterministic_environment(manual_seed: int, logger: logging.Logger):
     seed_everything(manual_seed)
 
 
-def setup(train_config: configs.DefaultTraining, logger: logging.Logger):
+def setup(train_config: DefaultTraining, logger: logging.Logger):
     if train_config.test and not train_config.save:
         logger.warn("Test pipeline is not possible while save param = False")
 
