@@ -4,7 +4,7 @@ from functools import wraps
 from time import time
 
 
-def timespan(process_name: str):
+def timespan(name: str):
     """
     Decorator based on `High Performance Python - Practical Performant
     Programming for Humans` by Micha Gorelicki & Ian Ozsvald.
@@ -17,7 +17,7 @@ def timespan(process_name: str):
             ts = time()
             result = f(*args, **kw)
             te = time()
-            sys.stdout.write(f"\n{process_name} took: {round(te - ts, 4)} sec")
+            sys.stdout.write(f"\n{name} took: {round(te - ts, 4)} sec\n")
             return result
 
         return wrap

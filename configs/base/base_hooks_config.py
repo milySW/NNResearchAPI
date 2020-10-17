@@ -4,7 +4,7 @@ from typing import Any, Callable, Dict, List, Optional
 
 import torch
 
-from pytorch_lightning.core.hooks import ModelHooks
+from pytorch_lightning.core.hooks import DataHooks, ModelHooks
 from pytorch_lightning.utilities import AMPType
 
 from configs.base.base import BaseConfig
@@ -206,7 +206,7 @@ class DefaultBindedHooks(BaseConfig):
         return self.bind_identical_hooks(
             method_name="transfer_batch_to_device",
             params=[batch, dev],
-            backup_function=ModelHooks().transfer_batch_to_device,
+            backup_function=DataHooks().transfer_batch_to_device,
         )
 
     def calculate_batch(self, batch: list, step: str) -> torch.Tensor:

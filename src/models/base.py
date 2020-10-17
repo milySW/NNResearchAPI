@@ -50,9 +50,9 @@ class LitModel(pl.LightningModule):
     def forward(self, x: torch.Tensor):
         return NotImplemented
 
-    def set_example(self, train_loader: DataLoader, dtype=torch.float32):
+    def set_example(self, train_loader: DataLoader):
         example = train_loader.dataset[0][0][None]
-        self.example_input_array = torch.tensor(example, dtype=dtype)
+        self.example_input_array = example
 
     def configure_optimizers(self) -> Tuple[BaseOptim, List[BaseScheduler]]:
         """
@@ -80,13 +80,12 @@ class LitModel(pl.LightningModule):
             y_hat = self(x.float())
 
         labels = torch.argmax(y.squeeze(), 1)
-        preds = torch.argmax(y_hat.squeeze(), 1)
 
         loss = self.loss_function(y_hat, labels)
 
         calculations = dict(
             inputs=x.detach().cpu(),
-            preds=preds.detach().cpu(),
+            preds=y_hat.detach().cpu(),
             labels=labels.detach().cpu(),
             losses=loss.detach().cpu().unsqueeze(dim=0),
         )
@@ -105,24 +104,21 @@ class LitModel(pl.LightningModule):
             batch = tfms(batch)
 
         loss, calculations = self.calculate_batch(batch, step="train")
-        result = pl.TrainResult(loss)
-
         self.trainer.calculations = calculations
-        return result
+
+        return loss
 
     def validation_step(self, batch: list, batch_idx: int) -> pl.EvalResult:
         loss, calculations = self.calculate_batch(batch, step="validation")
-        result = pl.EvalResult(checkpoint_on=loss)
-
         self.trainer.calculations = calculations
-        return result
+
+        return loss
 
     def test_step(self, batch: list, batch_idx: int) -> pl.EvalResult:
         loss, calculations = self.calculate_batch(batch, step="test")
-        result = pl.EvalResult(checkpoint_on=loss)
-
         self.trainer.calculations = calculations
-        return result
+
+        return loss
 
     def setup(self, stage: str):
         self.hooks.setup(stage)

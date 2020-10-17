@@ -29,7 +29,8 @@ class TopLosses(BaseEvaluation):
 
     @property
     def unique(self):
-        return [i.item() for i in self.targets.unique()]
+        unique = torch.cat([self.targets, self.preds]).unique()
+        return [i.item() for i in unique]
 
     @property
     def conns(self):

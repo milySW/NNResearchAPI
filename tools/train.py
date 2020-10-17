@@ -32,7 +32,7 @@ def main(config_path: Path, dataset_path: Path) -> Path:
         path_to_data=dataset_path, config=config
     )
 
-    model.set_example(train_loader, dtype=train.dtype)
+    model.set_example(train_loader)
     learner = trainer.Trainer(config=config)
     learner.fit(model, train_loader, val_loader)
 

@@ -49,7 +49,7 @@ class CalculateClassMetrics(CalculateMetrics):
         preds = self.preds[indices]
         labels = self.labels[indices]
 
-        stat = metric(num_classes=self.classes, *kwargs)(preds, labels)
+        stat = metric(*kwargs)(preds, labels)
         return round(stat.item(), 4)
 
     def calculate(
