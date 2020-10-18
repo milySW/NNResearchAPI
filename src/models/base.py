@@ -99,7 +99,7 @@ class LitModel(pl.LightningModule):
         else:
             return self.standard_calculate_batch(batch=batch)
 
-    def training_step(self, batch: list, batch_idx: int) -> pl.TrainResult:
+    def training_step(self, batch: list, batch_idx: int) -> torch.Tensor:
         for tfms in self.augmentations:
             batch = tfms(batch)
 
@@ -108,13 +108,13 @@ class LitModel(pl.LightningModule):
 
         return loss
 
-    def validation_step(self, batch: list, batch_idx: int) -> pl.EvalResult:
+    def validation_step(self, batch: list, batch_idx: int) -> torch.Tensor:
         loss, calculations = self.calculate_batch(batch, step="validation")
         self.trainer.calculations = calculations
 
         return loss
 
-    def test_step(self, batch: list, batch_idx: int) -> pl.EvalResult:
+    def test_step(self, batch: list, batch_idx: int) -> torch.Tensor:
         loss, calculations = self.calculate_batch(batch, step="test")
         self.trainer.calculations = calculations
 
@@ -147,32 +147,53 @@ class LitModel(pl.LightningModule):
     def on_train_batch_start(
         self, batch: Any, batch_idx: int, dataloader_idx: int
     ) -> None:
+
         self.hooks.on_train_batch_start(batch, batch_idx, dataloader_idx)
 
     def on_train_batch_end(
-        self, batch: Any, batch_idx: int, dataloader_idx: int
+        self,
+        train_step_outputs: List[Any],
+        batch: Any,
+        batch_idx: int,
+        dataloader_idx: int,
     ) -> None:
-        self.hooks.on_train_batch_end(batch, batch_idx, dataloader_idx)
+
+        params = [train_step_outputs, batch, batch_idx, dataloader_idx]
+        self.hooks.on_train_batch_end(*params)
 
     def on_validation_batch_start(
         self, batch: Any, batch_idx: int, dataloader_idx: int
     ) -> None:
+
         self.hooks.on_validation_batch_start(batch, batch_idx, dataloader_idx)
 
     def on_validation_batch_end(
-        self, batch: Any, batch_idx: int, dataloader_idx: int
+        self,
+        validation_step_outputs: List[Any],
+        batch: Any,
+        batch_idx: int,
+        dataloader_idx: int,
     ) -> None:
-        self.hooks.on_validation_batch_end(batch, batch_idx, dataloader_idx)
+
+        params = [validation_step_outputs, batch, batch_idx, dataloader_idx]
+        self.hooks.on_validation_batch_end(*params)
 
     def on_test_batch_start(
         self, batch: Any, batch_idx: int, dataloader_idx: int
     ) -> None:
+
         self.hooks.on_test_batch_start(batch, batch_idx, dataloader_idx)
 
     def on_test_batch_end(
-        self, batch: Any, batch_idx: int, dataloader_idx: int
+        self,
+        test_step_outputs: List[Any],
+        batch: Any,
+        batch_idx: int,
+        dataloader_idx: int,
     ) -> None:
-        self.hooks.on_test_batch_end(batch, batch_idx, dataloader_idx)
+
+        params = [test_step_outputs, batch, batch_idx, dataloader_idx]
+        self.hooks.on_test_batch_end(*params)
 
     def on_epoch_start(self) -> None:
         self.hooks.on_epoch_start()
@@ -183,20 +204,20 @@ class LitModel(pl.LightningModule):
     def on_train_epoch_start(self) -> None:
         self.hooks.on_train_epoch_start()
 
-    def on_train_epoch_end(self) -> None:
-        self.hooks.on_train_epoch_end
+    def on_train_epoch_end(self, outputs: List[Any]) -> None:
+        self.hooks.on_train_epoch_end(outputs)
 
     def on_validation_epoch_start(self) -> None:
         self.hooks.on_validation_epoch_start
 
     def on_validation_epoch_end(self) -> None:
-        self.hooks.on_validation_epoch_end
+        self.hooks.on_validation_epoch_end()
 
     def on_test_epoch_start(self) -> None:
         self.hooks.on_test_epoch_start()
 
     def on_test_epoch_end(self) -> None:
-        self.hooks.on_test_epoch_end
+        self.hooks.on_test_epoch_end()
 
     def on_pre_performance_check(self) -> None:
         self.hooks.on_pre_performance_check()
@@ -211,9 +232,10 @@ class LitModel(pl.LightningModule):
         self.hooks.on_after_backward()
 
     def backward(
-        self, trainer, loss: torch.Tensor, optim: BaseOptim, optim_idx: int
+        self, loss: torch.Tensor, optimizer: BaseOptim, optimizer_idx: int
     ) -> None:
-        self.hooks.backward(trainer, loss, optim, optim_idx)
+
+        self.hooks.backward(loss, optimizer, optimizer_idx)
 
     def amp_scale_loss(
         self,

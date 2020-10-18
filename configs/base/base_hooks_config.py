@@ -5,6 +5,7 @@ from typing import Any, Callable, Dict, List, Optional
 import torch
 
 from pytorch_lightning.core.hooks import DataHooks, ModelHooks
+from pytorch_lightning.core.lightning import LightningModule
 from pytorch_lightning.utilities import AMPType
 
 from configs.base.base import BaseConfig
@@ -115,21 +116,32 @@ class DefaultBindedHooks(BaseConfig):
         self.bind_identical_hooks("on_train_batch_start", params=params)
 
     def on_train_batch_end(
-        self, batch: Any, batch_idx: int, dataloader_idx: int
+        self,
+        train_step_outputs: List[Any],
+        batch: Any,
+        batch_idx: int,
+        dataloader_idx: int,
     ) -> None:
-        params = [batch, batch_idx, dataloader_idx]
+
+        params = [train_step_outputs, batch, batch_idx, dataloader_idx]
         self.bind_identical_hooks("on_train_batch_end", params=params)
 
     def on_validation_batch_start(
         self, batch: Any, batch_idx: int, dataloader_idx: int
     ) -> None:
+
         params = [batch, batch_idx, dataloader_idx]
         self.bind_identical_hooks("on_validation_batch_start", params=params)
 
     def on_validation_batch_end(
-        self, batch: Any, batch_idx: int, dataloader_idx: int
+        self,
+        validation_step_outputs: List[Any],
+        batch: Any,
+        batch_idx: int,
+        dataloader_idx: int,
     ) -> None:
-        params = [batch, batch_idx, dataloader_idx]
+
+        params = [validation_step_outputs, batch, batch_idx, dataloader_idx]
         self.bind_identical_hooks("on_validation_batch_end", params=params)
 
     def on_test_batch_start(
@@ -139,9 +151,14 @@ class DefaultBindedHooks(BaseConfig):
         self.bind_identical_hooks("on_test_batch_start", params=params)
 
     def on_test_batch_end(
-        self, batch: Any, batch_idx: int, dataloader_idx: int
+        self,
+        test_step_outputs: List[Any],
+        batch: Any,
+        batch_idx: int,
+        dataloader_idx: int,
     ) -> None:
-        params = [batch, batch_idx, dataloader_idx]
+
+        params = [test_step_outputs, batch, batch_idx, dataloader_idx]
         self.bind_identical_hooks("on_test_batch_end", params=params)
 
     def on_epoch_start(self) -> None:
@@ -153,8 +170,8 @@ class DefaultBindedHooks(BaseConfig):
     def on_train_epoch_start(self) -> None:
         self.bind_identical_hooks("on_train_epoch_start")
 
-    def on_train_epoch_end(self) -> None:
-        self.bind_identical_hooks("on_train_epoch_end")
+    def on_train_epoch_end(self, outputs: List[Any]) -> None:
+        self.bind_identical_hooks("on_train_epoch_end", params=[outputs])
 
     def on_validation_epoch_start(self) -> None:
         self.bind_identical_hooks("on_validation_epoch_start")
@@ -181,12 +198,13 @@ class DefaultBindedHooks(BaseConfig):
         self.bind_identical_hooks("on_after_backward")
 
     def backward(
-        self, trainer, loss: torch.Tensor, optim: BaseOptim, optim_idx: int
+        self, loss: torch.Tensor, optimizer: BaseOptim, optimizer_idx: int
     ) -> None:
+
         self.bind_identical_hooks(
             method_name="backward",
-            params=[trainer, loss, optim, optim_idx],
-            backup_function=ModelHooks().backward,
+            params=[loss, optimizer, optimizer_idx],
+            backup_function=LightningModule().backward,
         )
 
     def amp_scale_loss(
