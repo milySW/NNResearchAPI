@@ -68,7 +68,7 @@ class CalculateClassMetrics(CalculateMetrics):
 
         super().on_train_start(trainer=trainer, pl_module=pl_module)
 
-    def manage_metrics(self, trainer: Trainer, prefix: str):
+    def manage_metrics(self, prefix: str):
         self.calculate_metrics(prefix=prefix)
 
     def log_metrics(self, **kwargs):

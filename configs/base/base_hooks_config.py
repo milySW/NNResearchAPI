@@ -117,7 +117,7 @@ class DefaultBindedHooks(BaseConfig):
 
     def on_train_batch_end(
         self,
-        train_step_outputs: List[Any],
+        train_step_outputs: Dict[str, Any],
         batch: Any,
         batch_idx: int,
         dataloader_idx: int,
@@ -135,7 +135,7 @@ class DefaultBindedHooks(BaseConfig):
 
     def on_validation_batch_end(
         self,
-        validation_step_outputs: List[Any],
+        validation_step_outputs: Dict[str, Any],
         batch: Any,
         batch_idx: int,
         dataloader_idx: int,
@@ -152,7 +152,7 @@ class DefaultBindedHooks(BaseConfig):
 
     def on_test_batch_end(
         self,
-        test_step_outputs: List[Any],
+        test_step_outputs: Dict[str, Any],
         batch: Any,
         batch_idx: int,
         dataloader_idx: int,
@@ -170,7 +170,7 @@ class DefaultBindedHooks(BaseConfig):
     def on_train_epoch_start(self) -> None:
         self.bind_identical_hooks("on_train_epoch_start")
 
-    def on_train_epoch_end(self, outputs: List[Any]) -> None:
+    def on_train_epoch_end(self, outputs: Dict[str, Any]) -> None:
         self.bind_identical_hooks("on_train_epoch_end", params=[outputs])
 
     def on_validation_epoch_start(self) -> None:

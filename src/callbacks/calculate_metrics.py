@@ -128,7 +128,7 @@ class CalculateMetrics(Callback):
         self.labels = torch.cat((self.labels, trainer.calculations["labels"]))
         self.losses = torch.cat((self.losses, trainer.calculations["losses"]))
 
-    def manage_metrics(self, trainer: Trainer, prefix: str):
+    def manage_metrics(self, prefix: str):
         self.calculate_metrics(prefix=prefix)
         self.series[f"{prefix}loss"] = round(self.losses.mean().item(), 4)
 
@@ -169,33 +169,33 @@ class CalculateMetrics(Callback):
     ):
         self.fill_tensors(trainer=trainer)
         if trainer.num_training_batches - batch_idx == 1:
-            self.manage_metrics(trainer=trainer, prefix="")
+            self.manage_metrics(prefix="")
 
     def on_validation_batch_end(
         self,
         trainer: Trainer,
         pl_module: LitModel,
-        outputs: List[Any],
+        outputs: Dict[str, Any],
         batch: List[torch.Tensor],
         batch_idx: int,
         dataloader_idx: int,
     ):
         self.fill_tensors(trainer=trainer)
         if trainer.num_val_batches[dataloader_idx] - batch_idx == 1:
-            self.manage_metrics(trainer=trainer, prefix="val_")
+            self.manage_metrics(prefix="val_")
 
     def on_test_batch_end(
         self,
         trainer: Trainer,
         pl_module: LitModel,
-        outputs: List[Any],
+        outputs: Dict[str, Any],
         batch: List[torch.Tensor],
         batch_idx: int,
         dataloader_idx: int,
     ):
         self.fill_tensors(trainer=trainer)
         if trainer.num_test_batches[dataloader_idx] - batch_idx == 1:
-            self.manage_metrics(trainer=trainer, prefix="test_")
+            self.manage_metrics(prefix="test_")
 
     def on_epoch_end(self, trainer: Trainer, pl_module: LitModel):
         self.series = self.sorted_series(series=self.series)
