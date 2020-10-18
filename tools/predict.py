@@ -19,7 +19,7 @@ logger = get_logger("Predictor")
 @timespan("Prediction")
 def main(
     config_path: Path, input_path: Path, model_path: Path, predict_path: Path
-) -> None:
+) -> Path:
     """
     Main function responsible for prediction with passed model.
 
@@ -28,6 +28,9 @@ def main(
         Path input_path: Path to file with input data
         Path model_path: Path to trained model
         Path predict_path: Path to output directory
+
+    Returns:
+        Path to the experiment root dir.
     """
 
     config = load_variable("config", config_path)
@@ -47,6 +50,8 @@ def main(
         all_preds = torch.cat([all_preds, processed_preds])
 
     save_prediction(predictions=all_preds, output_path=predict_path)
+
+    return predict_path.parent.parent
 
 
 if __name__ == "__main__":

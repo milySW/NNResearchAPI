@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Tuple, Union
 
 from src import models
 from src.loaders import DataLoader
@@ -13,13 +14,17 @@ logger = get_logger("Trainer")
 
 
 @timespan("Training")
-def main(config_path: Path, dataset_path: Path) -> Path:
+def main(config_path: Path, dataset_path: Path) -> Union[Tuple[Path], Path]:
     """
     Main function responsible for training classification model.
 
     Arguments:
         Path config_path: Path to main config (of :class:`DefaultConfig` class)
         Path dataset_path: Path to dataset
+
+    Returns:
+        Tuple containing path to the experiment root dirrectory
+        and path to the saved model directory.
     """
 
     config = load_variable("config", config_path)
@@ -39,7 +44,12 @@ def main(config_path: Path, dataset_path: Path) -> Path:
     if train.test and train.save:
         learner.test(test_dataloaders=test_loader)
 
-    return Path(learner.checkpoint_callback.best_model_path)
+    if train.save:
+        model_path = Path(learner.checkpoint_callback.best_model_path)
+        return learner.root_dir, model_path
+
+    else:
+        return learner.root_dir
 
 
 if __name__ == "__main__":

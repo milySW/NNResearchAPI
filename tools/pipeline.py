@@ -1,6 +1,8 @@
 from pathlib import Path
 from typing import Optional
 
+import numpy as np
+
 from src.utils.decorators import timespan
 from src.utils.logging import get_logger
 from src.utils.params import ParamsBuilder
@@ -34,7 +36,12 @@ def main(
     """
 
     logger.info("Trainer")
-    model_path = train(config_path=config_path, dataset_path=dataset_path)
+    result = train(config_path=config_path, dataset_path=dataset_path)
+
+    info = "Pipline required training_config.py with attribute save = True"
+    assert len(np.atleast_1d(result)) != 1, info
+
+    _, model_path = result
     root = model_path.parent.parent
 
     logger.info("Predictor")

@@ -17,7 +17,7 @@ def main(
     input_path: Path,
     predict_path: Path,
     evaluate_path: Path,
-) -> None:
+) -> Path:
     """
     Main function responsible for evaluation with passed model.
 
@@ -27,6 +27,9 @@ def main(
         Path input_path: Path to file with input data
         Path predict_path: Path to file with model predictions
         Path output_path: Path to output directory
+
+    Returns:
+        Path to the experiment root dir.
     """
     config = load_variable("config", config_path)
 
@@ -41,6 +44,8 @@ def main(
             evaluator(prediction, target)
 
         evaluator.manage_evals(predictions, targets, data, evaluate_path)
+
+    return evaluate_path.parent
 
 
 if __name__ == "__main__":

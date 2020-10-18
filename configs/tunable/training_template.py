@@ -39,8 +39,8 @@ class DefaultTraining(BaseConfig):
 
     """
 
-    epochs: int = 2
-    batch_size: int = 256
+    epochs: int = 30
+    batch_size: int = 512
     save: bool = True
     seed: int = 42
     dtype: torch.dtype = torch.float32
