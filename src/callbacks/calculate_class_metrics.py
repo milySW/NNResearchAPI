@@ -22,8 +22,8 @@ class CalculateClassMetrics(CalculateMetrics):
 
     """
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.all_file_name = "metrics_group_all.csv"
         self.last_file_name = "metrics_group_last.csv"
 

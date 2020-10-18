@@ -13,5 +13,5 @@ class DefaultCallbacks(BaseConfig):
     """
 
     bar = LightProgressBar()
-    best_class_metric = CollectBestClassMetrics()
-    best_metric = CollectBestMetrics()
+    best_class_metric = CollectBestClassMetrics(variants=["val", "test"])
+    best_metric = CollectBestMetrics(variants=["val", "test"])

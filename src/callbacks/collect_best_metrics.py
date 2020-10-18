@@ -163,8 +163,8 @@ class CollectBestMetrics(CalculateMetrics, CollectBest):
 
     """
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
     def on_fit_start(self, trainer: Trainer, pl_module: LitModel):
         super().on_fit_start(trainer, pl_module)
@@ -193,8 +193,8 @@ class CollectBestClassMetrics(CalculateClassMetrics, CollectBest):
 
     """
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
     def on_fit_start(self, trainer: Trainer, pl_module: LitModel):
         super().on_fit_start(trainer, pl_module)

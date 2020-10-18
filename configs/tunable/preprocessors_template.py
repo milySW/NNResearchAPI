@@ -1,5 +1,4 @@
 from configs.base.base import BaseConfig
-from src.transformations import Flip
 
 
 class DefaultPreprocessors(BaseConfig):
@@ -8,4 +7,4 @@ class DefaultPreprocessors(BaseConfig):
     Providing new preprocessor require adding new class field with any name
     """
 
-    flip = Flip(x=True, y=False, dims=[1, 2])
+    # flip = Flip(x=True, y=False, dims=[1, 2])

@@ -106,21 +106,21 @@ class LitModel(pl.LightningModule):
         loss, calculations = self.calculate_batch(batch, step="train")
         self.trainer.calculations = calculations
 
-        return {"loss": loss}
+        return loss
 
     def validation_step(self, batch: list, batch_idx: int) -> torch.Tensor:
 
         loss, calculations = self.calculate_batch(batch, step="validation")
         self.trainer.calculations = calculations
 
-        return {"loss": loss}
+        return loss
 
     def test_step(self, batch: list, batch_idx: int) -> torch.Tensor:
 
         loss, calculations = self.calculate_batch(batch, step="test")
         self.trainer.calculations = calculations
 
-        return {"loss": loss}
+        return loss
 
     def setup(self, stage: str):
         self.hooks.setup(stage)
@@ -154,7 +154,7 @@ class LitModel(pl.LightningModule):
 
     def on_train_batch_end(
         self,
-        train_step_outputs: Dict[str, Any],
+        train_step_outputs: List[Any],
         batch: Any,
         batch_idx: int,
         dataloader_idx: int,
@@ -171,7 +171,7 @@ class LitModel(pl.LightningModule):
 
     def on_validation_batch_end(
         self,
-        validation_step_outputs: Dict[str, Any],
+        validation_step_outputs: List[Any],
         batch: Any,
         batch_idx: int,
         dataloader_idx: int,
@@ -188,7 +188,7 @@ class LitModel(pl.LightningModule):
 
     def on_test_batch_end(
         self,
-        test_step_outputs: Dict[str, Any],
+        test_step_outputs: List[Any],
         batch: Any,
         batch_idx: int,
         dataloader_idx: int,
@@ -206,7 +206,7 @@ class LitModel(pl.LightningModule):
     def on_train_epoch_start(self) -> None:
         self.hooks.on_train_epoch_start()
 
-    def on_train_epoch_end(self, outputs: Dict[str, Any]) -> None:
+    def on_train_epoch_end(self, outputs: List[Any]) -> None:
         self.hooks.on_train_epoch_end(outputs)
 
     def on_validation_epoch_start(self) -> None:

@@ -26,8 +26,8 @@ class CalculateMetrics(Callback):
 
     """
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
         self.preds = []
         self.labels = []
@@ -175,7 +175,7 @@ class CalculateMetrics(Callback):
         self,
         trainer: Trainer,
         pl_module: LitModel,
-        outputs: Dict[str, Any],
+        outputs: List[Any],
         batch: List[torch.Tensor],
         batch_idx: int,
         dataloader_idx: int,
@@ -188,7 +188,7 @@ class CalculateMetrics(Callback):
         self,
         trainer: Trainer,
         pl_module: LitModel,
-        outputs: Dict[str, Any],
+        outputs: List[Any],
         batch: List[torch.Tensor],
         batch_idx: int,
         dataloader_idx: int,
