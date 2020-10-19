@@ -19,7 +19,7 @@ class CollectBest:
     """Callback collecting best metrics."""
 
     def __init__(self, variants: str = ["val"]):
-        self.check_variant(variants=variants)
+        self.supported = self.check_variant(variants=variants)
         self.variants = variants
         super().__init__()
 
@@ -29,13 +29,6 @@ class CollectBest:
 
         self.metrics_dir = NotImplemented
 
-    def check_conflicts(self, trainer: Trainer, callback: Callback):
-        condition = any(type(i) == callback for i in trainer.callbacks)
-        info = "Don't use {} wrapper with parent callback {}."
-        names = self.__class__.__name__, callback.__name__
-
-        assert not condition, info.format(*names)
-
     @staticmethod
     def check_variant(variants: List[str]):
         supported = ["val", "test", ""]
@@ -44,12 +37,26 @@ class CollectBest:
         con = [True if variant in supported else False for variant in variants]
         assert all(con), info
 
+        return supported
+
+    def check_conflicts(self, trainer: Trainer, callback: Callback):
+        condition = any(type(i) == callback for i in trainer.callbacks)
+        info = "Don't use {} wrapper with parent callback {}."
+        names = self.__class__.__name__, callback.__name__
+
+        assert not condition, info.format(*names)
+
     def condtition(self, col: str):
         return any(True for variant in self.variants if variant in col)
 
-    @staticmethod
-    def extract_name(name: str):
-        return name.rsplit("_", 1)[0].split("_", 1)[-1]
+    def extract_name(self, name: str):
+        splited = name.split("_")
+        if splited[0] in self.supported:
+            del splited[0]
+        if splited[-1].isnumeric():
+            del splited[-1]
+
+        return "".join(splited)
 
     def get_paths(self, model_root_dir: Path, name: str) -> Tuple[Path, Path]:
 
