@@ -28,7 +28,9 @@ class XResNetBlock(LitModel):
         expansion: int,
         n_inputs: int,
         n_filters: int,
+        kernel_size: int,
         stride: int,
+        bias: bool,
         activation: torch.nn.Module,
     ):
         super().__init__()
@@ -41,16 +43,18 @@ class XResNetBlock(LitModel):
             layer_1 = conv_layer(
                 n_inputs=n_inputs,
                 n_filters=n_filters,
-                kernel_size=3,
+                kernel_size=kernel_size,
                 stride=stride,
+                bias=bias,
                 activation=activation,
             )
 
             layer_2 = conv_layer(
                 n_inputs=n_filters,
                 n_filters=n_filters,
-                kernel_size=3,
-                activation=activation,
+                kernel_size=kernel_size,
+                bias=bias,
+                activation=None,
             )
 
             layers = [layer_1, layer_2]
@@ -60,14 +64,16 @@ class XResNetBlock(LitModel):
                 n_inputs=n_inputs,
                 n_filters=n_filters,
                 kernel_size=1,
+                bias=bias,
                 activation=activation,
             )
 
             layer_2 = conv_layer(
                 n_inputs=n_filters,
                 n_filters=n_filters,
-                kernel_size=3,
+                kernel_size=kernel_size,
                 stride=stride,
+                bias=bias,
                 activation=activation,
             )
 
@@ -75,7 +81,8 @@ class XResNetBlock(LitModel):
                 n_inputs=n_filters,
                 n_filters=n_filters,
                 kernel_size=1,
-                activation=activation,
+                bias=bias,
+                activation=None,
             )
 
             layers = [layer_1, layer_2, layer_3]
@@ -90,7 +97,8 @@ class XResNetBlock(LitModel):
                 n_inputs=n_inputs,
                 n_filters=n_filters,
                 kernel_size=1,
-                use_activation=False,
+                bias=bias,
+                activation=None,
             )
 
         if stride == 1:
@@ -122,6 +130,7 @@ class XResNet(LitModel):
 
         super().__init__()
         self.set_params(config)
+        self.layers = self.set_layers(layers)
 
         # create the stem of the network
         n_filters = [
@@ -138,7 +147,9 @@ class XResNet(LitModel):
             layer = conv_layer(
                 n_inputs=n_filters[i],
                 n_filters=n_filters[i + 1],
+                kernel_size=self.ks,
                 stride=stride,
+                bias=self.bias,
                 activation=self.activation,
             )
 
@@ -146,24 +157,27 @@ class XResNet(LitModel):
 
         # create `XResNet` blocks
         n_filters = [self.get_filters(index, expansion) for index in range(5)]
+        n_filters = n_filters[: self.depth + 1]
 
-        self.res_layers = [
+        res_layers = [
             self._make_layer(
                 expansion=expansion,
                 n_inputs=n_filters[i],
                 n_filters=n_filters[i + 1],
+                kernel_size=self.ks,
                 n_blocks=layer,
                 stride=1 if i == 0 else 2,
+                bias=self.bias,
                 activation=self.activation,
             )
-            for i, layer in enumerate(layers)
+            for i, layer in enumerate(self.layers)
         ]
 
         self.x_res_net = nn.ModuleList(
             [
                 *stem,
-                nn.MaxPool2d(kernel_size=3, stride=1, padding=1),
-                *self.res_layers,
+                nn.MaxPool2d(kernel_size=self.ks, stride=1, padding=1),
+                *res_layers,
                 nn.AdaptiveAvgPool2d(1),
                 nn.Flatten(),
                 nn.Linear(n_filters[-1] * expansion, self.out_channels),
@@ -182,6 +196,20 @@ class XResNet(LitModel):
         self.activation = config.model.activation
         self.out_channels = config.model.out_channels
         self.f_maps = config.model.f_maps
+        self.bias = config.model.bias
+        self.depth = config.model.depth
+        self.ks = config.model.kernel_size
+
+    def set_layers(self, layers: Tuple[int]) -> Tuple[int]:
+        self.check_depth()
+
+        if self.depth < 4:
+            del layers[slice(1, 5 - self.depth)]
+        return layers
+
+    def check_depth(self):
+        info = f"depth {self.depth} not supported, 4 or less"
+        assert self.depth <= 4, info
 
     def get_filters(self, i: int, exp: int):
         return self.f_maps // exp if i == 0 else self.f_maps * 2 ** (i - 1)
@@ -196,8 +224,10 @@ class XResNet(LitModel):
         expansion: int,
         n_inputs: int,
         n_filters: int,
+        kernel_size: int,
         n_blocks: nn.Module,
         stride: int,
+        bias: bool,
         activation: nn.Module,
     ) -> nn.Sequential:
 
@@ -208,7 +238,9 @@ class XResNet(LitModel):
                 expansion=expansion,
                 n_inputs=n_inputs if number == 0 else n_filters,
                 n_filters=n_filters,
+                kernel_size=kernel_size,
                 stride=stride if number == 0 else 1,
+                bias=bias,
                 activation=activation,
             )
 

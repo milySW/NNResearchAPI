@@ -1,10 +1,7 @@
-from typing import Tuple
-
 import torch
 import torch.nn as nn
 
 from configs.tunable.models.model_template import DefaultModel
-from src.models.base import LitModel
 
 
 class DefaultResnet(DefaultModel):
@@ -20,18 +17,17 @@ class DefaultResnet(DefaultModel):
         int depth: Model depth
         int in_channels: Number of input channels
         int out_channels: Number of output channels
-        bool bias: TOADD
+        bool bias: Flag responsible for adding a learnable bias to the output
         torch.nn.Module activation: Model activation function
 
     """
 
     name: str = "xresnet18"
     expansion: int = 1
-    layers: Tuple = ()
-    model: LitModel = LitModel()
     depth: int = 4
     in_channels: int = 1
     out_channels: int = 4
+    kernel_size: int = 3
     f_maps: int = 64
-    bias: bool = None
+    bias: bool = True
     activation: torch.nn.Module = nn.ReLU(inplace=True)

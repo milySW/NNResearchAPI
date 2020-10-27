@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Optional
 
 import numpy as np
 import torch
@@ -8,12 +9,12 @@ import torch.nn as nn
 def conv_layer(
     n_inputs: int,
     n_filters: int,
-    kernel_size: int = 3,
+    kernel_size: int,
+    bias: bool,
+    activation: Optional[torch.nn.Module],
     stride: int = 1,
     zero_batch_norm: bool = False,
     use_activation: bool = True,
-    activation: torch.nn.Module = nn.ReLU(inplace=True),
-    bias: bool = True,
 ) -> nn.Sequential:
     """Creates a convolution block for `XResNet`.
 
@@ -23,9 +24,8 @@ def conv_layer(
         int kernel_size: Size of convolutional  kernel
         int stride: controls the stride for the cross-correlation
         bool zero_batch_norm: TOADD
-        bool use_activation: TOADD
         torch.nn.Module activation: Model activation function
-        bool bias: TOADD
+        bool bias: Flag responsible for adding a learnable bias to the output
 
     """
 
@@ -45,7 +45,7 @@ def conv_layer(
             batch_norm,
         ]
     )
-    if use_activation:
+    if activation:
         layers.append(activation)
     return nn.Sequential(*layers)
 
