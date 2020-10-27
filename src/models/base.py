@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Any, Dict, List, Tuple, Union
 
 import pytorch_lightning as pl
@@ -6,6 +8,8 @@ import torch
 from pytorch_lightning.utilities import AMPType
 from torch.utils.data.dataloader import DataLoader
 
+import configs
+
 from src.losses import BaseLoss
 from src.metrics import BaseMetric
 from src.optimizers import BaseOptim
@@ -13,9 +17,9 @@ from src.optimizers.schedulers import BaseScheduler
 
 
 class LitModel(pl.LightningModule):
-    def __init__(self, *kwargs):
+    def __init__(self, **kwargs):
         self.conifg = NotImplemented
-        super().__init__()
+        super().__init__(**kwargs)
 
     @property
     def loss_function(self) -> BaseMetric:
@@ -255,3 +259,12 @@ class LitModel(pl.LightningModule):
 
     def transfer_batch_to_device(self, batch: Any, dev: torch.device) -> Any:
         return self.hooks.transfer_batch_to_device(batch, dev)
+
+    @staticmethod
+    def model_check(
+        current: configs.DefaultModel,
+        expected: configs.DefaultModel,
+        architecture_name: str,
+    ):
+        info = f"Passed config is not for {architecture_name} architecutre!"
+        assert current == expected, info

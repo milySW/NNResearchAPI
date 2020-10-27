@@ -4,8 +4,7 @@ import torch
 
 from torch import nn
 
-import configs
-
+from configs import DefaultConfig, DefaultResnet
 from src.models.base import LitModel
 from src.models.utils import conv_layer
 
@@ -26,58 +25,60 @@ class XResNetBlock(LitModel):
 
     def __init__(
         self,
-        config: configs.DefaultConfig,
         expansion: int,
         n_inputs: int,
         n_filters: int,
-        stride: int = 1,
-        activation: torch.nn.Module = nn.ReLU(inplace=True),
+        stride: int,
+        activation: torch.nn.Module,
     ):
         super().__init__()
-        self.config = config
 
         n_inputs = n_inputs * expansion
         n_filters = n_filters * expansion
 
         # convolution path
         if expansion == 1:
-            layers = [
-                conv_layer(
-                    n_inputs=n_inputs,
-                    n_filters=n_filters,
-                    kernel_size=3,
-                    stride=stride,
-                    activation=activation,
-                ),
-                conv_layer(
-                    n_inputs=n_filters,
-                    n_filters=n_filters,
-                    kernel_size=3,
-                    activation=activation,
-                ),
-            ]
+            layer_1 = conv_layer(
+                n_inputs=n_inputs,
+                n_filters=n_filters,
+                kernel_size=3,
+                stride=stride,
+                activation=activation,
+            )
+
+            layer_2 = conv_layer(
+                n_inputs=n_filters,
+                n_filters=n_filters,
+                kernel_size=3,
+                activation=activation,
+            )
+
+            layers = [layer_1, layer_2]
+
         else:
-            layers = [
-                conv_layer(
-                    n_inputs=n_inputs,
-                    n_filters=n_filters,
-                    kernel_size=1,
-                    activation=activation,
-                ),
-                conv_layer(
-                    n_inputs=n_filters,
-                    n_filters=n_filters,
-                    kernel_size=3,
-                    stride=stride,
-                    activation=activation,
-                ),
-                conv_layer(
-                    n_inputs=n_filters,
-                    n_filters=n_filters,
-                    kernel_size=1,
-                    activation=activation,
-                ),
-            ]
+            layer_1 = conv_layer(
+                n_inputs=n_inputs,
+                n_filters=n_filters,
+                kernel_size=1,
+                activation=activation,
+            )
+
+            layer_2 = conv_layer(
+                n_inputs=n_filters,
+                n_filters=n_filters,
+                kernel_size=3,
+                stride=stride,
+                activation=activation,
+            )
+
+            layer_3 = conv_layer(
+                n_inputs=n_filters,
+                n_filters=n_filters,
+                kernel_size=1,
+                activation=activation,
+            )
+
+            layers = [layer_1, layer_2, layer_3]
 
         self.convs = nn.Sequential(*layers)
 
@@ -91,6 +92,7 @@ class XResNetBlock(LitModel):
                 kernel_size=1,
                 use_activation=False,
             )
+
         if stride == 1:
             self.pool = nn.Identity()
         else:
@@ -109,37 +111,41 @@ class XResNet(LitModel):
     Parameters:
 
         int expansion: Model expantion
-        tuple layer: TOADD
+        Tuple[int] layers: Tuple with number of blocks stacked
         DefaultConfig config: config with model parameters
 
     """
 
-    def __init__(
-        self, expansion: int, layers_list: Tuple, config: configs.DefaultConfig
-    ):
-        assert (
-            config.model == configs.DefaultResnet
-        ), "Passed config is not for RESNET architecutre!"
-        self.config = config
-        model = config.model
+    def __init__(self, expansion: int, layers: Tuple, config: DefaultConfig):
+
+        self.model_check(config.model, DefaultResnet, "ResNet")
+
+        super().__init__()
+        self.set_params(config)
 
         # create the stem of the network
-        super().__init__()
-        n_filters = [model.in_channels, (model.in_channels + 1) * 8, 64, 64]
+        n_filters = [
+            self.in_channels,
+            self.f_maps // 8 * (self.in_channels + 1),
+            self.f_maps,
+            self.f_maps,
+        ]
 
         stem = []
         for i in range(3):
             stride = 2 if i == 0 else 1
+
             layer = conv_layer(
                 n_inputs=n_filters[i],
                 n_filters=n_filters[i + 1],
                 stride=stride,
-                activation=model.activation,
+                activation=self.activation,
             )
+
             stem.append(layer)
 
         # create `XResNet` blocks
-        n_filters = [64 // expansion, 64, 128, 256, 512]
+        n_filters = [self.get_filters(index, expansion) for index in range(5)]
 
         self.res_layers = [
             self._make_layer(
@@ -148,10 +154,9 @@ class XResNet(LitModel):
                 n_filters=n_filters[i + 1],
                 n_blocks=layer,
                 stride=1 if i == 0 else 2,
-                activation=model.activation,
-                config=self.config,
+                activation=self.activation,
             )
-            for i, layer in enumerate(layers_list)
+            for i, layer in enumerate(layers)
         ]
 
         self.x_res_net = nn.ModuleList(
@@ -161,7 +166,7 @@ class XResNet(LitModel):
                 *self.res_layers,
                 nn.AdaptiveAvgPool2d(1),
                 nn.Flatten(),
-                nn.Linear(n_filters[-1] * expansion, model.out_channels),
+                nn.Linear(n_filters[-1] * expansion, self.out_channels),
             ]
         )
 
@@ -170,6 +175,16 @@ class XResNet(LitModel):
                 nn.init.constant_(module.bias, 0)
             if isinstance(module, (nn.Conv2d, nn.Linear)):
                 nn.init.kaiming_normal_(module.weight)
+
+    def set_params(self, config: DefaultConfig):
+        self.config = config
+        self.in_channels = config.model.in_channels
+        self.activation = config.model.activation
+        self.out_channels = config.model.out_channels
+        self.f_maps = config.model.f_maps
+
+    def get_filters(self, i: int, exp: int):
+        return self.f_maps // exp if i == 0 else self.f_maps * 2 ** (i - 1)
 
     def forward(self, x):
         for layer in self.x_res_net:
@@ -184,18 +199,19 @@ class XResNet(LitModel):
         n_blocks: nn.Module,
         stride: int,
         activation: nn.Module,
-        config: configs.DefaultConfig,
     ) -> nn.Sequential:
-        return nn.Sequential(
-            *[
-                XResNetBlock(
-                    expansion=expansion,
-                    n_inputs=n_inputs if i == 0 else n_filters,
-                    n_filters=n_filters,
-                    stride=stride if i == 0 else 1,
-                    activation=activation,
-                    config=config,
-                )
-                for i in range(n_blocks)
-            ]
-        )
+
+        resnet_blocks = []
+
+        for number in range(n_blocks):
+            resnet_block = XResNetBlock(
+                expansion=expansion,
+                n_inputs=n_inputs if number == 0 else n_filters,
+                n_filters=n_filters,
+                stride=stride if number == 0 else 1,
+                activation=activation,
+            )
+
+            resnet_blocks.append(resnet_block)
+
+        return nn.Sequential(*resnet_blocks)

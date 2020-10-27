@@ -32,5 +32,6 @@ class DefaultResnet(DefaultModel):
     depth: int = 4
     in_channels: int = 1
     out_channels: int = 4
+    f_maps: int = 64
     bias: bool = None
     activation: torch.nn.Module = nn.ReLU(inplace=True)

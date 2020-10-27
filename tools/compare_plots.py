@@ -14,7 +14,7 @@ def main(
     experiments: str,
     supported_files: str,
     prefix: str,
-):
+) -> None:
     """
     Function responsible for saving plots containing
     info about metric values in every experiment.
