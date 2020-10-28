@@ -5,6 +5,19 @@ import numpy as np
 import torch
 import torch.nn as nn
 
+pytorch_prefix = "https://download.pytorch.org/models"
+model_urls = dict(
+    xresnet18=f"{pytorch_prefix}/resnet18-5c106cde.pth",
+    resnet34=f"{pytorch_prefix}/resnet34-333f7ec4.pth",
+    resnet50=f"{pytorch_prefix}/resnet50-19c8e357.pth",
+    resnet101=f"{pytorch_prefix}/resnet101-5d3b4d8f.pth",
+    resnet152=f"{pytorch_prefix}/resnet152-b121ed2d.pth",
+    resnext50_32x4d=f"{pytorch_prefix}/resnext50_32x4d-7cdf4587.pth",
+    resnext101_32x8d=f"{pytorch_prefix}/resnext101_32x8d-8ba56ff5.pth",
+    wide_resnet50_2=f"{pytorch_prefix}/wide_resnet50_2-95faca4d.pth",
+    wide_resnet101_2=f"{pytorch_prefix}/wide_resnet101_2-32ee1156.pth",
+)
+
 
 def conv_layer(
     n_inputs: int,

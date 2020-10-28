@@ -1,12 +1,13 @@
-from typing import Tuple
+from typing import List
 
 import torch
 
 from torch import nn
+from torch.hub import load_state_dict_from_url
 
 from configs import DefaultConfig, DefaultResnet
 from src.models.base import LitModel
-from src.models.utils import conv_layer
+from src.models.utils import conv_layer, model_urls
 
 
 class XResNetBlock(LitModel):
@@ -40,6 +41,10 @@ class XResNetBlock(LitModel):
 
         # convolution path
         if expansion == 1:
+            # Residual block
+            # info: https://paperswithcode.com/method/residual-block
+            # paper: https://arxiv.org/pdf/1512.03385v1.pdf
+
             layer_1 = conv_layer(
                 n_inputs=n_inputs,
                 n_filters=n_filters,
@@ -60,6 +65,10 @@ class XResNetBlock(LitModel):
             layers = [layer_1, layer_2]
 
         else:
+            # Bottleneck residual layer
+            # info: https://paperswithcode.com/method/bottleneck-residual-block
+            # paper: https://arxiv.org/pdf/1512.03385v1.pdf
+
             layer_1 = conv_layer(
                 n_inputs=n_inputs,
                 n_filters=n_filters,
@@ -104,7 +113,11 @@ class XResNetBlock(LitModel):
         if stride == 1:
             self.pool = nn.Identity()
         else:
-            self.pool = nn.AvgPool2d(2, ceil_mode=True)
+            # Add AvgPool because of XResNet tweaks
+            # info: https://towardsdatascience.com
+            # /xresnet-from-scratch-in-pytorch-e64e309af722
+
+            self.pool = nn.AvgPool2d(kernel_size=2, stride=2, ceil_mode=True)
 
         self.activation = activation
 
@@ -119,12 +132,12 @@ class XResNet(LitModel):
     Parameters:
 
         int expansion: Model expantion
-        Tuple[int] layers: Tuple with number of blocks stacked
+        List[int] layers: List with number of blocks stacked
         DefaultConfig config: config with model parameters
 
     """
 
-    def __init__(self, expansion: int, layers: Tuple, config: DefaultConfig):
+    def __init__(self, expansion: int, layers: List, config: DefaultConfig):
 
         self.model_check(config.model, DefaultResnet, "ResNet")
 
@@ -132,7 +145,10 @@ class XResNet(LitModel):
         self.set_params(config)
         self.layers = self.set_layers(layers)
 
-        # create the stem of the network
+        # create the stem of the xresnet
+        # info: https://towardsdatascience.com
+        # /xresnet-from-scratch-in-pytorch-e64e309af722
+
         n_filters = [
             self.in_channels,
             self.f_maps // 8 * (self.in_channels + 1),
@@ -173,6 +189,10 @@ class XResNet(LitModel):
             for i, layer in enumerate(self.layers)
         ]
 
+        # Add MaxPool because of XResNet tweaks
+        # info: https://towardsdatascience.com
+        # /xresnet-from-scratch-in-pytorch-e64e309af722
+
         self.x_res_net = nn.ModuleList(
             [
                 *stem,
@@ -190,6 +210,10 @@ class XResNet(LitModel):
             if isinstance(module, (nn.Conv2d, nn.Linear)):
                 nn.init.kaiming_normal_(module.weight)
 
+        if self.pretrained:
+            state_dict = load_state_dict_from_url(model_urls[self.name])
+            self.load_state_dict(state_dict)
+
     def set_params(self, config: DefaultConfig):
         self.config = config
         self.in_channels = config.model.in_channels
@@ -199,8 +223,10 @@ class XResNet(LitModel):
         self.bias = config.model.bias
         self.depth = config.model.depth
         self.ks = config.model.kernel_size
+        self.pretrained = config.model.pretrained
+        self.name = config.model.name
 
-    def set_layers(self, layers: Tuple[int]) -> Tuple[int]:
+    def set_layers(self, layers: List[int]) -> List[int]:
         self.check_depth()
 
         if self.depth < 4:

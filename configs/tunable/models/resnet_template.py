@@ -30,4 +30,5 @@ class DefaultResnet(DefaultModel):
     kernel_size: int = 3
     f_maps: int = 64
     bias: bool = True
+    pretrained: bool = False
     activation: torch.nn.Module = nn.ReLU(inplace=True)
