@@ -10,9 +10,9 @@ from src.models.base import LitModel
 from src.models.utils import conv_layer, model_urls
 
 
-class XResNetBlock(LitModel):
+class ResNetBlock(LitModel):
     """
-    Creates the standard `XResNet` block.
+    Creates the standard `ResNet` block.
 
     Parameters:
 
@@ -32,6 +32,7 @@ class XResNetBlock(LitModel):
         kernel_size: int,
         stride: int,
         bias: bool,
+        xresnet: bool,
         activation: torch.nn.Module,
     ):
         super().__init__()
@@ -65,14 +66,16 @@ class XResNetBlock(LitModel):
             layers = [layer_1, layer_2]
 
         else:
-            # Bottleneck residual layer
+            # Bottleneck residual layer --> Path A
             # info: https://paperswithcode.com/method/bottleneck-residual-block
             # paper: https://arxiv.org/pdf/1512.03385v1.pdf
+            # stride condition is connected with xresnet tweaks -> ResNet-B
 
             layer_1 = conv_layer(
                 n_inputs=n_inputs,
                 n_filters=n_filters,
                 kernel_size=1,
+                stride=stride if not self.xresnet else 1,
                 bias=bias,
                 activation=activation,
             )
@@ -81,7 +84,7 @@ class XResNetBlock(LitModel):
                 n_inputs=n_filters,
                 n_filters=n_filters,
                 kernel_size=kernel_size,
-                stride=stride,
+                stride=stride if self.xresnet else 1,
                 bias=bias,
                 activation=activation,
             )
@@ -98,10 +101,14 @@ class XResNetBlock(LitModel):
 
         self.convs = nn.Sequential(*layers)
 
-        # identity path
+        # identity path / skip connection
         if n_inputs == n_filters:
             self.id_conv = nn.Identity()
         else:
+            # If downsampling block
+            # paper: https://towardsdatascience.com/
+            # xresnet-from-scratch-in-pytorch-e64e309af722
+
             self.id_conv = conv_layer(
                 n_inputs=n_inputs,
                 n_filters=n_filters,
@@ -110,7 +117,7 @@ class XResNetBlock(LitModel):
                 activation=None,
             )
 
-        if stride == 1:
+        if stride == 1 or not xresnet:
             self.pool = nn.Identity()
         else:
             # Add AvgPool because of XResNet tweaks
@@ -125,9 +132,9 @@ class XResNetBlock(LitModel):
         return self.activation(self.convs(x) + self.id_conv(self.pool(x)))
 
 
-class XResNet(LitModel):
+class ResNet(LitModel):
     """
-    Creates the standard `XResNet` model.
+    Creates the standard `ResNet` model.
 
     Parameters:
 
@@ -145,26 +152,42 @@ class XResNet(LitModel):
         self.set_params(config)
         self.layers = self.set_layers(layers)
 
-        # create the stem of the xresnet
-        # info: https://towardsdatascience.com
-        # /xresnet-from-scratch-in-pytorch-e64e309af722
-
-        n_filters = [
-            self.in_channels,
-            self.f_maps // 8 * (self.in_channels + 1),
-            self.f_maps,
-            self.f_maps,
-        ]
+        # create the stem
 
         stem = []
-        for i in range(3):
-            stride = 2 if i == 0 else 1
 
+        if self.xresnet:
+            # Add other stem because of the xresnet tweaks --> ResNet-C
+            # info: https://towardsdatascience.com
+            # /xresnet-from-scratch-in-pytorch-e64e309af722
+
+            n_filters = [
+                self.in_channels,
+                self.f_maps // 8 * (self.in_channels + 1),
+                self.f_maps,
+                self.f_maps,
+            ]
+
+            for i in range(3):
+                stride = 2 if i == 0 else 1
+
+                layer = conv_layer(
+                    n_inputs=n_filters[i],
+                    n_filters=n_filters[i + 1],
+                    kernel_size=self.ks,
+                    stride=stride,
+                    bias=self.bias,
+                    activation=self.activation,
+                )
+
+                stem.append(layer)
+
+        elif not self.xresnet:
             layer = conv_layer(
-                n_inputs=n_filters[i],
-                n_filters=n_filters[i + 1],
-                kernel_size=self.ks,
-                stride=stride,
+                n_inputs=self.in_channels,
+                n_filters=self.f_maps,
+                kernel_size=7,
+                stride=2,
                 bias=self.bias,
                 activation=self.activation,
             )
@@ -184,19 +207,16 @@ class XResNet(LitModel):
                 n_blocks=layer,
                 stride=1 if i == 0 else 2,
                 bias=self.bias,
+                xresnet=self.xresnet,
                 activation=self.activation,
             )
             for i, layer in enumerate(self.layers)
         ]
 
-        # Add MaxPool because of XResNet tweaks
-        # info: https://towardsdatascience.com
-        # /xresnet-from-scratch-in-pytorch-e64e309af722
-
         self.x_res_net = nn.ModuleList(
             [
                 *stem,
-                nn.MaxPool2d(kernel_size=self.ks, stride=1, padding=1),
+                nn.MaxPool2d(kernel_size=self.ks, stride=2, padding=1),
                 *res_layers,
                 nn.AdaptiveAvgPool2d(1),
                 nn.Flatten(),
@@ -210,7 +230,7 @@ class XResNet(LitModel):
             if isinstance(module, (nn.Conv2d, nn.Linear)):
                 nn.init.kaiming_normal_(module.weight)
 
-        if self.pretrained:
+        if self.pretrained and not self.xresnet:
             state_dict = load_state_dict_from_url(model_urls[self.name])
             self.load_state_dict(state_dict)
 
@@ -225,6 +245,7 @@ class XResNet(LitModel):
         self.ks = config.model.kernel_size
         self.pretrained = config.model.pretrained
         self.name = config.model.name
+        self.xresnet = config.model.xresnet
 
     def set_layers(self, layers: List[int]) -> List[int]:
         self.check_depth()
@@ -254,19 +275,21 @@ class XResNet(LitModel):
         n_blocks: nn.Module,
         stride: int,
         bias: bool,
+        xresnet: bool,
         activation: nn.Module,
     ) -> nn.Sequential:
 
         resnet_blocks = []
 
         for number in range(n_blocks):
-            resnet_block = XResNetBlock(
+            resnet_block = ResNetBlock(
                 expansion=expansion,
                 n_inputs=n_inputs if number == 0 else n_filters,
                 n_filters=n_filters,
                 kernel_size=kernel_size,
                 stride=stride if number == 0 else 1,
                 bias=bias,
+                xresnet=xresnet,
                 activation=activation,
             )
 

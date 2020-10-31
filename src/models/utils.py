@@ -7,7 +7,7 @@ import torch.nn as nn
 
 pytorch_prefix = "https://download.pytorch.org/models"
 model_urls = dict(
-    xresnet18=f"{pytorch_prefix}/resnet18-5c106cde.pth",
+    resnet18=f"{pytorch_prefix}/resnet18-5c106cde.pth",
     resnet34=f"{pytorch_prefix}/resnet34-333f7ec4.pth",
     resnet50=f"{pytorch_prefix}/resnet50-19c8e357.pth",
     resnet101=f"{pytorch_prefix}/resnet101-5d3b4d8f.pth",
@@ -29,7 +29,7 @@ def conv_layer(
     zero_batch_norm: bool = False,
     use_activation: bool = True,
 ) -> nn.Sequential:
-    """Creates a convolution block for `XResNet`.
+    """Creates a convolution block for `ResNet`.
 
     Arguments:
         int n_inputs: Number of inputs
