@@ -103,11 +103,11 @@ class ResNetBlock(LitModel):
 
         # identity path / skip connection
         if n_inputs == n_filters:
+            # Not downsampling block
             self.id_conv = nn.Identity()
-        else:
-            # If downsampling block
-            # paper: https://towardsdatascience.com/
-            # xresnet-from-scratch-in-pytorch-e64e309af722
+            self.pool = nn.Identity()
+        elif not n_inputs == n_filters and xresnet:
+            # If downsampling block in XResNet
 
             self.id_conv = conv_layer(
                 n_inputs=n_inputs,
@@ -117,14 +117,25 @@ class ResNetBlock(LitModel):
                 activation=None,
             )
 
-        if stride == 1 or not xresnet:
-            self.pool = nn.Identity()
-        else:
             # Add AvgPool because of XResNet tweaks
             # info: https://towardsdatascience.com
             # /xresnet-from-scratch-in-pytorch-e64e309af722
 
             self.pool = nn.AvgPool2d(kernel_size=2, stride=2, ceil_mode=True)
+
+        elif not n_inputs == n_filters and not xresnet:
+            # If downsampling block in ResNet
+
+            self.id_conv = conv_layer(
+                n_inputs=n_inputs,
+                n_filters=n_filters,
+                kernel_size=1,
+                stride=stride,
+                bias=bias,
+                activation=None,
+            )
+
+            self.pool = nn.Identity()
 
         self.activation = activation
 
