@@ -117,7 +117,7 @@ class ResNetBlock(LitModel):
                 activation=None,
             )
 
-            # Add AvgPool because of XResNet tweaks
+            # Add AvgPool because of XResNet tweaks --> ResNet-D
             # info: https://towardsdatascience.com
             # /xresnet-from-scratch-in-pytorch-e64e309af722
 
