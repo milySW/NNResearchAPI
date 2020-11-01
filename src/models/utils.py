@@ -1,9 +1,14 @@
+from collections import OrderedDict
 from pathlib import Path
 from typing import Optional
 
 import numpy as np
 import torch
 import torch.nn as nn
+
+from torch.hub import load_state_dict_from_url
+
+from src.models.base import LitModel
 
 pytorch_prefix = "https://download.pytorch.org/models"
 model_urls = dict(
@@ -27,7 +32,6 @@ def conv_layer(
     activation: Optional[torch.nn.Module],
     stride: int = 1,
     zero_batch_norm: bool = False,
-    use_activation: bool = True,
 ) -> nn.Sequential:
     """Creates a convolution block for `ResNet`.
 
@@ -66,3 +70,70 @@ def conv_layer(
 def save_prediction(predictions: np.ndarray, output_path: Path):
     output_path.parent.mkdir(parents=True, exist_ok=True)
     np.save(output_path, predictions.data.cpu().numpy())
+
+
+def load_state_dict(model: LitModel):
+    pretrained_dict = load_state_dict_from_url(model_urls[model.name])
+    model_dict = model.state_dict()
+
+    model_dict, layers = unify_keys(pretrained_dict, model_dict, model.xresnet)
+
+    model.load_state_dict(model_dict)
+
+
+def group_dict(dictionary):
+    subgroups = unique_keys([split_name(i, 0, 3) for i in dictionary.keys()])
+    groups = unique_keys([split_name(i, 0, -1) for i in subgroups])
+    keys = dictionary.keys()
+
+    return groups, subgroups, keys
+
+
+def unify_keys(pretrained_dict, model_dict, xresnet):
+    pre_groups, pre_subgroups, pre_keys = group_dict(pretrained_dict)
+    model_groups, model_subgroups, model_keys = group_dict(model_dict)
+    unique = unique_keys([split_name(i, -1, None) for i in model_dict.keys()])
+
+    if xresnet:
+        model_groups = model_groups[3:-1]
+    elif not xresnet:
+        model_groups = model_groups[1:-1]
+
+    pre_groups = pre_groups[2:-1]
+
+    pre_subgroups = filter_list(pre_subgroups, pre_groups)
+    pre_keys = filter_list(pre_keys, pre_groups)
+
+    model_subgroups = filter_list(model_subgroups, model_groups)
+    model_keys = filter_list(model_keys, model_groups)
+
+    pretrained_layers = []
+    for suffix in unique:
+        model_layer_keys = [layer for layer in model_keys if suffix in layer]
+        pre_layer_keys = [layer for layer in pre_keys if suffix in layer]
+
+        weights = [pretrained_dict[layer] for layer in pre_layer_keys]
+        zipped = zip(model_layer_keys, weights)
+
+        weights_dict = {layer: weight for layer, weight in zipped}
+        model_dict.update(weights_dict)
+
+        pretrained_layers.extend(list(weights_dict.keys()))
+
+    return model_dict, pretrained_layers
+
+
+def check_prefix(key, prefix_list):
+    return any([key.startswith(prefix) for prefix in prefix_list])
+
+
+def filter_list(key_list, prefix_list):
+    return [key for key in key_list if check_prefix(key, prefix_list)]
+
+
+def split_name(name, start, stop):
+    return ".".join(name.split(".")[start:stop])
+
+
+def unique_keys(keys):
+    return list(OrderedDict.fromkeys(keys))

@@ -22,14 +22,14 @@ class DefaultResnet(DefaultModel):
 
     """
 
-    name: str = "resnet18"
+    name: str = "resnet34"
     expansion: int = 1
     depth: int = 4
     in_channels: int = 1
     out_channels: int = 4
     kernel_size: int = 3
     f_maps: int = 64
-    bias: bool = True
-    pretrained: bool = False
+    bias: bool = False
+    pretrained: bool = True
     xresnet: bool = True
     activation: torch.nn.Module = nn.ReLU(inplace=True)

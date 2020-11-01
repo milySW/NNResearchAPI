@@ -3,11 +3,13 @@ from typing import List
 import torch
 
 from torch import nn
-from torch.hub import load_state_dict_from_url
 
 from configs import DefaultConfig, DefaultResnet
 from src.models.base import LitModel
-from src.models.utils import conv_layer, model_urls
+from src.models.utils import conv_layer, load_state_dict
+from src.utils.logging import get_logger
+
+logger = get_logger("ResNet")
 
 
 class ResNetBlock(LitModel):
@@ -231,7 +233,10 @@ class ResNet(LitModel):
                 *res_layers,
                 nn.AdaptiveAvgPool2d(1),
                 nn.Flatten(),
-                nn.Linear(n_filters[-1] * expansion, self.out_channels),
+                nn.Linear(
+                    in_features=n_filters[-1] * expansion,
+                    out_features=self.out_channels,
+                ),
             ]
         )
 
@@ -241,9 +246,24 @@ class ResNet(LitModel):
             if isinstance(module, (nn.Conv2d, nn.Linear)):
                 nn.init.kaiming_normal_(module.weight)
 
-        if self.pretrained and not self.xresnet:
-            state_dict = load_state_dict_from_url(model_urls[self.name])
-            self.load_state_dict(state_dict)
+        if self.pretrained and self.bias:
+            self.log_pretrained_weights_bias_warning()
+
+        elif self.pretrained and (expansion == 1 or not self.xresnet):
+            load_state_dict(self)
+
+        elif self.pretrained and not (expansion == 1 or not self.xresnet):
+            self.log_pretrained_weights_xresnet_warning()
+
+    def log_pretrained_weights_bias_warning(self):
+        info = "Setting pretrained weights will be ommited."
+        cause = f"pretrained weights for XResNet with bias == {self.bias}"
+        logger.warn(f"{info} Using {cause}  is not supported.")
+
+    def log_pretrained_weights_xresnet_warning(self):
+        info = "Setting pretrained weights will be ommited."
+        cause = "pretrained weights for XResNet with expansion > 1"
+        logger.warn(f"{info} Using {cause}  is not supported.")
 
     def set_params(self, config: DefaultConfig):
         self.config = config
