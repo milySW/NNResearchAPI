@@ -249,11 +249,11 @@ class ResNet(LitModel):
         if self.pretrained and self.bias:
             self.log_pretrained_weights_bias_warning()
 
-        elif self.pretrained and (expansion == 1 or not self.xresnet):
-            load_state_dict(self)
-
         elif self.pretrained and not (expansion == 1 or not self.xresnet):
             self.log_pretrained_weights_xresnet_warning()
+
+        elif self.pretrained and (expansion == 1 or not self.xresnet):
+            load_state_dict(self)
 
     def log_pretrained_weights_bias_warning(self):
         info = "Setting pretrained weights will be ommited."

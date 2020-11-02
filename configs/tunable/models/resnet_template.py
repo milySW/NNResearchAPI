@@ -12,17 +12,21 @@ class DefaultResnet(DefaultModel):
 
         str name: Name of the architecture
         int expansion: Model expantion
-        tuple layers: TOADD
-        LitModel model: Base model with implemented logic
         int depth: Model depth
         int in_channels: Number of input channels
         int out_channels: Number of output channels
+        int kernel_size: Size of defaut kernel used in architecture
+        int f_maps: Default number of feature maps used in architecture
         bool bias: Flag responsible for adding a learnable bias to the output
         torch.nn.Module activation: Model activation function
+        bool xresnet: Flag responsible for using additional tweaks suggested
+            by Jeremy Howard (co-founder of fast.ai)
 
     """
 
     name: str = "resnet34"
+
+    # Architecture
     expansion: int = 1
     depth: int = 4
     in_channels: int = 1
@@ -30,6 +34,7 @@ class DefaultResnet(DefaultModel):
     kernel_size: int = 3
     f_maps: int = 64
     bias: bool = False
-    pretrained: bool = True
-    xresnet: bool = True
     activation: torch.nn.Module = nn.ReLU(inplace=True)
+
+    # Additional features
+    xresnet: bool = True

@@ -1,6 +1,6 @@
 from collections import OrderedDict
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 
 import numpy as np
 import torch
@@ -72,13 +72,15 @@ def save_prediction(predictions: np.ndarray, output_path: Path):
     np.save(output_path, predictions.data.cpu().numpy())
 
 
-def load_state_dict(model: LitModel):
+def load_state_dict(model: LitModel) -> Any:
     pretrained_dict = load_state_dict_from_url(model_urls[model.name])
     model_dict = model.state_dict()
 
     model_dict, layers = unify_keys(pretrained_dict, model_dict, model)
 
     model.load_state_dict(model_dict)
+    model.update_pretrained_layers(layers)
+    model.freeze_pretrained_layers(freeze=True)
 
 
 def group_dict(dictionary):

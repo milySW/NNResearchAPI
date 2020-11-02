@@ -19,11 +19,26 @@ from src.optimizers.schedulers import BaseScheduler
 class LitModel(pl.LightningModule):
     def __init__(self, **kwargs):
         self.conifg = NotImplemented
+        self.pretrained_layers = []
+
         super().__init__(**kwargs)
+
+    @staticmethod
+    def model_check(
+        current: configs.DefaultModel,
+        expected: configs.DefaultModel,
+        architecture_name: str,
+    ):
+        info = f"Passed config is not for {architecture_name} architecutre!"
+        assert current == expected, info
 
     @property
     def loss_function(self) -> BaseMetric:
         return self.config.training.loss
+
+    @property
+    def unfreezing_epoch(self) -> bool:
+        return self.config.model.unfreezing_epoch
 
     @property
     def metrics(self) -> Dict[str, Dict[str, Union[dict, BaseMetric, bool]]]:
@@ -208,6 +223,9 @@ class LitModel(pl.LightningModule):
         self.hooks.on_epoch_end()
 
     def on_train_epoch_start(self) -> None:
+        if self.current_epoch == self.unfreezing_epoch:
+            self.freeze_pretrained_layers(freeze=False)
+
         self.hooks.on_train_epoch_start()
 
     def on_train_epoch_end(self, outputs: List[Any]) -> None:
@@ -260,11 +278,10 @@ class LitModel(pl.LightningModule):
     def transfer_batch_to_device(self, batch: Any, dev: torch.device) -> Any:
         return self.hooks.transfer_batch_to_device(batch, dev)
 
-    @staticmethod
-    def model_check(
-        current: configs.DefaultModel,
-        expected: configs.DefaultModel,
-        architecture_name: str,
-    ):
-        info = f"Passed config is not for {architecture_name} architecutre!"
-        assert current == expected, info
+    def update_pretrained_layers(self, layers: List[str]):
+        self.pretrained_layers = layers
+
+    def freeze_pretrained_layers(self, freeze: bool):
+        for layer, weights in self.state_dict().items():
+            if layer in self.pretrained_layers:
+                weights.requires_grad = not freeze
