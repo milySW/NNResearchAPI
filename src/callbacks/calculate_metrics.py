@@ -118,6 +118,13 @@ class CalculateMetrics(Callback):
         print(tabulate(metrics, tablefmt="plain"))
         print("-" * total_width)
 
+    def log_metrics_to_module(self, module: LitModel):
+        names = self.series.keys().values
+        values = self.series.values
+
+        for name, value in zip(names, values):
+            module.log(name, value)
+
     def initialize_tensors(self):
         self.preds = torch.empty(0)
         self.labels = torch.empty(0)
@@ -170,6 +177,7 @@ class CalculateMetrics(Callback):
         self.fill_tensors(trainer=trainer)
         if trainer.num_training_batches - batch_idx == 1:
             self.manage_metrics(prefix="")
+            self.log_metrics_to_module(module=pl_module)
 
     def on_validation_batch_end(
         self,
@@ -183,6 +191,7 @@ class CalculateMetrics(Callback):
         self.fill_tensors(trainer=trainer)
         if trainer.num_val_batches[dataloader_idx] - batch_idx == 1:
             self.manage_metrics(prefix="val_")
+            self.log_metrics_to_module(module=pl_module)
 
     def on_test_batch_end(
         self,
