@@ -17,8 +17,8 @@ from src.optimizers.schedulers import BaseScheduler
 
 
 class LitModel(pl.LightningModule):
-    def __init__(self, **kwargs):
-        self.conifg = NotImplemented
+    def __init__(self, config: configs.DefaultConfig, **kwargs):
+        self.config = config
         self.pretrained_layers = []
 
         super().__init__(**kwargs)
@@ -31,6 +31,22 @@ class LitModel(pl.LightningModule):
     ):
         info = f"Passed config is not for {architecture_name} architecutre!"
         assert current == expected, info
+
+    @property
+    def pretrained(self):
+        return self.config.model.pretrained
+
+    @property
+    def name(self):
+        return self.config.model.name
+
+    @property
+    def freezing_start(self):
+        return self.config.model.freezing_start
+
+    @property
+    def freezing_stop(self):
+        return self.config.model.freezing_stop
 
     @property
     def loss_function(self) -> BaseMetric:
@@ -282,6 +298,8 @@ class LitModel(pl.LightningModule):
         self.pretrained_layers = layers
 
     def freeze_pretrained_layers(self, freeze: bool):
-        for layer, weights in self.state_dict().items():
-            if layer in self.pretrained_layers:
-                weights.requires_grad = not freeze
+        length = sum(1 for x in self.parameters())
+
+        for index, param in enumerate(self.parameters()):
+            if self.freezing_start <= index <= length + self.freezing_stop:
+                param.requires_grad = not freeze

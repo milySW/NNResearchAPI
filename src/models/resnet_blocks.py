@@ -1,5 +1,6 @@
-from typing import List
+from typing import Dict, List, Tuple
 
+import pytorch_lightning as pl
 import torch
 
 from torch import nn
@@ -7,12 +8,13 @@ from torch import nn
 from configs import DefaultConfig, DefaultResnet
 from src.models.base import LitModel
 from src.models.utils import conv_layer, load_state_dict
+from src.utils.collections import filter_by_prefix, split, unique_keys
 from src.utils.logging import get_logger
 
 logger = get_logger("ResNet")
 
 
-class ResNetBlock(LitModel):
+class ResNetBlock(pl.LightningModule):
     """
     Creates the standard `ResNet` block.
 
@@ -161,7 +163,7 @@ class ResNet(LitModel):
 
         self.model_check(config.model, DefaultResnet, "ResNet")
 
-        super().__init__()
+        super().__init__(config)
         self.set_params(config)
         self.layers = self.set_layers(layers)
 
@@ -254,47 +256,7 @@ class ResNet(LitModel):
 
         elif self.pretrained and (expansion == 1 or not self.xresnet):
             load_state_dict(self)
-
-    def log_pretrained_weights_bias_warning(self):
-        info = "Setting pretrained weights will be ommited."
-        cause = f"pretrained weights for XResNet with bias == {self.bias}"
-        logger.warn(f"{info} Using {cause}  is not supported.")
-
-    def log_pretrained_weights_xresnet_warning(self):
-        info = "Setting pretrained weights will be ommited."
-        cause = "pretrained weights for XResNet with expansion > 1"
-        logger.warn(f"{info} Using {cause}  is not supported.")
-
-    def set_params(self, config: DefaultConfig):
-        self.config = config
-        self.in_channels = config.model.in_channels
-        self.activation = config.model.activation
-        self.out_channels = config.model.out_channels
-        self.f_maps = config.model.f_maps
-        self.bias = config.model.bias
-        self.depth = config.model.depth
-        self.ks = config.model.kernel_size
-        self.pretrained = config.model.pretrained
-        self.name = config.model.name
-        self.xresnet = config.model.xresnet
-
-    def set_layers(self, layers: List[int]) -> List[int]:
-        self.check_depth()
-        del layers[slice(1, 5 - self.depth)]
-
-        return layers
-
-    def check_depth(self):
-        info = f"depth {self.depth} not supported, 4 or less"
-        assert self.depth <= 4, info
-
-    def get_filters(self, i: int, exp: int):
-        return self.f_maps // exp if i == 0 else self.f_maps * 2 ** (i - 1)
-
-    def forward(self, x):
-        for layer in self.x_res_net:
-            x = layer(x)
-        return x
+            self.freeze_pretrained_layers(freeze=True)
 
     @staticmethod
     def _make_layer(
@@ -326,3 +288,101 @@ class ResNet(LitModel):
             resnet_blocks.append(resnet_block)
 
         return nn.Sequential(*resnet_blocks)
+
+    def log_pretrained_weights_bias_warning(self):
+        info = "Setting pretrained weights will be ommited."
+        cause = f"pretrained weights for XResNet with bias == {self.bias}"
+        logger.warn(f"{info} Using {cause}  is not supported.")
+
+    def log_pretrained_weights_xresnet_warning(self):
+        info = "Setting pretrained weights will be ommited."
+        cause = "pretrained weights for XResNet with expansion > 1"
+        logger.warn(f"{info} Using {cause}  is not supported.")
+
+    def set_params(self, config: DefaultConfig):
+        self.in_channels = config.model.in_channels
+        self.activation = config.model.activation
+        self.out_channels = config.model.out_channels
+        self.f_maps = config.model.f_maps
+        self.bias = config.model.bias
+        self.depth = config.model.depth
+        self.ks = config.model.kernel_size
+        self.xresnet = config.model.xresnet
+
+    def set_layers(self, layers: List[int]) -> List[int]:
+        self.check_depth()
+        del layers[slice(1, 5 - self.depth)]
+
+        return layers
+
+    def check_depth(self):
+        info = f"depth {self.depth} not supported, 4 or less"
+        assert self.depth <= 4, info
+
+    def get_filters(self, i: int, exp: int):
+        return self.f_maps // exp if i == 0 else self.f_maps * 2 ** (i - 1)
+
+    def forward(self, x):
+        for layer in self.x_res_net:
+            x = layer(x)
+        return x
+
+    def tune_with_depth(
+        self, model_groups: List[str], pre_groups: List[str]
+    ) -> List[str]:
+
+        indices = slice(1, 5 - self.depth)
+        del model_groups[indices]
+
+        main_groups = unique_keys([split(i, 0, -1) for i in pre_groups])
+        del main_groups[indices]
+
+        return filter_by_prefix(pre_groups, main_groups)
+
+    def group_dict(self, data: Dict[str, torch.Tensor]) -> Tuple[List[str]]:
+        subgroups = unique_keys([split(i, 0, 3) for i in data.keys()])
+        groups = unique_keys([split(i, 0, -1) for i in subgroups])
+        keys = data.keys()
+
+        return groups, subgroups, keys
+
+    def unify_keys(
+        self,
+        pretrained_dict: Dict[str, torch.Tensor],
+        model_dict: Dict[str, torch.Tensor],
+    ) -> Tuple[Dict[str, torch.Tensor], List[str]]:
+
+        model_keys = model_dict.keys()
+
+        pre_groups, pre_subgroups, pre_keys = self.group_dict(pretrained_dict)
+        model_groups, model_subgroups, model_keys = self.group_dict(model_dict)
+        unique = unique_keys([split(i, -1, None) for i in model_keys])
+
+        if self.xresnet:
+            model_groups = model_groups[3:-1]
+        elif not self.xresnet:
+            model_groups = model_groups[1:-1]
+
+        pre_groups = pre_groups[2:-1]
+        pre_groups = self.tune_with_depth(model_groups, pre_groups)
+
+        pre_subgroups = filter_by_prefix(pre_subgroups, pre_groups)
+        pre_keys = filter_by_prefix(pre_keys, pre_groups)
+
+        model_subgroups = filter_by_prefix(model_subgroups, model_groups)
+        model_keys = filter_by_prefix(model_keys, model_groups)
+
+        pretrained_layers = []
+        for suffix in unique:
+            model_layers = [layer for layer in model_keys if suffix in layer]
+            pre_layers = [layer for layer in pre_keys if suffix in layer]
+
+            weights = [pretrained_dict[layer] for layer in pre_layers]
+            zipped = zip(model_layers, weights)
+
+            weights_dict = {layer: weight for layer, weight in zipped}
+            model_dict.update(weights_dict)
+
+            pretrained_layers.extend(list(weights_dict.keys()))
+
+        return model_dict, pretrained_layers

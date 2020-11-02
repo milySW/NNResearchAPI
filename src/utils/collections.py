@@ -1,7 +1,8 @@
 import itertools
 
+from collections import OrderedDict
 from pathlib import Path
-from typing import Any, Dict, Generator, Iterable, List
+from typing import Any, Callable, Dict, Generator, Iterable, List
 
 
 def flatten(iterable: List[List[Any]]) -> itertools.chain:
@@ -46,3 +47,27 @@ def batch_generator(
 
 def batch_list(iterable: Iterable, batch_size: int) -> List[Iterable]:
     return list(batch_generator(iterable=iterable, batch_size=batch_size))
+
+
+def check_prefix(string: str, prefix_list: List[str]) -> bool:
+    return any([string.startswith(prefix) for prefix in prefix_list])
+
+
+def filter_list(
+    data: List[Any], filters: List[Any], filtering_func: Callable
+) -> List[Any]:
+
+    return [var for var in data if filtering_func(var, filters)]
+
+
+def filter_by_prefix(data: List[str], prefixes: List[str]) -> List[str]:
+    func = check_prefix
+    return filter_list(data=data, filters=prefixes, filtering_func=func)
+
+
+def split(name: str, start: int, stop: int, delimeter=".") -> str:
+    return delimeter.join(name.split(delimeter)[start:stop])
+
+
+def unique_keys(collection: Iterable[str]) -> List[Any]:
+    return list(OrderedDict.fromkeys(collection))
