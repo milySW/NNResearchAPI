@@ -38,11 +38,12 @@ def conv_layer(
     Arguments:
         int n_inputs: Number of inputs
         int n_filters: Number of filters
-        int kernel_size: Size of convolutional  kernel
-        int stride: controls the stride for the cross-correlation
-        bool zero_batch_norm: TOADD
-        torch.nn.Module activation: Model activation function
+        int kernel_size: Size of convolutional kernel
         bool bias: Flag responsible for adding a learnable bias to the output
+        torch.nn.Module activation: Model activation function
+        int stride: controls the stride for the cross-correlation
+        bool zero_batch_norm: Flag responsible for initializing
+            batch normalization weights to 0
 
     """
 

@@ -7,8 +7,8 @@ Models
 ResNet
 ------------------------------------------------
 
-.. autoclass:: src.models.resnet_blocks.XResNetBlock
-.. autoclass:: src.models.resnet_blocks.XResNet
+.. autoclass:: src.models.resnet_blocks.ResNetBlock
+.. autoclass:: src.models.resnet_blocks.ResNet
 
 
 Utils

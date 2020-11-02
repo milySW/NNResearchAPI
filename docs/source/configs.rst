@@ -7,6 +7,7 @@ Configs
 
 Architecture templates
 ------------------------------------------------
+.. autoclass:: configs.DefaultModel
 .. autoclass:: configs.DefaultResnet
 
 

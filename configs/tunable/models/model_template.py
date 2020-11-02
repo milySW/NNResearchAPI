@@ -7,11 +7,11 @@ class DefaultModel(BaseConfig):
 
     Parameters:
 
-        str name: Name of the architecture (field is abstract)
+        str name: Name of the architecture `(field is abstract)`
         bool pretrained: Flag responsible for using pretrained weights
         int unfreezing_epoch: Epoch after which the layers will be unfrozen
-        int freezing_start: Layer where freezing starts (field is abstract)
-        int freezing_stop:: Layer where freezing ends (field is abstract)
+        int freezing_start: Layer where freezing starts `(field is abstract)`
+        int freezing_stop: Layer where freezing ends `(field is abstract)`
 
     """
 

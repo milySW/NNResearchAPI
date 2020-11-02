@@ -23,7 +23,10 @@ class ResNetBlock(pl.LightningModule):
         int expansion: Model expantion
         int n_inputs: Number of inputs
         int n_filters: Number of filters
+        int kernel_size: Size of convolutional kernel
         int stride: controls the stride for the cross-correlation
+        bool bias: Flag responsible for adding a learnable bias layer
+        bool xresnet: Flag responsible for using XResNet architecture
         torch.nn.Module activation: Model activation function
 
     """
