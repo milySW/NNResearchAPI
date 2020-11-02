@@ -280,9 +280,8 @@ class ResNet(LitModel):
 
     def set_layers(self, layers: List[int]) -> List[int]:
         self.check_depth()
+        del layers[slice(1, 5 - self.depth)]
 
-        if self.depth < 4:
-            del layers[slice(1, 5 - self.depth)]
         return layers
 
     def check_depth(self):

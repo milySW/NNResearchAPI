@@ -39,6 +39,7 @@ def main(config_path: Path, dataset_path: Path) -> Union[Tuple[Path], Path]:
 
     model.set_example(train_loader)
     learner = trainer.Trainer(config=config)
+    learner.summary(model)
     learner.fit(model, train_loader, val_loader)
 
     if train.test and train.save:

@@ -76,7 +76,7 @@ def load_state_dict(model: LitModel):
     pretrained_dict = load_state_dict_from_url(model_urls[model.name])
     model_dict = model.state_dict()
 
-    model_dict, layers = unify_keys(pretrained_dict, model_dict, model.xresnet)
+    model_dict, layers = unify_keys(pretrained_dict, model_dict, model)
 
     model.load_state_dict(model_dict)
 
@@ -89,17 +89,18 @@ def group_dict(dictionary):
     return groups, subgroups, keys
 
 
-def unify_keys(pretrained_dict, model_dict, xresnet):
+def unify_keys(pretrained_dict, model_dict, model: LitModel):
     pre_groups, pre_subgroups, pre_keys = group_dict(pretrained_dict)
     model_groups, model_subgroups, model_keys = group_dict(model_dict)
     unique = unique_keys([split_name(i, -1, None) for i in model_dict.keys()])
 
-    if xresnet:
+    if model.xresnet:
         model_groups = model_groups[3:-1]
-    elif not xresnet:
+    elif not model.xresnet:
         model_groups = model_groups[1:-1]
 
     pre_groups = pre_groups[2:-1]
+    pre_groups = tune_with_depth(model_groups, pre_groups, model.depth)
 
     pre_subgroups = filter_list(pre_subgroups, pre_groups)
     pre_keys = filter_list(pre_keys, pre_groups)
@@ -121,6 +122,16 @@ def unify_keys(pretrained_dict, model_dict, xresnet):
         pretrained_layers.extend(list(weights_dict.keys()))
 
     return model_dict, pretrained_layers
+
+
+def tune_with_depth(model_groups, pre_groups, depth):
+    indices = slice(1, 5 - depth)
+    del model_groups[indices]
+
+    main_groups = unique_keys([split_name(i, 0, -1) for i in pre_groups])
+    del main_groups[indices]
+
+    return filter_list(pre_groups, main_groups)
 
 
 def check_prefix(key, prefix_list):

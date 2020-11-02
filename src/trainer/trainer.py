@@ -4,6 +4,7 @@ from pathlib import Path
 
 from pytorch_lightning import Trainer as PLTrainer
 from pytorch_lightning.callbacks.progress import ProgressBar
+from pytorch_model_summary import summary
 
 from configs import DefaultConfig
 from src.utils.collections import filter_class
@@ -42,7 +43,7 @@ class Trainer(PLTrainer):
             logger=self.logger,
             gpus=self.gpus,
             profiler=True,
-            weights_summary=self.weights_summary,
+            weights_summary=None,
             **kwargs
         )
 
@@ -59,12 +60,19 @@ class Trainer(PLTrainer):
 
     def set_params(self, config: DefaultConfig):
         self.gpus = config.training.gpus
-        self.weights_summary = config.training.weights_summary
         self.epochs = config.training.epochs
         self.checkpoint_callback = config.training.save
         self.callbacks = config.callbacks.value_list()
         self.logger = None if self.set_logger else True
         self.root_dir = self.create_save_path(self.root(config))
+        self.torchsummary = config.training.torchsummary
+        self.depth = config.training.summary_depth
+
+    def summary(self, model):
+        if self.torchsummary:
+
+            example = model.example_input_array
+            summary(model, example, print_summary=True, max_depth=self.depth)
 
     def create_save_path(self, root: Path) -> Path:
         root.mkdir(parents=True, exist_ok=True)
