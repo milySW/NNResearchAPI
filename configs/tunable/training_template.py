@@ -5,6 +5,7 @@ import torch
 from pytorch_lightning.profiler import BaseProfiler
 
 from configs.base.base import BaseConfig
+from src.callbacks import ModelCheckpoint
 from src.losses import BaseLoss, CrossEntropyLoss
 from src.utils.loaders import load_default_sets
 
@@ -49,7 +50,7 @@ class DefaultTraining(BaseConfig):
 
     # Saving
     experiments_dir: str = ".data/models"
-    save: bool = True
+    save: bool = ModelCheckpoint(monitor="val_accuracy", mode="max")
 
     # Additional features
     test: bool = True

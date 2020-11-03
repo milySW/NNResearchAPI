@@ -5,11 +5,13 @@ from src.callbacks.collect_best_metrics import (
     CollectBestMetrics,
 )
 from src.callbacks.early_stopping import EarlyStopping
+from src.callbacks.model_checkpoint import ModelCheckpoint
 from src.callbacks.progress import LightProgressBar
 
 __all__ = [
     "LightProgressBar",
     "EarlyStopping",
+    "ModelCheckpoint",
     "CalculateClassMetrics",
     "CalculateMetrics",
     "CollectBestMetrics",

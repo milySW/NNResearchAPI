@@ -15,5 +15,6 @@ class DefaultCallbacks(BaseConfig):
 
     bar = LightProgressBar()
     e_stopping = EarlyStopping(monitor="val_accuracy", patience=1, mode="max")
+
     best_class_metric = CollectBestClassMetrics(variants=["val", "test"])
     best_metric = CollectBestMetrics(variants=["val", "test"])
