@@ -255,6 +255,9 @@ class ResNet(LitModel):
         if self.pretrained and self.bias:
             self.log_pretrained_weights_bias_warning()
 
+        elif self.pretrained and self.f_maps != 64:
+            self.log_pretrained_weights_f_maps_warning()
+
         elif self.pretrained and not (expansion == 1 or not self.xresnet):
             self.log_pretrained_weights_xresnet_warning()
 
@@ -296,12 +299,17 @@ class ResNet(LitModel):
     def log_pretrained_weights_bias_warning(self):
         info = "Setting pretrained weights will be ommited."
         cause = f"pretrained weights for XResNet with bias == {self.bias}"
-        logger.warn(f"{info} Using {cause}  is not supported.")
+        logger.warn(f"{info} Using {cause} are not supported.")
+
+    def log_pretrained_weights_f_maps_warning(self):
+        info = "Setting pretrained weights will be ommited."
+        cause = "pretrained weights for XResNet with f_maps != 64"
+        logger.warn(f"{info} Using {cause} are not supported.")
 
     def log_pretrained_weights_xresnet_warning(self):
         info = "Setting pretrained weights will be ommited."
         cause = "pretrained weights for XResNet with expansion > 1"
-        logger.warn(f"{info} Using {cause}  is not supported.")
+        logger.warn(f"{info} Using {cause} are not supported.")
 
     def set_params(self, config: DefaultConfig):
         self.in_channels = config.model.in_channels

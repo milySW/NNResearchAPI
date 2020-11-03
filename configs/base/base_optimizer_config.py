@@ -23,9 +23,16 @@ class DefaultOptimizersAndSchedulers(BaseConfig):
         trainer = deepcopy(model.trainer)
         trainer.profile_connector.on_trainer_init(None)
 
+        if hasattr(model, "dropout"):
+            dropout = model.dropout
+            model.dropout = 0
+
         model.freeze_pretrained_layers(freeze=False)
         lr_finder = trainer.tuner.lr_find(model)
         model.freeze_pretrained_layers(freeze=True)
+
+        if hasattr(model, "dropout"):
+            model.dropout = dropout
 
         new_lr = lr_finder.suggestion()
         logger.info(f"Set initial learning rate to: {new_lr}")
@@ -37,6 +44,7 @@ class DefaultOptimizersAndSchedulers(BaseConfig):
         lr_finder_path.mkdir(parents=True, exist_ok=True)
 
         fig.savefig(lr_finder_path / "lr_finder", transparent=True)
+
         return optimizer_kwargs
 
     @classmethod
