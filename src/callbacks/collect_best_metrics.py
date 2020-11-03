@@ -18,9 +18,10 @@ from src.models.base import LitModel
 class CollectBest:
     """Callback collecting best metrics."""
 
-    def __init__(self, variants: str = ["val"]):
+    def __init__(self, variants: str = ["val"], best=True):
         self.supported = self.check_variant(variants=variants)
         self.variants = variants
+        self.best = best
         super().__init__()
 
         self.best_index = "best"
@@ -58,13 +59,17 @@ class CollectBest:
 
         return "".join(splited)
 
-    def get_paths(self, model_root_dir: Path, name: str) -> Tuple[Path, Path]:
+    def set_paths(self, model_root_dir: Path, name: str) -> Tuple[Path, Path]:
 
         metric_subdir = self.best_dir_path / f"{self.best_index}_{name}"
-        best_metric_dir = model_root_dir / metric_subdir
-        best_file = best_metric_dir / self.subdir / self.last_file_name
 
-        return best_metric_dir, best_file
+        best_metric_dir = model_root_dir / metric_subdir
+        history_file = best_metric_dir / self.history_filename
+        best_last_file = best_metric_dir / self.subdir / self.last_file_name
+
+        self.history_file = history_file
+        self.best_last_file = best_last_file
+        self.best_metric_dir = best_metric_dir
 
     def get_new_metric(self, data: dict, root_dir: Path):
         new_metric = pd.DataFrame(data=data)
@@ -72,34 +77,43 @@ class CollectBest:
 
         return new_metric
 
-    def add_new_metric(
-        self, new_metric: pd.DataFrame, best_metric_dir: Path
-    ) -> pd.DataFrame:
+    def add_new_metric(self, new_metric: pd.DataFrame) -> pd.DataFrame:
 
-        hist = pd.read_csv(best_metric_dir / self.history_filename)
+        hist = pd.read_csv(self.history_file)
         hist = hist.set_index(self.best_index)
 
         hist = pd.concat([new_metric, hist], ignore_index=True,)
         return hist.rename_axis(index=self.best_index)
 
-    def create_best_dir(self, history: pd.DataFrame, best_dir: Path):
-        copytree(self.last_path.parent.parent, best_dir)
-        history.to_csv(best_dir / self.history_filename)
+    def create_best_dir(self, history: pd.DataFrame):
+        copytree(self.all_path.parent.parent, self.best_metric_dir)
+        history.to_csv(self.history_file)
 
-    def replace_best_dir(self, history: pd.DataFrame, best_dir: Path):
-        rmtree(best_dir)
-        copytree(self.last_path.parent.parent, best_dir)
-        history.to_csv(best_dir / self.history_filename)
+    def replace_best_dir(self, history: pd.DataFrame):
+        rmtree(self.best_metric_dir)
+        copytree(self.all_path.parent.parent, self.best_metric_dir)
+        history.to_csv(self.history_file)
 
-    def prepare(self, name: str) -> Tuple[float, pd.DataFrame, Path, Path]:
-        stat = float(self.data_frame.tail(1)[name].values.item())
+    def prepare(
+        self, name: str, extremum: str
+    ) -> Tuple[float, pd.DataFrame, Path, Path]:
+
+        func = max if extremum == "max" else min
+
+        if "test" not in name and self.best:
+            df = self.data_frame
+        else:
+            df = pd.read_csv(self.last_path)
+
+        stat = float(func(df[name].values))
+
         root_dir = self.metrics_dir.parent.parent
-        best_metric_dir, best_file = self.get_paths(root_dir, name)
+        self.set_paths(root_dir, name)
 
         data = {"model_index": [self.metrics_dir.parent.name], name: [stat]}
         new = self.get_new_metric(data=data, root_dir=self.metrics_dir.parent)
 
-        return stat, new, best_metric_dir, best_file
+        return stat, new
 
     def get_extremum(self, name: str) -> str:
 
@@ -112,35 +126,31 @@ class CollectBest:
     def collect(
         self,
         name: str,
-        stat: float,
+        current_statistic: float,
         new_metric: pd.DataFrame,
-        best_file: Path,
-        best_metric_dir: Path,
         extremum: str,
     ):
-        best_metrics = pd.read_csv(best_file)
+        best_metrics = pd.read_csv(self.history_file)
         assert name in best_metrics.columns, f"Column {name} doesn't exist"
 
         sign = operator.lt if extremum == "max" else operator.gt
-        if sign(best_metrics[name].values.item(), stat):
-            history = self.add_new_metric(new_metric, best_metric_dir)
-            self.replace_best_dir(history, best_metric_dir)
+        if sign(best_metrics[name].values[0], current_statistic):
+            history = self.add_new_metric(new_metric)
+            self.replace_best_dir(history)
 
     def collect_best_metric(self, name: str, extremum: str):
-        stat, new, best_metric_dir, best_file = self.prepare(name)
+        current_statistic, new_metric = self.prepare(name, extremum)
 
-        if best_file.is_file():
+        if self.best_last_file.is_file() and self.history_file.is_file():
             self.collect(
                 name=name,
-                stat=stat,
-                new_metric=new,
-                best_file=best_file,
-                best_metric_dir=best_metric_dir,
+                current_statistic=current_statistic,
+                new_metric=new_metric,
                 extremum=extremum,
             )
 
         else:
-            self.create_best_dir(history=new, best_dir=best_metric_dir)
+            self.create_best_dir(history=new_metric)
 
     def collect_best_metrics(self, trainer: Trainer):
         self.save_final_metrics()
@@ -162,6 +172,11 @@ class CollectBestMetrics(CalculateMetrics, CollectBest):
     than previous ones will be added to file history.csv with info
     about experiment number. Furthermore experiment directory
     content will be saved as backup in "best_{metric_name}" directory.
+
+    Parameters:
+
+        List[str] variants: List of supported variants ['', 'test', 'val']
+        bool best: Flag responsible for checking best metrics instead of last
 
     Output:
 
@@ -192,11 +207,15 @@ class CollectBestClassMetrics(CalculateClassMetrics, CollectBest):
     about experiment number. Furthermore experiment directory
     content will be saved as backup in "best_{metric_name}" directory.
 
+    Parameters:
+
+        List[str] variants: List of supported variants ['', 'test', 'val']
+        bool best: Flag responsible for checking best metrics instead of last
+
     Output:
 
         - `history.csv`: File with history of models with best metric
         - content of experiment run directory
-
 
     """
 

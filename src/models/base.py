@@ -141,8 +141,6 @@ class LitModel(pl.LightningModule):
         loss, calculations = self.calculate_batch(batch, step="train")
         self.trainer.calculations = calculations
 
-        self.log("loss", loss)
-
         return loss
 
     def validation_step(self, batch: list, batch_idx: int) -> torch.Tensor:
@@ -150,16 +148,12 @@ class LitModel(pl.LightningModule):
         loss, calculations = self.calculate_batch(batch, step="validation")
         self.trainer.calculations = calculations
 
-        self.log("val_loss", loss)
-
         return loss
 
     def test_step(self, batch: list, batch_idx: int) -> torch.Tensor:
 
         loss, calculations = self.calculate_batch(batch, step="test")
         self.trainer.calculations = calculations
-
-        self.log("test_loss", loss)
 
         return loss
 
