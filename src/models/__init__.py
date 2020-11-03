@@ -18,11 +18,11 @@ def get_model(config: DefaultConfig):
     )
 
     kwargs = dict(
-        resnet18=dict(expansion=1, layers=[2, 2, 2, 2], config=config),
-        resnet34=dict(expansion=1, layers=[3, 4, 6, 3], config=config),
-        resnet50=dict(expansion=4, layers=[3, 4, 6, 3], config=config),
-        resnet101=dict(expansion=4, layers=[3, 4, 23, 3], config=config),
-        resnet152=dict(expansion=4, layers=[3, 8, 36, 3], config=config),
+        resnet18=dict(expansion=1, blocks=[2, 2, 2, 2], config=config),
+        resnet34=dict(expansion=1, blocks=[3, 4, 6, 3], config=config),
+        resnet50=dict(expansion=4, blocks=[3, 4, 6, 3], config=config),
+        resnet101=dict(expansion=4, blocks=[3, 4, 23, 3], config=config),
+        resnet152=dict(expansion=4, blocks=[3, 8, 36, 3], config=config),
     )
 
     assert name in models.keys(), "Could not find model name"

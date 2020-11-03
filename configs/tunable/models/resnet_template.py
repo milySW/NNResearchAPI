@@ -38,6 +38,7 @@ class DefaultResnet(DefaultModel):
 
     # Additional features
     xresnet: bool = True
+    dropout: float = 0.2
 
     # Pretrained weights
     freezing_start: int = 9 if xresnet else 3

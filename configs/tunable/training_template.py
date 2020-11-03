@@ -36,7 +36,7 @@ class DefaultTraining(BaseConfig):
     """
 
     # Lengths
-    epochs: int = 30
+    epochs: int = 1
     batch_size: int = 512
 
     # Environment

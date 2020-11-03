@@ -30,7 +30,12 @@ class DefaultOptimizers(BaseConfig):
 
     """
 
-    adam = dict(optimizer=Adam, kwargs={}, character="normal")
+    adam = dict(
+        optimizer=Adam,
+        kwargs=dict(lr=1e-4, weight_decay=1e-4, eps=1e-8),
+        auto_lr=True,
+        character="normal",
+    )
 
 
 class DefaultSchedulers(BaseConfig):

@@ -19,6 +19,7 @@ from src.optimizers.schedulers import BaseScheduler
 class LitModel(pl.LightningModule):
     def __init__(self, config: configs.DefaultConfig, **kwargs):
         self.config = config
+        self.configured_optimizers = False
         self.pretrained_layers = []
 
         super().__init__(**kwargs)

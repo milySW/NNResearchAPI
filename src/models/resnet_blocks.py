@@ -157,18 +157,18 @@ class ResNet(LitModel):
     Parameters:
 
         int expansion: Model expantion
-        List[int] layers: List with number of blocks stacked
+        List[int] blocks: List with number of blocks stacked
         DefaultConfig config: config with model parameters
 
     """
 
-    def __init__(self, expansion: int, layers: List, config: DefaultConfig):
+    def __init__(self, expansion: int, blocks: List, config: DefaultConfig):
 
         self.model_check(config.model, DefaultResnet, "ResNet")
 
         super().__init__(config)
         self.set_params(config)
-        self.layers = self.set_layers(layers)
+        self.blocks = self.set_blocks(blocks)
 
         # create the stem
 
@@ -222,22 +222,23 @@ class ResNet(LitModel):
                 n_inputs=n_filters[i],
                 n_filters=n_filters[i + 1],
                 kernel_size=self.ks,
-                n_blocks=layer,
+                n_blocks=number_of_blocks,
                 stride=1 if i == 0 else 2,
                 bias=self.bias,
                 xresnet=self.xresnet,
                 activation=self.activation,
             )
-            for i, layer in enumerate(self.layers)
+            for i, number_of_blocks in enumerate(self.blocks)
         ]
 
-        self.x_res_net = nn.ModuleList(
+        self.layers = nn.ModuleList(
             [
                 *stem,
                 nn.MaxPool2d(kernel_size=self.ks, stride=2, padding=1),
                 *res_layers,
                 nn.AdaptiveAvgPool2d(1),
                 nn.Flatten(),
+                nn.Dropout(p=self.dropout),
                 nn.Linear(
                     in_features=n_filters[-1] * expansion,
                     out_features=self.out_channels,
@@ -245,7 +246,7 @@ class ResNet(LitModel):
             ]
         )
 
-        for module in self.x_res_net:
+        for module in self.layers:
             if getattr(module, "bias", None) is not None:
                 nn.init.constant_(module.bias, 0)
             if isinstance(module, (nn.Conv2d, nn.Linear)):
@@ -311,12 +312,13 @@ class ResNet(LitModel):
         self.depth = config.model.depth
         self.ks = config.model.kernel_size
         self.xresnet = config.model.xresnet
+        self.dropout = config.model.dropout
 
-    def set_layers(self, layers: List[int]) -> List[int]:
+    def set_blocks(self, blocks: List[int]) -> List[int]:
         self.check_depth()
-        del layers[slice(1, 5 - self.depth)]
+        del blocks[slice(1, 5 - self.depth)]
 
-        return layers
+        return blocks
 
     def check_depth(self):
         info = f"depth {self.depth} not supported, 4 or less"
@@ -326,7 +328,7 @@ class ResNet(LitModel):
         return self.f_maps // exp if i == 0 else self.f_maps * 2 ** (i - 1)
 
     def forward(self, x):
-        for layer in self.x_res_net:
+        for layer in self.layers:
             x = layer(x)
         return x
 

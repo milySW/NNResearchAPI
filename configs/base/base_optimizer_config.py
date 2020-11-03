@@ -1,4 +1,5 @@
-from typing import Dict, ItemsView, List, Optional
+from copy import deepcopy
+from typing import Any, Dict, ItemsView, List, Optional
 
 from configs.base.base import BaseConfig
 from configs.tunable.optimizers_template import (
@@ -8,17 +9,48 @@ from configs.tunable.optimizers_template import (
 from src.models.base import LitModel
 from src.optimizers import BaseOptim
 from src.optimizers.schedulers import BaseScheduler
+from src.utils.logging import get_logger
+
+logger = get_logger("SchedulerSetter")
 
 
 class DefaultOptimizersAndSchedulers(BaseConfig):
     optimizers: Dict[str, BaseOptim] = DefaultOptimizers.to_dict()
     schedulers: Dict[str, BaseScheduler] = DefaultSchedulers.to_dict()
 
+    @staticmethod
+    def find_lr(optimizer_kwargs: Dict[str, Any], model):
+        trainer = deepcopy(model.trainer)
+        trainer.profile_connector.on_trainer_init(None)
+
+        model.freeze_pretrained_layers(freeze=False)
+        lr_finder = trainer.tuner.lr_find(model)
+        model.freeze_pretrained_layers(freeze=True)
+
+        new_lr = lr_finder.suggestion()
+        logger.info(f"Set initial learning rate to: {new_lr}")
+        optimizer_kwargs.update({"lr": new_lr})
+
+        fig = lr_finder.plot(suggest=True)
+
+        lr_finder_path = model.trainer.root_dir / "plots"
+        lr_finder_path.mkdir(parents=True, exist_ok=True)
+
+        fig.savefig(lr_finder_path / "lr_finder", transparent=True)
+        return optimizer_kwargs
+
     @classmethod
-    def get_optimizer(cls, opt: dict, models: dict) -> BaseOptim:
-        func = opt["optimizer"]
-        kwargs = opt["kwargs"]
-        parameters = models[opt["character"]].parameters()
+    def get_optimizer(cls, optimizer: dict, models: dict) -> BaseOptim:
+
+        func = optimizer["optimizer"]
+        kwargs = optimizer["kwargs"]
+        model = models[optimizer["character"]]
+
+        if optimizer["auto_lr"] and not model.configured_optimizers:
+            model.configured_optimizers = True
+            kwargs = cls.find_lr(optimizer_kwargs=kwargs, model=model)
+
+        parameters = models[optimizer["character"]].parameters()
 
         return func(parameters, **kwargs)
 
