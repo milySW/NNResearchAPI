@@ -1,6 +1,6 @@
 from torch.optim.lr_scheduler import ExponentialLR as TorchExponentialLR
 
-from src.optimizers.schedulers.base import BaseScheduler
+from src.base.schedulers import BaseScheduler
 
 
 class ExponentialLR(BaseScheduler, TorchExponentialLR):

@@ -1,6 +1,6 @@
 from torch.optim.lr_scheduler import ReduceLROnPlateau as TReduceLROnPlateau
 
-from src.optimizers.schedulers.base import BaseScheduler
+from src.base.schedulers import BaseScheduler
 
 
 class ReduceLROnPlateau(BaseScheduler, TReduceLROnPlateau):

@@ -19,6 +19,6 @@ class DefaultModel(BaseConfig):
 
     # Pretrained weights
     pretrained: bool = True
-    unfreezing_epoch: int = 5
+    unfreezing_epoch: int = 3
     freezing_start: int
     freezing_stop: int

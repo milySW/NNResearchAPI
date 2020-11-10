@@ -10,9 +10,9 @@ from pytorch_lightning.utilities import AMPType
 
 from configs.base.base import BaseConfig
 from configs.tunable.hooks_template import DefaultHooks
-from src.hooks import BaseHook
-from src.losses import BaseLoss
-from src.optimizers import BaseOptim
+from src.base.hooks import BaseHook
+from src.base.losses import BaseLoss
+from src.base.optimizers import BaseOptim
 
 
 class DefaultBindedHooks(BaseConfig):

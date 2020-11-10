@@ -1,6 +1,7 @@
 from configs.base.base import BaseConfig
+from src.base.schedulers import BaseScheduler
 from src.optimizers import Adam
-from src.optimizers.schedulers import BaseScheduler, ExponentialLR
+from src.optimizers.schedulers import OneCycleLR
 
 
 class SchedulerCommonKwargs(BaseConfig):
@@ -32,7 +33,7 @@ class DefaultOptimizers(BaseConfig):
 
     adam = dict(
         optimizer=Adam,
-        kwargs=dict(lr=1e-4, weight_decay=1e-4, eps=1e-8),
+        kwargs=dict(lr=1e-4, weight_decay=1e-4, eps=1e-8, amsgrad=True),
         auto_lr=True,
         character="normal",
     )
@@ -56,8 +57,12 @@ class DefaultSchedulers(BaseConfig):
 
     adam = [
         dict(
-            sched=ExponentialLR,
+            sched=OneCycleLR,
             common_kwargs=BaseScheduler(**{}),
-            scheduler_kwargs={"gamma": 0.9},
+            scheduler_kwargs={
+                "max_lr": 0.01,
+                "epochs": 100,
+                "steps_per_epoch": 9 * 1000,
+            },
         )
     ]

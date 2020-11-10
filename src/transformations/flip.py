@@ -2,7 +2,7 @@ from typing import Iterable, List
 
 import torch
 
-from src.transformations.base import BaseTransformation
+from src.base.transformations import BaseTransformation
 
 
 class Flip(BaseTransformation):

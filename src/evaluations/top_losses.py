@@ -5,8 +5,8 @@ from typing import Tuple
 import pandas as pd
 import torch
 
-from src.evaluations import BaseEvaluation
-from src.losses import BaseLoss
+from src.base.evaluations import BaseEvaluation
+from src.base.losses import BaseLoss
 from src.utils.plots import save_data_plot
 
 

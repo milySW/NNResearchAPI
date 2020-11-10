@@ -25,10 +25,10 @@ class DefaultResnet(DefaultModel):
 
     """
 
-    name: str = "resnet34"
+    name: str = "resnet18"
 
     # Architecture
-    depth: int = 3
+    depth: int = 4
     in_channels: int = 1
     out_channels: int = 4
     kernel_size: int = 3
@@ -38,7 +38,7 @@ class DefaultResnet(DefaultModel):
 
     # Additional features
     xresnet: bool = True
-    dropout: float = 0.2
+    dropout: float = 0.7
 
     # Pretrained weights
     freezing_start: int = 9 if xresnet else 3

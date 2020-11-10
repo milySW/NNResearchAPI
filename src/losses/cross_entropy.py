@@ -1,6 +1,6 @@
 from torch.nn import CrossEntropyLoss as TorchCrossEntropyLoss
 
-from src.losses import BaseLoss
+from src.base.losses import BaseLoss
 
 
 class CrossEntropyLoss(BaseLoss, TorchCrossEntropyLoss):

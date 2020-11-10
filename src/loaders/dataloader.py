@@ -8,7 +8,7 @@ from torch.utils.data.dataloader import DataLoader as PLDataloader
 from tqdm import tqdm
 
 from configs import DefaultConfig
-from src.transformations import BaseTransformation
+from src.base.transformations import BaseTransformation
 from src.utils.logging import get_logger
 
 logger = get_logger("PrepareDataloader")

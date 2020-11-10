@@ -6,9 +6,9 @@ from configs.tunable.optimizers_template import (
     DefaultOptimizers,
     DefaultSchedulers,
 )
+from src.base.optimizers import BaseOptim
+from src.base.schedulers import BaseScheduler
 from src.models.base import LitModel
-from src.optimizers import BaseOptim
-from src.optimizers.schedulers import BaseScheduler
 from src.utils.logging import get_logger
 
 logger = get_logger("SchedulerSetter")

@@ -10,10 +10,10 @@ from torch.utils.data.dataloader import DataLoader
 
 import configs
 
-from src.losses import BaseLoss
-from src.metrics import BaseMetric
-from src.optimizers import BaseOptim
-from src.optimizers.schedulers import BaseScheduler
+from src.base.losses import BaseLoss
+from src.base.metrics import BaseMetric
+from src.base.optimizers import BaseOptim
+from src.base.schedulers import BaseScheduler
 
 
 class LitModel(pl.LightningModule):

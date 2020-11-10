@@ -5,8 +5,9 @@ import torch
 from pytorch_lightning.profiler import BaseProfiler
 
 from configs.base.base import BaseConfig
+from src.base.losses import BaseLoss
 from src.callbacks import ModelCheckpoint
-from src.losses import BaseLoss, CrossEntropyLoss
+from src.losses import CrossEntropyLoss
 from src.utils.loaders import load_default_sets
 
 
@@ -36,7 +37,7 @@ class DefaultTraining(BaseConfig):
     """
 
     # Lengths
-    epochs: int = 50
+    epochs: int = 100
     batch_size: int = 512
 
     # Environment

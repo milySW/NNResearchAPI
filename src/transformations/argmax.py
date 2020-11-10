@@ -2,7 +2,7 @@ from typing import Iterable
 
 import torch
 
-from src.transformations.base import BaseTransformation
+from src.base.transformations import BaseTransformation
 
 
 class ArgMax(BaseTransformation):

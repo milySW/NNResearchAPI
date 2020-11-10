@@ -9,9 +9,9 @@ import pandas as pd
 from pytorch_lightning.callbacks.base import Callback
 from pytorch_lightning.trainer.trainer import Trainer
 
+from src.base.losses import BaseLoss
 from src.callbacks.calculate_class_metrics import CalculateClassMetrics
 from src.callbacks.calculate_metrics import CalculateMetrics
-from src.losses import BaseLoss
 from src.models.base import LitModel
 
 

@@ -1,6 +1,6 @@
 from torch.optim.lr_scheduler import CosineAnnealingLR as TCosineAnnealingLR
 
-from src.optimizers.schedulers.base import BaseScheduler
+from src.base.schedulers import BaseScheduler
 
 
 class CosineAnnealingLR(BaseScheduler, TCosineAnnealingLR):

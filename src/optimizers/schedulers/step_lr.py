@@ -1,6 +1,6 @@
 from torch.optim.lr_scheduler import StepLR as TorchStepLR
 
-from src.optimizers.schedulers.base import BaseScheduler
+from src.base.schedulers import BaseScheduler
 
 
 class StepLR(BaseScheduler, TorchStepLR):

@@ -1,4 +1,3 @@
-from src.optimizers.schedulers.base import BaseScheduler
 from src.optimizers.schedulers.cosine_annealing_lr import CosineAnnealingLR
 from src.optimizers.schedulers.cosine_annealing_warm_restarts import (
     CosineAnnealingWarmRestarts,
@@ -12,7 +11,6 @@ from src.optimizers.schedulers.one_cycle_lr import OneCycleLR
 from src.optimizers.schedulers.step_lr import StepLR
 
 __all__ = [
-    "BaseScheduler",
     "ExponentialLR",
     "CosineAnnealingLR",
     "CosineAnnealingWarmRestarts",

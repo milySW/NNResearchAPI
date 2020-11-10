@@ -1,6 +1,6 @@
 from torch.optim.lr_scheduler import MultiStepLR as TorchMultiStepLR
 
-from src.optimizers.schedulers.base import BaseScheduler
+from src.base.schedulers import BaseScheduler
 
 
 class MultiStepLR(BaseScheduler, TorchMultiStepLR):

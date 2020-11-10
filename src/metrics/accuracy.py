@@ -1,6 +1,6 @@
 from pytorch_lightning.metrics.classification import Accuracy as PLAccuracy
 
-from src.metrics import BaseMetric
+from src.base.metrics import BaseMetric
 
 
 class Accuracy(BaseMetric, PLAccuracy):

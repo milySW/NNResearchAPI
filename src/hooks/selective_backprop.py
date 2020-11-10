@@ -5,7 +5,7 @@ from typing import Any, List
 
 import torch
 
-from src.hooks.base import BaseHook
+from src.base.hooks import BaseHook
 from src.utils.logging import get_logger
 
 logger = get_logger("Selective Bakckpropagation Hook")

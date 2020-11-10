@@ -8,7 +8,7 @@ from pytorch_lightning.callbacks.base import Callback
 from pytorch_lightning.trainer.trainer import Trainer
 from tabulate import tabulate
 
-from src.metrics import BaseMetric
+from src.base.metrics import BaseMetric
 from src.models.base import LitModel
 from src.utils.plots import save_columns_plot
 
