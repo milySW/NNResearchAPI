@@ -27,9 +27,13 @@ class DefaultOptimizersAndSchedulers(BaseConfig):
             dropout = model.dropout
             model.dropout = 0
 
-        model.freeze_pretrained_layers(freeze=False)
-        lr_finder = trainer.tuner.lr_find(model)
-        model.freeze_pretrained_layers(freeze=True)
+        if model.pretrained:
+            model.freeze_pretrained_layers(freeze=False)
+            lr_finder = trainer.tuner.lr_find(model)
+            model.freeze_pretrained_layers(freeze=True)
+
+        if not model.pretrained:
+            lr_finder = trainer.tuner.lr_find(model)
 
         if hasattr(model, "dropout"):
             model.dropout = dropout

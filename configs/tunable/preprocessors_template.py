@@ -1,4 +1,5 @@
 from configs.base.base import BaseConfig
+from src.transformations import Flatten
 
 
 class DefaultPreprocessors(BaseConfig):
@@ -8,3 +9,12 @@ class DefaultPreprocessors(BaseConfig):
     """
 
     # flip = Flip(x=True, y=False, dims=[1, 2])
+    flatten = Flatten(
+        start_dim=-2,
+        end_dim=-1 * 1,
+        x=True,
+        y=False,
+        train=True,
+        valid=True,
+        test=True,
+    )

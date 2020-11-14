@@ -1,7 +1,7 @@
 from configs.base.base import BaseConfig
 from src.base.schedulers import BaseScheduler
 from src.optimizers import Adam
-from src.optimizers.schedulers import OneCycleLR
+from src.optimizers.schedulers import ExponentialLR
 
 
 class SchedulerCommonKwargs(BaseConfig):
@@ -57,12 +57,8 @@ class DefaultSchedulers(BaseConfig):
 
     adam = [
         dict(
-            sched=OneCycleLR,
+            sched=ExponentialLR,
             common_kwargs=BaseScheduler(**{}),
-            scheduler_kwargs={
-                "max_lr": 0.01,
-                "epochs": 100,
-                "steps_per_epoch": 9 * 1000,
-            },
+            scheduler_kwargs={"gamma": 0.99},
         )
     ]

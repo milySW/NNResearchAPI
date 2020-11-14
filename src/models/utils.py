@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Optional
 
@@ -24,12 +25,22 @@ model_urls = dict(
 )
 
 
+@dataclass
+class LayersMap:
+    AdaptiveAvgPool: torch.nn.Module
+    MaxPool: torch.nn.Module
+    AvgPool: torch.nn.Module
+    Conv: torch.nn.Module
+    BatchNorm: torch.nn.Module
+
+
 def conv_layer(
     n_inputs: int,
     n_filters: int,
     kernel_size: int,
     bias: bool,
     activation: Optional[torch.nn.Module],
+    layers_map: LayersMap,
     stride: int = 1,
     zero_batch_norm: bool = False,
 ) -> nn.Sequential:
@@ -47,12 +58,12 @@ def conv_layer(
 
     """
 
-    batch_norm = nn.BatchNorm2d(n_filters)
+    batch_norm = layers_map.BatchNorm(n_filters)
     # initializer batch normalization to 0 if its the final conv layer
     nn.init.constant_(batch_norm.weight, 0.0 if zero_batch_norm else 1.0)
     layers = torch.nn.ModuleList(
         [
-            nn.Conv2d(
+            layers_map.Conv(
                 in_channels=n_inputs,
                 out_channels=n_filters,
                 kernel_size=kernel_size,

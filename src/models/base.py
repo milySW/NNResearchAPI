@@ -76,6 +76,21 @@ class LitModel(pl.LightningModule):
         return self.config.augmentations.value_list()
 
     @property
+    def data_dim(self):
+        data_dim = self.config.model.data_dim
+        supported = ["1D", "2D", "3D"]
+
+        info = f"Data with dimnesions other than {supported} is not supported."
+        cause = f"Change passed dimenstion {data_dim} to one of supported."
+        assert data_dim in supported, f"{info}{cause}"
+
+        return self.config.model.data_dim
+
+    @property
+    def layers_map(self):
+        return NotImplemented
+
+    @property
     def model_gen(self):
         return NotImplemented
 

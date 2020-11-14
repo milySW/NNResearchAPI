@@ -7,7 +7,7 @@ from torch import nn
 
 from configs import DefaultConfig, DefaultResnet
 from src.models.base import LitModel
-from src.models.utils import conv_layer, load_state_dict
+from src.models.utils import LayersMap, conv_layer, load_state_dict
 from src.utils.collections import filter_by_prefix, split, unique_keys
 from src.utils.logging import get_logger
 
@@ -41,6 +41,7 @@ class ResNetBlock(pl.LightningModule):
         bias: bool,
         xresnet: bool,
         activation: torch.nn.Module,
+        layers_map: LayersMap,
     ):
         super().__init__()
 
@@ -60,6 +61,7 @@ class ResNetBlock(pl.LightningModule):
                 stride=stride,
                 bias=bias,
                 activation=activation,
+                layers_map=layers_map,
             )
 
             layer_2 = conv_layer(
@@ -68,6 +70,7 @@ class ResNetBlock(pl.LightningModule):
                 kernel_size=kernel_size,
                 bias=bias,
                 activation=None,
+                layers_map=layers_map,
             )
 
             layers = [layer_1, layer_2]
@@ -85,6 +88,7 @@ class ResNetBlock(pl.LightningModule):
                 stride=stride if not self.xresnet else 1,
                 bias=bias,
                 activation=activation,
+                layers_map=layers_map,
             )
 
             layer_2 = conv_layer(
@@ -94,6 +98,7 @@ class ResNetBlock(pl.LightningModule):
                 stride=stride if self.xresnet else 1,
                 bias=bias,
                 activation=activation,
+                layers_map=layers_map,
             )
 
             layer_3 = conv_layer(
@@ -102,6 +107,7 @@ class ResNetBlock(pl.LightningModule):
                 kernel_size=1,
                 bias=bias,
                 activation=None,
+                layers_map=layers_map,
             )
 
             layers = [layer_1, layer_2, layer_3]
@@ -122,13 +128,15 @@ class ResNetBlock(pl.LightningModule):
                 kernel_size=1,
                 bias=bias,
                 activation=None,
+                layers_map=layers_map,
             )
 
             # Add AvgPool because of XResNet tweaks --> ResNet-D
             # info: https://towardsdatascience.com
             # /xresnet-from-scratch-in-pytorch-e64e309af722
 
-            self.pool = nn.AvgPool2d(kernel_size=2, stride=2, ceil_mode=True)
+            pool_params = dict(kernel_size=2, stride=2, ceil_mode=True)
+            self.pool = layers_map.AvgPool(**pool_params)
 
         elif not n_inputs == n_filters and not xresnet:
             # If downsampling block in ResNet
@@ -140,6 +148,7 @@ class ResNetBlock(pl.LightningModule):
                 stride=stride,
                 bias=bias,
                 activation=None,
+                layers_map=layers_map,
             )
 
             self.pool = nn.Identity()
@@ -147,7 +156,11 @@ class ResNetBlock(pl.LightningModule):
         self.activation = activation
 
     def forward(self, x):
-        return self.activation(self.convs(x) + self.id_conv(self.pool(x)))
+        identity = self.id_conv(self.pool(x))
+        shape = identity.shape
+
+        conv = nn.functional.interpolate(self.convs(x), shape[-1])
+        return self.activation(conv + identity)
 
 
 class ResNet(LitModel):
@@ -196,6 +209,7 @@ class ResNet(LitModel):
                     stride=stride,
                     bias=self.bias,
                     activation=self.activation,
+                    layers_map=self.layers_map,
                 )
 
                 stem.append(layer)
@@ -208,6 +222,7 @@ class ResNet(LitModel):
                 stride=2,
                 bias=self.bias,
                 activation=self.activation,
+                layers_map=self.layers_map,
             )
 
             stem.append(layer)
@@ -227,22 +242,38 @@ class ResNet(LitModel):
                 bias=self.bias,
                 xresnet=self.xresnet,
                 activation=self.activation,
+                layers_map=self.layers_map,
             )
             for i, number_of_blocks in enumerate(self.blocks)
         ]
 
+        if self.additional_dense_layers:
+            first_linear_output = n_filters[-1] * expansion // 2
+            final_layers = [
+                nn.Dropout(p=self.dropout),
+                nn.Linear(
+                    in_features=n_filters[-1] * expansion // 2,
+                    out_features=self.out_channels,
+                ),
+            ] * self.additional_dense_layers
+
+        else:
+            first_linear_output = self.out_channels
+            final_layers = []
+
         self.layers = nn.ModuleList(
             [
                 *stem,
-                nn.MaxPool2d(kernel_size=self.ks, stride=2, padding=1),
+                self.layers_map.MaxPool(kernel_size=3, stride=2, padding=1),
                 *res_layers,
-                nn.AdaptiveAvgPool2d(1),
+                self.layers_map.AdaptiveAvgPool(1),
                 nn.Flatten(),
                 nn.Dropout(p=self.dropout),
                 nn.Linear(
                     in_features=n_filters[-1] * expansion,
-                    out_features=self.out_channels,
+                    out_features=first_linear_output,
                 ),
+                *final_layers,
             ]
         )
 
@@ -276,6 +307,7 @@ class ResNet(LitModel):
         bias: bool,
         xresnet: bool,
         activation: nn.Module,
+        layers_map: LayersMap,
     ) -> nn.Sequential:
 
         resnet_blocks = []
@@ -290,11 +322,40 @@ class ResNet(LitModel):
                 bias=bias,
                 xresnet=xresnet,
                 activation=activation,
+                layers_map=layers_map,
             )
 
             resnet_blocks.append(resnet_block)
 
         return nn.Sequential(*resnet_blocks)
+
+    @property
+    def layers_map(self):
+        layers_dim_map = {
+            "1D": LayersMap(
+                AdaptiveAvgPool=torch.nn.AdaptiveAvgPool1d,
+                MaxPool=torch.nn.MaxPool1d,
+                AvgPool=torch.nn.AvgPool1d,
+                Conv=torch.nn.Conv1d,
+                BatchNorm=torch.nn.BatchNorm1d,
+            ),
+            "2D": LayersMap(
+                AdaptiveAvgPool=torch.nn.AdaptiveAvgPool2d,
+                MaxPool=torch.nn.MaxPool2d,
+                AvgPool=torch.nn.AvgPool2d,
+                Conv=torch.nn.Conv2d,
+                BatchNorm=torch.nn.BatchNorm2d,
+            ),
+            "3D": LayersMap(
+                AdaptiveAvgPool=torch.nn.AdaptiveAvgPool3d,
+                MaxPool=torch.nn.MaxPool3d,
+                AvgPool=torch.nn.AvgPool3d,
+                Conv=torch.nn.Conv3d,
+                BatchNorm=torch.nn.BatchNorm3d,
+            ),
+        }
+
+        return layers_dim_map[self.data_dim]
 
     def log_pretrained_weights_bias_warning(self):
         info = "Setting pretrained weights will be ommited."
@@ -321,6 +382,7 @@ class ResNet(LitModel):
         self.ks = config.model.kernel_size
         self.xresnet = config.model.xresnet
         self.dropout = config.model.dropout
+        self.additional_dense_layers = config.model.additional_dense_layers
 
     def set_blocks(self, blocks: List[int]) -> List[int]:
         self.check_depth()
