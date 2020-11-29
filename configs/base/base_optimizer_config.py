@@ -1,12 +1,13 @@
 from copy import deepcopy
 from typing import Any, Dict, ItemsView, List, Optional
 
+from torch.nn import Module
+
 from configs.base.base import BaseConfig
 from configs.tunable.optimizers_template import (
     DefaultOptimizers,
     DefaultSchedulers,
 )
-from src.base.models import LitModel
 from src.base.optimizers import BaseOptim
 from src.base.schedulers import BaseScheduler
 from src.utils.logging import get_logger
@@ -70,7 +71,7 @@ class DefaultOptimizersAndSchedulers(BaseConfig):
     def get_optimizers(
         cls,
         opts: ItemsView[str, Dict[str, BaseOptim]],
-        models: Dict[str, Optional[LitModel]],
+        models: Dict[str, Optional[Module]],
     ) -> Dict[str, BaseOptim]:
 
         return {name: cls.get_optimizer(opt, models) for name, opt in opts}

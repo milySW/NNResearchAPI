@@ -8,9 +8,9 @@ import pandas as pd
 
 from pytorch_lightning.callbacks.base import Callback
 from pytorch_lightning.trainer.trainer import Trainer
+from torch.nn import Module
 
 from src.base.losses import BaseLoss
-from src.base.models import LitModel
 from src.callbacks.calculate_class_metrics import CalculateClassMetrics
 from src.callbacks.calculate_metrics import CalculateMetrics
 
@@ -188,11 +188,11 @@ class CollectBestMetrics(CalculateMetrics, CollectBest):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-    def on_fit_start(self, trainer: Trainer, pl_module: LitModel):
+    def on_fit_start(self, trainer: Trainer, pl_module: Module):
         super().on_fit_start(trainer, pl_module)
         self.check_conflicts(trainer=trainer, callback=CalculateMetrics)
 
-    def on_fit_end(self, trainer: Trainer, pl_module: LitModel):
+    def on_fit_end(self, trainer: Trainer, pl_module: Module):
         self.collect_best_metrics(trainer=trainer)
 
 
@@ -222,9 +222,9 @@ class CollectBestClassMetrics(CalculateClassMetrics, CollectBest):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-    def on_fit_start(self, trainer: Trainer, pl_module: LitModel):
+    def on_fit_start(self, trainer: Trainer, pl_module: Module):
         super().on_fit_start(trainer, pl_module)
         self.check_conflicts(trainer=trainer, callback=CalculateClassMetrics)
 
-    def on_fit_end(self, trainer: Trainer, pl_module: LitModel):
+    def on_fit_end(self, trainer: Trainer, pl_module: Module):
         self.collect_best_metrics(trainer=trainer)

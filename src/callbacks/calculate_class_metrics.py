@@ -3,9 +3,9 @@ from typing import Any, Dict, List, Tuple
 import numpy as np
 
 from pytorch_lightning.trainer.trainer import Trainer
+from torch.nn import Module
 
 from src.base.metrics import BaseMetric
-from src.base.models import LitModel
 from src.callbacks.calculate_metrics import CalculateMetrics
 
 
@@ -62,7 +62,7 @@ class CalculateClassMetrics(CalculateMetrics):
                 metric=metric, kwargs=kwargs, group=group,
             )
 
-    def on_train_start(self, trainer: Trainer, pl_module: LitModel):
+    def on_train_start(self, trainer: Trainer, pl_module: Module):
         _, y = trainer.train_dataloader.dataset.pop()
         self.classes = len(y)
 

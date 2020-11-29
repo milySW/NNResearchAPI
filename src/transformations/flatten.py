@@ -17,6 +17,6 @@ class Flatten(BaseTransformation):
 
     @staticmethod
     def core_transofmation(data: Iterable, start_dim, end_dim) -> torch.Tensor:
-        data = data.permute(0, 1, 3, 2)
-        data[:, :, 1, :].shape
+        # data = data.permute(0, 1, 3, 2)
+        # data[:, :, 1, :].shape
         return torch.flatten(data, start_dim=start_dim, end_dim=end_dim)

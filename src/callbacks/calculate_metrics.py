@@ -7,9 +7,9 @@ import torch
 from pytorch_lightning.callbacks.base import Callback
 from pytorch_lightning.trainer.trainer import Trainer
 from tabulate import tabulate
+from torch.nn import Module
 
 from src.base.metrics import BaseMetric
-from src.base.models import LitModel
 from src.utils.plots import save_columns_plot
 
 
@@ -118,7 +118,7 @@ class CalculateMetrics(Callback):
         print(tabulate(metrics, tablefmt="plain"))
         print("-" * total_width)
 
-    def log_metrics_to_module(self, module: LitModel):
+    def log_metrics_to_module(self, module: Module):
         names = self.series.keys().values
         values = self.series.values
 
@@ -145,30 +145,30 @@ class CalculateMetrics(Callback):
         cols = sorted(cols, key=lambda x: x.split("_")[-1])
         return series[cols]
 
-    def on_fit_start(self, trainer: Trainer, pl_module: LitModel):
+    def on_fit_start(self, trainer: Trainer, pl_module: Module):
         self.metrics_dir = Path(trainer.default_root_dir) / self.subdir
         self.metrics_dir.mkdir(parents=True, exist_ok=True)
 
-    def on_train_start(self, trainer: Trainer, pl_module: LitModel):
+    def on_train_start(self, trainer: Trainer, pl_module: Module):
         self.metrics = trainer.model.metrics
         self.initial_load_save_dataframe()
 
     def on_epoch_start(self, trainer, pl_module):
         self.series = pd.Series()
 
-    def on_train_epoch_start(self, trainer: Trainer, pl_module: LitModel):
+    def on_train_epoch_start(self, trainer: Trainer, pl_module: Module):
         self.initialize_tensors()
 
-    def on_validation_epoch_start(self, trainer: Trainer, pl_module: LitModel):
+    def on_validation_epoch_start(self, trainer: Trainer, pl_module: Module):
         self.initialize_tensors()
 
-    def on_test_epoch_start(self, trainer: Trainer, pl_module: LitModel):
+    def on_test_epoch_start(self, trainer: Trainer, pl_module: Module):
         self.initialize_tensors()
 
     def on_train_batch_end(
         self,
         trainer: Trainer,
-        pl_module: LitModel,
+        pl_module: Module,
         outputs: List[Any],
         batch: List[torch.Tensor],
         batch_idx: int,
@@ -182,7 +182,7 @@ class CalculateMetrics(Callback):
     def on_validation_batch_end(
         self,
         trainer: Trainer,
-        pl_module: LitModel,
+        pl_module: Module,
         outputs: List[Any],
         batch: List[torch.Tensor],
         batch_idx: int,
@@ -196,7 +196,7 @@ class CalculateMetrics(Callback):
     def on_test_batch_end(
         self,
         trainer: Trainer,
-        pl_module: LitModel,
+        pl_module: Module,
         outputs: List[Any],
         batch: List[torch.Tensor],
         batch_idx: int,
@@ -206,16 +206,16 @@ class CalculateMetrics(Callback):
         if trainer.num_test_batches[dataloader_idx] - batch_idx == 1:
             self.manage_metrics(prefix="test_")
 
-    def on_epoch_end(self, trainer: Trainer, pl_module: LitModel):
+    def on_epoch_end(self, trainer: Trainer, pl_module: Module):
         self.series = self.sorted_series(series=self.series)
         self.load_save_dataframe()
         self.log_metrics(epoch=trainer.current_epoch)
 
-    def on_train_end(self, trainer: Trainer, pl_module: LitModel):
+    def on_train_end(self, trainer: Trainer, pl_module: Module):
         self.save_final_metrics()
         self.save_plots()
 
-    def on_test_end(self, trainer: Trainer, pl_module: LitModel):
+    def on_test_end(self, trainer: Trainer, pl_module: Module):
         self.series = self.sorted_series(series=self.series)
         self.load_save_dataframe(save=False)
         self.save_final_metrics()
