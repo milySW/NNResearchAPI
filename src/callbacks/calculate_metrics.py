@@ -9,7 +9,7 @@ from pytorch_lightning.trainer.trainer import Trainer
 from tabulate import tabulate
 
 from src.base.metrics import BaseMetric
-from src.models.base import LitModel
+from src.base.models import LitModel
 from src.utils.plots import save_columns_plot
 
 

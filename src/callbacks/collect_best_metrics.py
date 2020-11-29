@@ -10,9 +10,9 @@ from pytorch_lightning.callbacks.base import Callback
 from pytorch_lightning.trainer.trainer import Trainer
 
 from src.base.losses import BaseLoss
+from src.base.models import LitModel
 from src.callbacks.calculate_class_metrics import CalculateClassMetrics
 from src.callbacks.calculate_metrics import CalculateMetrics
-from src.models.base import LitModel
 
 
 class CollectBest:

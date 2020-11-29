@@ -5,8 +5,8 @@ import numpy as np
 from pytorch_lightning.trainer.trainer import Trainer
 
 from src.base.metrics import BaseMetric
+from src.base.models import LitModel
 from src.callbacks.calculate_metrics import CalculateMetrics
-from src.models.base import LitModel
 
 
 class CalculateClassMetrics(CalculateMetrics):

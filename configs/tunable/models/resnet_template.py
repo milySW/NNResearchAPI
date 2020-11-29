@@ -32,22 +32,22 @@ class DefaultResnet(DefaultModel):
 
     """
 
-    name: str = "resnet34"
-    data_dim: str = "1D"
+    name: str = "resnet18"  # final
+    data_dim: str = "1D"  # final
 
     # Architecture
-    depth: int = 3
-    in_channels: int = 1
-    out_channels: int = 4
-    kernel_size: int = 16
-    f_maps: int = 64
-    bias: bool = True
+    depth: int = 3  # final
+    in_channels: int = 1  # final
+    out_channels: int = 4  # final
+    kernel_size: int = 6  # final
+    f_maps: int = 64  # final
+    bias: bool = False  # final
     activation: torch.nn.Module = nn.ReLU(inplace=True)
 
     # Additional features
-    dropout: float = 0.5
-    additional_dense_layers: int = 1
-    xresnet: bool = True
+    dropout: float = 0  # final
+    additional_dense_layers: int = 0  # final
+    xresnet: bool = False  # final
 
     # Pretrained weights (Supported only for 2d)
     freezing_start: int = 9 if xresnet else 3

@@ -4,6 +4,7 @@ import torch
 
 from tqdm import tqdm
 
+from src.base.models import LitModel
 from src.models import load_model
 from src.models.utils import save_prediction
 from src.utils.collections import batch_list
@@ -11,7 +12,7 @@ from src.utils.decorators import timespan
 from src.utils.loaders import load_variable, load_x
 from src.utils.logging import get_logger
 from src.utils.params import ParamsBuilder
-from src.utils.transforms import pred_transform
+from src.utils.transforms import input_transform, pred_transform
 
 logger = get_logger("Predictor")
 
@@ -39,11 +40,12 @@ def main(
     x = load_x(input_path, dtype=dtype)
     batches = batch_list(x, config.prediction.batch_size)
 
-    model = load_model(config, model_path)
+    model: LitModel = load_model(config, model_path)
     model.eval()
 
     all_preds = torch.tensor([])
     for input_data in tqdm(batches, desc="Predictions"):
+        input_data = input_transform(input_data, config.preprocessors)
         predictions = model(input_data)
         processed_preds = pred_transform(predictions, config.postprocessors)
 

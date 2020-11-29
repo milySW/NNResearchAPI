@@ -2,7 +2,7 @@ from typing import Iterable
 
 import torch
 
-from configs import DefaultPostprocessors
+from configs import DefaultPostprocessors, DefaultPreprocessors
 
 
 def pred_transform(preds: Iterable, postprocessors: DefaultPostprocessors):
@@ -13,3 +13,13 @@ def pred_transform(preds: Iterable, postprocessors: DefaultPostprocessors):
         data = tfms(data)
 
     return data[1]
+
+
+def input_transform(inputs: Iterable, preprocessors: DefaultPreprocessors):
+    tfms_list = preprocessors.value_list()
+    data = list([inputs, torch.zeros_like(inputs)])
+
+    for tfms in tfms_list:
+        data = tfms(data)
+
+    return data[0]

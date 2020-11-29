@@ -9,4 +9,6 @@ class DefaultEvaluation(BaseConfig):
     Providing new evaluation require adding new class field with any name
     """
 
-    top_losses = TopLosses(loss=CrossEntropyLoss(reduction="none"))
+    top_losses = TopLosses(
+        loss=CrossEntropyLoss(reduction="none"), k=200, save_plots=False
+    )

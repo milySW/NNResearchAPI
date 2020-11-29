@@ -8,7 +8,7 @@ import torch.nn as nn
 
 from torch.hub import load_state_dict_from_url
 
-from src.models.base import LitModel
+from src.base.models import LitModel
 
 pytorch_prefix = "https://download.pytorch.org/models"
 model_urls = dict(

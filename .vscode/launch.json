@@ -34,7 +34,7 @@
                 "--input_path",
                 ".data/x_test.npy",
                 "--model_path",
-                ".data/models/xresnet18/1/checkpoints/epoch=1.ckpt",
+                ".data/models/resnet18/202/checkpoints/epoch=20.ckpt",
                 "--predict_path",
                 ".data/predictions/predictions.npy"
             ],
