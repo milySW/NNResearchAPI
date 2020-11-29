@@ -2,9 +2,9 @@ from pathlib import Path
 
 import torch
 
+from torch.nn import Module
 from tqdm import tqdm
 
-from src.base.models import LitModel
 from src.models import load_model
 from src.models.utils import save_prediction
 from src.utils.collections import batch_list
@@ -40,7 +40,7 @@ def main(
     x = load_x(input_path, dtype=dtype)
     batches = batch_list(x, config.prediction.batch_size)
 
-    model: LitModel = load_model(config, model_path)
+    model: Module = load_model(config, model_path)
     model.eval()
 
     all_preds = torch.tensor([])
