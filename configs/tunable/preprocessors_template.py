@@ -17,3 +17,16 @@ class DefaultPreprocessors(BaseConfig):
         valid=True,
         test=True,
     )
+
+    # binarize_labels = LabelBinarize(
+    #     main_class=2, x=False, y=True, train=True, valid=True, test=True,
+    # )
+
+    # auto_covariation = AutoCov(
+    #     size=64 * 1 * 1 * 1 * 1 * 1 * 1,
+    #     x=True,
+    #     y=False,
+    #     train=True,
+    #     valid=True,
+    #     test=True,
+    # )
