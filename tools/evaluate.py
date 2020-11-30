@@ -6,6 +6,7 @@ from src.utils.decorators import timespan
 from src.utils.loaders import load_variable, load_x, load_y
 from src.utils.logging import get_logger
 from src.utils.params import ParamsBuilder
+from src.utils.transforms import input_transform
 
 logger = get_logger("Evaluator")
 
@@ -34,7 +35,11 @@ def main(
     config = load_variable("config", config_path)
 
     data = load_x(input_path)
-    targets = load_y(data_path)
+    _, targets = input_transform(
+        input_data=None,
+        input_labels=load_y(data_path),
+        preprocessors=config.preprocessors,
+    )
     predictions = load_y(predict_path)
 
     for evaluator in config.evaluations.value_list():

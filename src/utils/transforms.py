@@ -1,8 +1,9 @@
-from typing import Iterable
+from typing import Iterable, Optional
 
 import torch
 
 from configs import DefaultPostprocessors, DefaultPreprocessors
+from src.utils.collections import collection_is_none
 
 
 def pred_transform(preds: Iterable, postprocessors: DefaultPostprocessors):
@@ -15,11 +16,18 @@ def pred_transform(preds: Iterable, postprocessors: DefaultPostprocessors):
     return data[1]
 
 
-def input_transform(inputs: Iterable, preprocessors: DefaultPreprocessors):
+def input_transform(
+    input_data: Optional[Iterable],
+    input_labels: Optional[Iterable],
+    preprocessors: DefaultPreprocessors,
+):
+    if collection_is_none(input_data) and collection_is_none(input_labels):
+        raise ValueError("Both data inputs are None!")
+
     tfms_list = preprocessors.value_list()
-    data = list([inputs, torch.zeros_like(inputs)])
+    data = list([input_data, input_labels])
 
     for tfms in tfms_list:
         data = tfms(data)
 
-    return data[0]
+    return data

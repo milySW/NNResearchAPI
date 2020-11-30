@@ -71,3 +71,7 @@ def split(name: str, start: int, stop: int, delimeter=".") -> str:
 
 def unique_keys(collection: Iterable[str]) -> List[Any]:
     return list(OrderedDict.fromkeys(collection))
+
+
+def collection_is_none(data: Iterable):
+    return isinstance(data, type(None))

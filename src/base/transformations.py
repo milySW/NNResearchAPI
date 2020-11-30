@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 from random import random
 from typing import Iterable, List
 
+from src.utils.collections import collection_is_none
+
 
 class BaseTransformation(ABC):
     @abstractmethod
@@ -38,9 +40,9 @@ class BaseTransformation(ABC):
 
         x, y = data
 
-        if self.x:
+        if self.x and not collection_is_none(x):
             x = self.transformation(x)
-        if self.y:
+        if self.y and not collection_is_none(y):
             y = self.transformation(y)
 
         return [x, y]
