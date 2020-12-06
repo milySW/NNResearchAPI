@@ -1,7 +1,9 @@
 from pytorch_lightning.callbacks.early_stopping import EarlyStopping as PLEarly
 
+from src.base.callback import BaseCallback
 
-class EarlyStopping(PLEarly):
+
+class EarlyStopping(BaseCallback, PLEarly):
     __doc__ = PLEarly.__doc__
 
     def __init__(self, **kwargs):

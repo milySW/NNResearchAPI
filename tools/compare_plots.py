@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from src.utils.collections import unpack_paths
+from src.utils.collections import unpack_metric_paths
 from src.utils.logging import get_logger
 from src.utils.params import ParamsBuilder
 from src.utils.plots import get_name_from_names, save_csv_plots
@@ -29,7 +29,7 @@ def main(
 
     logger.info("Start generating plots")
     output = output_path / get_name_from_names(experiments)
-    experiments = unpack_paths(root_path, experiments, supported_files)
+    experiments = unpack_metric_paths(root_path, experiments, supported_files)
 
     for group in experiments:
         save_csv_plots(data=group, output=output, prefix=prefix)

@@ -2,8 +2,10 @@ import sys
 
 from pytorch_lightning.callbacks import progress
 
+from src.base.callback import BaseCallback
 
-class LightProgressBar(progress.ProgressBar):
+
+class LightProgressBar(BaseCallback, progress.ProgressBar):
     """
     Callback logging progresss bar. Wrapper for progress.ProgressBar,
     which provides progress bar hidding after operation end.

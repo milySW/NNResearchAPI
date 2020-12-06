@@ -10,10 +10,10 @@ from torch.utils.data.dataloader import DataLoader
 
 import configs
 
-from src.base.losses import BaseLoss
-from src.base.metrics import BaseMetric
-from src.base.optimizers import BaseOptim
-from src.base.schedulers import BaseScheduler
+from src.base.loss import BaseLoss
+from src.base.metric import BaseMetric
+from src.base.optimizer import BaseOptim
+from src.base.scheduler import BaseScheduler
 
 
 class LitModel(pl.LightningModule):
@@ -31,7 +31,7 @@ class LitModel(pl.LightningModule):
         architecture_name: str,
     ):
         info = f"Passed config is not for {architecture_name} architecutre!"
-        assert current == expected, info
+        assert current.__name__ == expected.__name__, info
 
     @property
     def pretrained(self):
@@ -120,6 +120,20 @@ class LitModel(pl.LightningModule):
 
         return list(optimizers.values()), schedulers
 
+    @staticmethod
+    def manage_labels(labels: torch.Tensor) -> torch.Tensor:
+        if dim := len(labels.shape) == 1:
+            pass
+
+        elif len(labels.shape) == 2:
+            labels = torch.argmax(labels.squeeze(), 1)
+
+        else:
+            problem = "Only flat tensor and one hots are supported"
+            raise ValueError(f"Label tensor is {dim} dimensional. {problem}")
+
+        return labels
+
     def standard_calculate_batch(
         self, batch: list, precalculated_preds: torch.Tensor = None
     ) -> torch.Tensor:
@@ -130,8 +144,7 @@ class LitModel(pl.LightningModule):
         else:
             y_hat = self(x.float())
 
-        labels = torch.argmax(y.squeeze(), 1)
-
+        labels = self.manage_labels(labels=y)
         loss = self.loss_function(y_hat, labels)
 
         calculations = dict(

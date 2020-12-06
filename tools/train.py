@@ -1,4 +1,5 @@
 from pathlib import Path
+from types import SimpleNamespace
 from typing import Tuple, Union
 
 from src import models
@@ -46,11 +47,15 @@ def main(config_path: Path, dataset_path: Path) -> Union[Tuple[Path], Path]:
         learner.test(test_dataloaders=test_loader)
 
     if train.save:
-        model_path = Path(learner.checkpoint_callback.best_model_path)
-        return learner.root_dir, model_path
-
+        results = SimpleNamespace(
+            root=learner.root_dir,
+            model_path=Path(learner.checkpoint_callback.best_model_path),
+            val_loader=val_loader,
+            test_loader=test_loader,
+        )
+        return results
     else:
-        return learner.root_dir
+        return SimpleNamespace(root=learner.root_dir)
 
 
 if __name__ == "__main__":

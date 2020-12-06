@@ -23,18 +23,11 @@ class ParamsBuilder(ArgumentParser):
             "--dataset_path", type=Path, help=info, required=False,
         )
 
-    def add_data_argument(
-        self, info: str = "Path to file containing data."
-    ) -> ArgumentParser:
-        self.add_argument(
-            "--data_path", type=Path, help=info, required=False,
-        )
-
     def add_input_argument(
         self, info: str = "Path to file with input data."
     ) -> ArgumentParser:
         self.add_argument(
-            "--input_path", type=str, help=info, required=False,
+            "--input_path", type=Path, help=info, required=False,
         )
 
     def add_predict_argument(
@@ -63,6 +56,13 @@ class ParamsBuilder(ArgumentParser):
     ) -> ArgumentParser:
         self.add_argument(
             "--model_path", type=Path, help=info, required=False,
+        )
+
+    def add_models_argument(
+        self, info: str = "Relative paths to models separated by a coma"
+    ) -> ArgumentParser:
+        self.add_argument(
+            "--model_paths", type=str, help=info, required=False,
         )
 
     def add_evaluate_argument(

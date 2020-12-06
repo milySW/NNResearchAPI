@@ -6,6 +6,9 @@ from typing import Any, List, Tuple
 import numpy as np
 import torch
 
+from torchvision import transforms
+from torchvision.datasets import ImageFolder
+
 
 def load_variable(variable_name: str, path: Path) -> Any:
     spec = importlib.util.spec_from_file_location(variable_name, path)
@@ -26,7 +29,30 @@ def load_custom_set(
     return NotImplemented
 
 
-def load_default_sets(path: Path, dtype=torch.dtype) -> Tuple[np.array, ...]:
+def load_image_sets(
+    path: Path, dtype: torch.dtype, preprocessors, *args, **kwargs
+) -> Tuple[np.array, ...]:
+
+    data_transform = transforms.Compose(
+        [transforms.Resize((256, 256)), transforms.ToTensor(), *preprocessors]
+    )
+
+    dataset = ImageFolder(path / "omatko", transform=data_transform)
+    length = len(dataset)
+
+    train_size, valid_size = int(0.7 * length), int(0.15 * length)
+    sizes = (train_size, valid_size, length - train_size - valid_size)
+
+    train, valid, test = torch.utils.data.random_split(dataset, sizes)
+    sets = dict(train=train, test=test, valid=valid)
+
+    return sets
+
+
+def load_default_sets(
+    path: Path, dtype=torch.dtype, preprocessors=None
+) -> Tuple[np.array, ...]:
+
     X_train, y_train = load_set(path, ["X_train.npy", "y_train.npy"], dtype)
     X_val, y_val = load_set(path, ["X_val.npy", "y_val.npy"], dtype)
     X_test, y_test = load_set(path, ["X_test.npy", "y_test.npy"], dtype)
@@ -48,6 +74,10 @@ def load_set(
 
 
 def load_x(path: Path, dtype: torch.dtype = torch.float32) -> torch.Tensor:
+    return torch.tensor(np.expand_dims(np.load(path), axis=1), dtype=dtype)
+
+
+def load_custom_x(path: Path, dtype: torch.dtype = torch.float32):
     return torch.tensor(np.expand_dims(np.load(path), axis=1), dtype=dtype)
 
 

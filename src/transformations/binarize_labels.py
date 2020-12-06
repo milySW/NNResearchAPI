@@ -2,7 +2,7 @@ from typing import Iterable
 
 import torch
 
-from src.base.transformations import BaseTransformation
+from src.base.transformation import BaseTransformation
 
 
 class LabelBinarize(BaseTransformation):

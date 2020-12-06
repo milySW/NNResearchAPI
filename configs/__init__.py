@@ -4,7 +4,7 @@ from configs.base.base_optimizer_config import DefaultOptimizersAndSchedulers
 from configs.main.config_template import DefaultConfig
 from configs.tunable.augmentations_template import DefaultAugmentations
 from configs.tunable.callbacks_template import DefaultCallbacks
-from configs.tunable.evaluation_template import DefaultEvaluation
+from configs.tunable.evaluation_template import DefaultEvaluations
 from configs.tunable.hooks_template import DefaultHooks
 from configs.tunable.metrics_template import DefaultMetrics
 from configs.tunable.models.model_template import DefaultModel
@@ -25,7 +25,7 @@ __all__ = [
     "DefaultResnet",
     "DefaultTraining",
     "DefaultPrediction",
-    "DefaultEvaluation",
+    "DefaultEvaluations",
     "DefaultMetrics",
     "DefaultCallbacks",
     "DefaultHooks",

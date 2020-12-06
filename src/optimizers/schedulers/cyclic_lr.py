@@ -1,6 +1,6 @@
 from torch.optim.lr_scheduler import CyclicLR as TorchCyclicLr
 
-from src.base.schedulers import BaseScheduler
+from src.base.scheduler import BaseScheduler
 
 
 class CyclicLR(BaseScheduler, TorchCyclicLr):

@@ -5,8 +5,9 @@ import numpy as np
 from pytorch_lightning.trainer.trainer import Trainer
 from torch.nn import Module
 
-from src.base.metrics import BaseMetric
+from src.base.metric import BaseMetric
 from src.callbacks.calculate_metrics import CalculateMetrics
+from src.utils.checkers import image_folder
 
 
 class CalculateClassMetrics(CalculateMetrics):
@@ -63,8 +64,11 @@ class CalculateClassMetrics(CalculateMetrics):
             )
 
     def on_train_start(self, trainer: Trainer, pl_module: Module):
-        _, y = trainer.train_dataloader.dataset.pop()
-        self.classes = len(y)
+        if image_folder(data := trainer.train_dataloader.dataset):
+            self.classes = len(data.dataset.classes)
+        else:
+            _, y = data.pop()
+            self.classes = len(y)
 
         super().on_train_start(trainer=trainer, pl_module=pl_module)
 

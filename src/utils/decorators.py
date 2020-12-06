@@ -3,7 +3,6 @@ import sys
 from functools import wraps
 from time import time
 
-import numpy as np
 import pandas as pd
 
 
@@ -25,8 +24,7 @@ def timespan(name: str):
             sys.stdout.write(f"\n{name} took: {seconds} sec\n")
 
             if result:
-                root = np.atleast_1d(result)[0]
-                path = root / "time.csv"
+                path = result.root / "time.csv"
                 header = not path.is_file()
 
                 df = pd.DataFrame({"operation": [name], "time[s]": [seconds]})

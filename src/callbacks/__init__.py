@@ -1,5 +1,6 @@
 from src.callbacks.calculate_class_metrics import CalculateClassMetrics
 from src.callbacks.calculate_metrics import CalculateMetrics
+from src.callbacks.class_distribution import ClassDistribution
 from src.callbacks.collect_best_metrics import (
     CollectBestClassMetrics,
     CollectBestMetrics,
@@ -16,4 +17,5 @@ __all__ = [
     "CalculateMetrics",
     "CollectBestMetrics",
     "CollectBestClassMetrics",
+    "ClassDistribution",
 ]

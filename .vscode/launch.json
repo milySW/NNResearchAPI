@@ -32,9 +32,9 @@
                 "--config_path",
                 "configs/main/config.py",
                 "--input_path",
-                ".data/x_test.npy",
+                ".data",
                 "--model_path",
-                ".data/models/resnet18/202/checkpoints/epoch=20.ckpt",
+                ".data/models/resnet18/391/checkpoints/epoch=0.ckpt",
                 "--predict_path",
                 ".data/predictions/predictions.npy"
             ],
@@ -55,9 +55,7 @@
                 "--config_path",
                 "configs/main/config.py",
                 "--input_path",
-                ".data/X_val.npy",
-                "--data_path",
-                ".data/y_val.npy",
+                ".data",
                 "--predict_path",
                 ".data/models/resnet18/235/predictions/predictions.npy",
                 "--evaluate_path",
@@ -82,9 +80,7 @@
                 "--dataset_path",
                 ".data",
                 "--input_path",
-                ".data/X_val.npy",
-                "--data_path",
-                ".data/y_val.npy",
+                ".data",
                 "--predict_path",
                 "predictions/predictions.npy",
                 "--evaluate_path",
@@ -96,6 +92,35 @@
                 "hidden": false,
                 "group": "2. Pipelines",
                 "order": 4
+            }
+        },
+        {
+            "name": "ensamble predict + evaluate",
+            "type": "python",
+            "request": "launch",
+            "module": "tools.ensamble.voting_classifiers",
+            "args": [
+                "--root_path",
+                ".data/models",
+                "--experiments",
+                "resnet18/262, resnet18/264",
+                "--model_paths",
+                "checkpoints/epoch=53.ckpt, checkpoints/epoch=33.ckpt",
+                "--input_path",
+                ".data",
+                "--predict_path",
+                "ensemble/two_voting/predictions/predictions.npy",
+                "--config_path",
+                "configs",
+                "--evaluate_path",
+                "ensemble/two_voting/evaluations",
+            ],
+            "justMyCode": false,
+            "cwd": "${workspaceFolder}",
+            "presentation": {
+                "hidden": false,
+                "group": "2. Pipelines",
+                "order": 5
             }
         },
         {
@@ -120,7 +145,7 @@
             "presentation": {
                 "hidden": false,
                 "group": "3. Additional Tools",
-                "order": 5
+                "order": 6
             }
         },
     ]

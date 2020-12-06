@@ -8,8 +8,8 @@ from configs.tunable.optimizers_template import (
     DefaultOptimizers,
     DefaultSchedulers,
 )
-from src.base.optimizers import BaseOptim
-from src.base.schedulers import BaseScheduler
+from src.base.optimizer import BaseOptim
+from src.base.scheduler import BaseScheduler
 from src.utils.logging import get_logger
 
 logger = get_logger("SchedulerSetter")

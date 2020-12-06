@@ -3,7 +3,7 @@ from typing import Generator
 from torch.nn.parameter import Parameter
 from torch.optim import Adadelta as TorchAdadelta
 
-from src.base.optimizers import BaseOptim
+from src.base.optimizer import BaseOptim
 
 
 class Adadelta(BaseOptim, TorchAdadelta):

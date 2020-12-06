@@ -2,6 +2,9 @@ from abc import ABC, abstractmethod
 from random import random
 from typing import Iterable, List
 
+import torch
+
+from src.utils.checkers import image_folder
 from src.utils.collections import collection_is_none
 
 
@@ -38,7 +41,13 @@ class BaseTransformation(ABC):
         if self.ratio < random():
             return data
 
+        if isinstance(data, torch.Tensor):
+            return self.transformation(data)
+
         x, y = data
+
+        if image_folder(x):
+            return data
 
         if self.x and not collection_is_none(x):
             x = self.transformation(x)

@@ -25,7 +25,7 @@ def stripped_data(data: Iterable) -> Iterable:
     return [i.strip() for i in data]
 
 
-def unpack_paths(
+def unpack_metric_paths(
     root_path: str, experiments: str, supported_files: str
 ) -> Generator[Dict[str, Path], str, None]:
 
@@ -34,6 +34,10 @@ def unpack_paths(
 
     roots = {exp: root_path / exp / "metrics" for exp in experiments}
     return (add_path_to_dict(roots, filename) for filename in supported_files)
+
+
+def unpack_string(string_iterable: Iterable) -> Iterable:
+    return stripped_data(string_iterable.split(","))
 
 
 def batch_generator(
@@ -73,5 +77,5 @@ def unique_keys(collection: Iterable[str]) -> List[Any]:
     return list(OrderedDict.fromkeys(collection))
 
 
-def collection_is_none(data: Iterable):
+def collection_is_none(data: Any) -> bool:
     return isinstance(data, type(None))

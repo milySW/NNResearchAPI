@@ -44,7 +44,7 @@ Prediction template
 
 Evaluation template
 ------------------------------------------------
-.. autoclass:: configs.DefaultEvaluation
+.. autoclass:: configs.DefaultEvaluations
 
 Preprocessors template
 ------------------------------------------------

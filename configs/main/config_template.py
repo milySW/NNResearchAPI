@@ -8,7 +8,7 @@ from configs.base.base_hooks_config import DefaultBindedHooks
 from configs.base.base_optimizer_config import DefaultOptimizersAndSchedulers
 from configs.tunable.augmentations_template import DefaultAugmentations
 from configs.tunable.callbacks_template import DefaultCallbacks
-from configs.tunable.evaluation_template import DefaultEvaluation
+from configs.tunable.evaluation_template import DefaultEvaluations
 from configs.tunable.metrics_template import DefaultMetrics
 from configs.tunable.models.model_template import DefaultModel
 from configs.tunable.postprocessors_template import DefaultPostprocessors
@@ -30,7 +30,7 @@ class DefaultConfig(BaseConfig):
         augmentations: DefaultAugmentations,
         postprocessors: DefaultPostprocessors,
         prediction: DefaultPrediction,
-        evaluations: DefaultEvaluation,
+        evaluations: DefaultEvaluations,
     ):
         self.model = model
         self.training = training

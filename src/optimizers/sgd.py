@@ -3,7 +3,7 @@ from typing import Generator
 from torch.nn.parameter import Parameter
 from torch.optim import SGD as TorchSGD
 
-from src.base.optimizers import BaseOptim
+from src.base.optimizer import BaseOptim
 
 
 class SGD(BaseOptim, TorchSGD):

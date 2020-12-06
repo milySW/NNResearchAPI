@@ -5,10 +5,10 @@ import torch
 from pytorch_lightning.profiler import BaseProfiler
 
 from configs.base.base import BaseConfig
-from src.base.losses import BaseLoss
+from src.base.loss import BaseLoss
 from src.callbacks import ModelCheckpoint
 from src.losses import MSELoss
-from src.utils.loaders import load_default_sets
+from src.utils.loaders import load_default_sets, load_image_sets  # noqa
 
 
 class DefaultTraining(BaseConfig):

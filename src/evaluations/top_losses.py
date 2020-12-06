@@ -2,11 +2,13 @@ from itertools import count, permutations
 from pathlib import Path
 from typing import Tuple
 
+import matplotlib.pyplot as plt
 import pandas as pd
 import torch
 
-from src.base.evaluations import BaseEvaluation
-from src.base.losses import BaseLoss
+from src.base.evaluation import BaseEvaluation
+from src.base.loss import BaseLoss
+from src.base.model import LitModel
 from src.utils.plots import save_data_plot
 
 
@@ -77,10 +79,12 @@ class TopLosses(BaseEvaluation):
         preds: torch.Tensor,
         data: torch.Tensor,
         output_path: Path,
+        image: bool,
     ):
         self.targets = targets
         self.losses = [round(loss.item(), 4) for loss in losses]
         self.preds = torch.argmax(preds.squeeze(), 1)
+        self.image = image
 
         self.log_reports()
 
@@ -102,7 +106,18 @@ class TopLosses(BaseEvaluation):
 
         for i, pred, target, loss, volume in zipped_data:
             name = f"top={i + 1}_target={target}_pred={pred}_loss={loss}.png"
-            save_data_plot(data=volume.squeeze().T, path=root / name)
+
+            shape = volume.shape
+
+            if self.image:
+                size = int(shape[1:].numel() ** (1 / 2))
+
+                reshaped_volume = volume.reshape([volume.shape[0], size, size])
+                volume = reshaped_volume.permute(1, 2, 0).numpy()
+
+                plt.imsave(root / name, volume)
+            else:
+                save_data_plot(data=volume.squeeze().T, path=root / name)
 
     def save_report(self, output_path: Path):
         root = output_path / self.folder_name / "reports"
@@ -131,8 +146,9 @@ class TopLosses(BaseEvaluation):
         targets: torch.Tensor,
         data: torch.Tensor,
         output: Path,
+        image: bool,
     ):
-        targets = torch.argmax(targets.squeeze(), 1)
+        targets = LitModel.manage_labels(targets)
         losses = self.loss(predictions, targets)
         indices, values = self.get_top_losses(losses)
 
@@ -142,4 +158,5 @@ class TopLosses(BaseEvaluation):
             preds=predictions[indices],
             data=data[indices],
             output_path=output,
+            image=image,
         )

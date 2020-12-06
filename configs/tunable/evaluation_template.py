@@ -3,7 +3,7 @@ from src.evaluations import TopLosses
 from src.losses import CrossEntropyLoss
 
 
-class DefaultEvaluation(BaseConfig):
+class DefaultEvaluations(BaseConfig):
     """
     Config responsible for evaluations of :class:`BaseEvaluation`.
     Providing new evaluation require adding new class field with any name

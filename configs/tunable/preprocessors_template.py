@@ -1,5 +1,5 @@
 from configs.base.base import BaseConfig
-from src.transformations import Flatten
+from src.transformations import Flatten, LabelBinarize  # noqa
 
 
 class DefaultPreprocessors(BaseConfig):

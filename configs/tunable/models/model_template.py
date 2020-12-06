@@ -1,3 +1,5 @@
+from torch import nn
+
 from configs.base.base import BaseConfig
 
 
@@ -19,6 +21,9 @@ class DefaultModel(BaseConfig):
 
     name: str
     data_dim: str
+
+    # layers
+    final_activation: nn.Module = nn.Softmax()
 
     # Pretrained weights
     pretrained: bool = False

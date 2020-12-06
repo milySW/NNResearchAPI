@@ -6,8 +6,7 @@ import torch
 from torch import nn
 
 from configs import DefaultConfig, DefaultResnet
-from src.base.models import LitModel
-from src.layers import PoolMixed1d
+from src.base.model import LitModel
 from src.models.utils import LayersMap, conv_layer, load_state_dict
 from src.utils.collections import filter_by_prefix, split, unique_keys
 from src.utils.logging import get_logger
@@ -137,8 +136,7 @@ class ResNetBlock(pl.LightningModule):
             # /xresnet-from-scratch-in-pytorch-e64e309af722
 
             pool_params = dict(kernel_size=2, stride=2, ceil_mode=True)
-            pool = layers_map.AvgPool(**pool_params)
-            self.pool = PoolMixed1d(flattened_size=2, pool=pool)
+            self.pool = layers_map.AvgPool(**pool_params)
 
         elif not n_inputs == n_filters and not xresnet:
             # If downsampling block in ResNet
@@ -267,17 +265,18 @@ class ResNet(LitModel):
             last_in = n_filters[-1] * expansion
             final_layers = []
 
-        max_pool = self.layers_map.MaxPool(kernel_size=3, stride=2, padding=1)
+        self.pool = self.layers_map.MaxPool(kernel_size=3, stride=2, padding=1)
         self.layers = nn.ModuleList(
             [
                 *stem,
-                PoolMixed1d(flattened_size=2, pool=max_pool),
+                self.pool,
                 *res_layers,
                 self.layers_map.AdaptiveAvgPool(1),
                 nn.Flatten(),
                 *final_layers,
                 nn.Dropout(p=self.dropout),
                 nn.Linear(in_features=last_in, out_features=self.out_channels),
+                self.final_activation,
             ]
         )
 
@@ -387,6 +386,7 @@ class ResNet(LitModel):
         self.xresnet = config.model.xresnet
         self.dropout = config.model.dropout
         self.additional_dense_layers = config.model.additional_dense_layers
+        self.final_activation = config.model.final_activation
 
     def set_blocks(self, blocks: List[int]) -> List[int]:
         self.check_depth()

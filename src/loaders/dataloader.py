@@ -1,14 +1,17 @@
 from functools import cached_property
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any, Iterable, Optional, Union
 
 import numpy as np
+import torch
 
 from torch.utils.data.dataloader import DataLoader as PLDataloader
+from torch.utils.data.dataset import Dataset
 from tqdm import tqdm
 
 from configs import DefaultConfig
-from src.base.transformations import BaseTransformation
+from src.base.transformation import BaseTransformation
+from src.utils.checkers import image_folder
 from src.utils.logging import get_logger
 
 logger = get_logger("PrepareDataloader")
@@ -31,11 +34,12 @@ class DataLoader(PLDataloader):
     @classmethod
     def get_loader(
         cls,
-        x_data: np.array,
-        labels: np.array,
+        x_data: Union[np.array, torch.Tensor, Dataset],
+        labels: Optional[Union[np.array, torch.Tensor]],
         config: DefaultConfig,
         dataset_type: str = "train",
     ):
+
         data = [x_data, labels]
         loader = cls(dataset=data, config=config, ds_type=dataset_type)
         return loader
@@ -44,10 +48,17 @@ class DataLoader(PLDataloader):
     def get_loaders(cls, path_to_data: Path, config: DefaultConfig):
 
         loading_func = config.training.loader_func
-        dtype = config.training.dtype
 
-        sets = loading_func(path_to_data, dtype)
+        sets = loading_func(
+            path=path_to_data,
+            dtype=config.training.dtype,
+            preprocessors=config.preprocessors.value_list(),
+        )
+
         for key, data_set in sets.items():
+            if image_folder(data=data_set):
+                data_set = (data_set, None)
+
             loader = cls.get_loader(*data_set, config=config, dataset_type=key)
             yield loader
 
@@ -76,4 +87,7 @@ class DataLoader(PLDataloader):
             logger.info(f"Applying {tfms.name} on {ds_type} set ...")
             data = tfms(data)
 
-        return list(zip(data[0], data[1]))
+        if data[1] is None:
+            return data[0]
+        else:
+            return list(zip(data[0], data[1]))

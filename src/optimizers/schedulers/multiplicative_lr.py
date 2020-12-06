@@ -1,6 +1,6 @@
 from torch.optim.lr_scheduler import MultiplicativeLR as TorchMultiplicativeLR
 
-from src.base.schedulers import BaseScheduler
+from src.base.scheduler import BaseScheduler
 
 
 class MultiplicativeLR(BaseScheduler, TorchMultiplicativeLR):

@@ -1,6 +1,6 @@
 from torch.optim.lr_scheduler import CosineAnnealingWarmRestarts as TorchCAWR
 
-from src.base.schedulers import BaseScheduler
+from src.base.scheduler import BaseScheduler
 
 
 class CosineAnnealingWarmRestarts(BaseScheduler, TorchCAWR):

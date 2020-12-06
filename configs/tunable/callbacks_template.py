@@ -1,5 +1,6 @@
 from configs.base.base import BaseConfig
 from src.callbacks import (
+    ClassDistribution,
     CollectBestClassMetrics,
     CollectBestMetrics,
     EarlyStopping,
@@ -18,3 +19,5 @@ class DefaultCallbacks(BaseConfig):
 
     best_class_metric = CollectBestClassMetrics(variants=["val", "test"])
     best_metric = CollectBestMetrics(variants=["val", "test"])
+
+    class_distribution = ClassDistribution()

@@ -2,7 +2,7 @@ import operator
 
 from pathlib import Path
 from shutil import copytree, rmtree
-from typing import List, Tuple
+from typing import Tuple
 
 import pandas as pd
 
@@ -10,12 +10,13 @@ from pytorch_lightning.callbacks.base import Callback
 from pytorch_lightning.trainer.trainer import Trainer
 from torch.nn import Module
 
-from src.base.losses import BaseLoss
+from src.base.callback import BaseCallback
+from src.base.loss import BaseLoss
 from src.callbacks.calculate_class_metrics import CalculateClassMetrics
 from src.callbacks.calculate_metrics import CalculateMetrics
 
 
-class CollectBest:
+class CollectBest(BaseCallback):
     """Callback collecting best metrics."""
 
     def __init__(self, variants: str = ["val"], best=True):
@@ -29,16 +30,6 @@ class CollectBest:
         self.best_dir_path = Path("best_metrics")
 
         self.metrics_dir = NotImplemented
-
-    @staticmethod
-    def check_variant(variants: List[str]):
-        supported = ["val", "test", ""]
-        info = f"Variants not supported. Supported variants: {supported}"
-
-        con = [True if variant in supported else False for variant in variants]
-        assert all(con), info
-
-        return supported
 
     def check_conflicts(self, trainer: Trainer, callback: Callback):
         condition = any(type(i) == callback for i in trainer.callbacks)

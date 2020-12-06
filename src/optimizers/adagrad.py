@@ -3,7 +3,7 @@ from typing import Generator
 from torch.nn.parameter import Parameter
 from torch.optim import Adagrad as TorchAdagrad
 
-from src.base.optimizers import BaseOptim
+from src.base.optimizer import BaseOptim
 
 
 class Adagrad(BaseOptim, TorchAdagrad):

@@ -45,7 +45,7 @@ class DefaultResnet(DefaultModel):
     activation: torch.nn.Module = nn.ReLU(inplace=True)
 
     # Additional features
-    dropout: float = 0.5  # final
+    dropout: float = 0  # final
     additional_dense_layers: int = 0  # final
     xresnet: bool = True  # final
 

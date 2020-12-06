@@ -4,16 +4,16 @@ from typing import Any, Dict, List, Tuple, Union
 import pandas as pd
 import torch
 
-from pytorch_lightning.callbacks.base import Callback
 from pytorch_lightning.trainer.trainer import Trainer
 from tabulate import tabulate
 from torch.nn import Module
 
-from src.base.metrics import BaseMetric
+from src.base.callback import BaseCallback
+from src.base.metric import BaseMetric
 from src.utils.plots import save_columns_plot
 
 
-class CalculateMetrics(Callback):
+class CalculateMetrics(BaseCallback):
     """
     Callback callculating metrics after every epoch.
     Metrics are saved in output directory "metrics"

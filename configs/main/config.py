@@ -3,7 +3,7 @@ from configs import (
     DefaultBindedHooks,
     DefaultCallbacks,
     DefaultConfig,
-    DefaultEvaluation,
+    DefaultEvaluations,
     DefaultMetrics,
     DefaultOptimizersAndSchedulers,
     DefaultPostprocessors,
@@ -24,5 +24,5 @@ config = DefaultConfig(
     augmentations=DefaultAugmentations,
     postprocessors=DefaultPostprocessors,
     prediction=DefaultPrediction,
-    evaluations=DefaultEvaluation,
+    evaluations=DefaultEvaluations,
 )

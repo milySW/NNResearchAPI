@@ -1,15 +1,18 @@
 from pathlib import Path
+from types import SimpleNamespace
+from typing import Optional
 
 import torch
 
 from torch.nn import Module
 from tqdm import tqdm
 
+from src.loaders import DataLoader
 from src.models import load_model
 from src.models.utils import save_prediction
-from src.utils.collections import batch_list
+from src.utils.checkers import image_folder
 from src.utils.decorators import timespan
-from src.utils.loaders import load_variable, load_x
+from src.utils.loaders import load_variable
 from src.utils.logging import get_logger
 from src.utils.params import ParamsBuilder
 from src.utils.transforms import input_transform, pred_transform
@@ -19,7 +22,11 @@ logger = get_logger("Predictor")
 
 @timespan("Prediction")
 def main(
-    config_path: Path, input_path: Path, model_path: Path, predict_path: Path
+    config_path: Path,
+    input_path: Path,
+    model_path: Path,
+    predict_path: Path,
+    val_loader: Optional[DataLoader] = None,
 ) -> Path:
     """
     Main function responsible for prediction with passed model.
@@ -35,30 +42,37 @@ def main(
     """
 
     config = load_variable("config", config_path)
-    dtype = config.training.dtype
 
-    x = load_x(input_path, dtype=dtype)
-    batches = batch_list(x, config.prediction.batch_size)
+    if val_loader is None:
+        pipeline = False
+        _, val_loader, _ = DataLoader.get_loaders(input_path, config=config)
+
+    else:
+        pipeline = True
+
+    is_image_folder = image_folder(val_loader.dataset)
 
     model: Module = load_model(config, model_path)
     model.eval()
 
     all_preds = torch.tensor([])
-    for input_data in tqdm(batches, desc="Predictions"):
-        x, _ = input_transform(
-            input_data=input_data,
-            input_labels=None,
-            preprocessors=config.preprocessors,
-        )
+    for inputs, labels in tqdm(val_loader, desc="Predictions"):
 
-        predictions = model(x)
+        if not is_image_folder and not pipeline:
+            inputs, _ = input_transform(
+                input_data=inputs,
+                input_labels=labels,
+                preprocessors=config.preprocessors,
+            )
+
+        predictions = model(inputs)
         processed_preds = pred_transform(predictions, config.postprocessors)
 
         all_preds = torch.cat([all_preds, processed_preds])
 
     save_prediction(predictions=all_preds, output_path=predict_path)
 
-    return predict_path.parent.parent
+    return SimpleNamespace(root=predict_path.parent.parent)
 
 
 if __name__ == "__main__":

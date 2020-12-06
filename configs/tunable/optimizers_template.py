@@ -1,5 +1,5 @@
 from configs.base.base import BaseConfig
-from src.base.schedulers import BaseScheduler
+from src.base.scheduler import BaseScheduler
 from src.optimizers import Adam
 from src.optimizers.schedulers import ExponentialLR
 
