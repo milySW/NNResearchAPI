@@ -4,15 +4,15 @@ import torch
 
 from tqdm import tqdm
 
+from src.loaders import DataLoader
 from src.models import load_model
 from src.models.utils import save_prediction
 from src.utils.checkers import set_param
-from src.utils.collections import batch_list, unpack_string
+from src.utils.collections import unpack_string
 from src.utils.decorators import timespan
-from src.utils.loaders import load_x
 from src.utils.logging import get_logger
 from src.utils.params import ParamsBuilder
-from src.utils.transforms import input_transform, pred_transform
+from src.utils.transforms import pred_transform
 from tools.ensamble.utils import get_config
 from tools.ensamble.vote import two_classifiers
 from tools.evaluate import evaluate
@@ -75,8 +75,7 @@ def main(
             name="batch_size",
         )
 
-    x = load_x(input_path, dtype=data_type)
-    batches = batch_list(x, prediction_bs)
+    _, val_loader, _ = DataLoader.get_loaders(input_path, config=main_config)
 
     model_preds = []
 
@@ -85,13 +84,7 @@ def main(
         config = model_with_config["config"]
 
         all_preds = torch.tensor([])
-        for input_data in tqdm(batches, desc="Predictions"):
-            x, _ = input_transform(
-                input_data=input_data,
-                input_labels=None,
-                preprocessors=config.preprocessors,
-            )
-
+        for x, _ in tqdm(val_loader, desc="Predictions"):
             predictions = model(x)
             processed_preds = pred_transform(
                 preds=predictions, postprocessors=config.postprocessors
@@ -101,7 +94,7 @@ def main(
 
         model_preds.append(all_preds)
 
-    predictions = two_classifiers(model_preds)
+    predictions = two_classifiers(model_preds, loader=val_loader)
     save_prediction(
         predictions=predictions, output_path=root_path / predict_path,
     )
@@ -113,6 +106,7 @@ def main(
             input_path=input_path,
             predict_path=root_path / predict_path,
             evaluate_path=root_path / evaluate_path,
+            val_loader=val_loader,
         )
 
 

@@ -13,7 +13,7 @@
                 "--config_path",
                 "configs/main/config.py",
                 "--dataset_path",
-                ".data",
+                ".data"
             ],
             "justMyCode": false,
             "cwd": "${workspaceFolder}",
@@ -84,7 +84,7 @@
                 "--predict_path",
                 "predictions/predictions.npy",
                 "--evaluate_path",
-                "evaluations",
+                "evaluations"
             ],
             "justMyCode": false,
             "cwd": "${workspaceFolder}",
@@ -103,9 +103,9 @@
                 "--root_path",
                 ".data/models",
                 "--experiments",
-                "resnet18/262, resnet18/264",
+                "resnet18/481, rnn/55",
                 "--model_paths",
-                "checkpoints/epoch=53.ckpt, checkpoints/epoch=33.ckpt",
+                "checkpoints/epoch=10.ckpt, checkpoints/epoch=61.ckpt",
                 "--input_path",
                 ".data",
                 "--predict_path",
@@ -113,7 +113,7 @@
                 "--config_path",
                 "configs",
                 "--evaluate_path",
-                "ensemble/two_voting/evaluations",
+                "ensemble/two_voting/evaluations"
             ],
             "justMyCode": false,
             "cwd": "${workspaceFolder}",
@@ -147,6 +147,6 @@
                 "group": "3. Additional Tools",
                 "order": 6
             }
-        },
+        }
     ]
 }

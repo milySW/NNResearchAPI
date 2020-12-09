@@ -58,7 +58,7 @@ def load_default_sets(
     X_test, y_test = load_set(path, ["X_test.npy", "y_test.npy"], dtype)
 
     train, test, valid = (X_train, y_train), (X_val, y_val), (X_test, y_test)
-    sets = dict(train=train, test=test, valid=valid)
+    sets = dict(train=train, valid=valid, test=test)
 
     return sets
 

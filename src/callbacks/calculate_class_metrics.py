@@ -1,7 +1,5 @@
 from typing import Any, Dict, List, Tuple
 
-import numpy as np
-
 from pytorch_lightning.trainer.trainer import Trainer
 from torch.nn import Module
 
@@ -46,9 +44,10 @@ class CalculateClassMetrics(CalculateMetrics):
         self, metric: BaseMetric, kwargs: Dict[str, Any], group: int
     ) -> float:
 
-        indices = np.where(self.labels == group)
-        preds = self.preds[indices]
-        labels = self.labels[indices]
+        argmax_preds = self.preds.argmax(dim=1)
+
+        labels = (self.labels == group).int()
+        preds = (argmax_preds == group).int()
 
         stat = metric(*kwargs)(preds, labels)
         return round(stat.item(), 4)

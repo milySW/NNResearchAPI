@@ -18,6 +18,7 @@ class BaseTransformation(ABC):
         valid: bool = False,
         test: bool = False,
         ratio: float = 1.0,
+        both: bool = False,
     ):
         self.x = x
         self.y = y
@@ -25,6 +26,7 @@ class BaseTransformation(ABC):
         self.valid = valid
         self.test = test
         self.ratio = ratio
+        self.both = both
 
     @property
     def name(self):
@@ -49,9 +51,13 @@ class BaseTransformation(ABC):
         if image_folder(x):
             return data
 
-        if self.x and not collection_is_none(x):
+        if (is_x := self.x and not collection_is_none(x)) and not self.both:
             x = self.transformation(x)
-        if self.y and not collection_is_none(y):
+
+        if (is_y := self.y and not collection_is_none(y)) and not self.both:
             y = self.transformation(y)
+
+        if is_x and is_y and self.both:
+            return self.transformation(data)
 
         return [x, y]

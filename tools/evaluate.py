@@ -56,18 +56,6 @@ def evaluate(
             image=image_folder(val_loader.dataset),
         )
 
-    # Voting tests:
-    # for name, metric in config.metrics.to_dict().items():
-    #     metric_function = metric["metric"](*metric["kwargs"])
-    #     v = metric_function(predictions.argmax(dim=1), targets.argmax(dim=1))
-    #     print(f"{name}: {v}")
-
-    #     mask = targets.argmax(dim=1) == 2
-    #     binary_preds = predictions.argmax(dim=1)[mask]
-    #     binary_targets = targets.argmax(dim=1)[mask]
-    #     v = metric_function(binary_preds, binary_targets)
-    #     print(f"{name}_2: {v}")
-
 
 @timespan("Evaluation")
 def main(

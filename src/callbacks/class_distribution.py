@@ -61,14 +61,16 @@ class ClassDistribution(BaseCallback):
             plt.ylabel("Prawdopodobieńswo")
             plt.title(f"Pewność przy podejmowaniu decyzji dla klasy {_class}")
 
-            path = self.metrics_dir / f"epoch_{trainer.current_epoch}"
+            path = self.dist_dir / f"class_{int(_class)}"
+            path.mkdir(parents=True, exist_ok=True)
+
+            path = path / f"epoch_{trainer.current_epoch}"
 
             plt.savefig(path, transparent=True)
             plt.close()
 
     def on_fit_start(self, trainer: Trainer, pl_module: Module):
-        self.metrics_dir = Path(trainer.default_root_dir) / "distributions"
-        self.metrics_dir.mkdir(parents=True, exist_ok=True)
+        self.dist_dir = Path(trainer.default_root_dir) / "distributions"
 
     def on_train_epoch_start(self, trainer: Trainer, pl_module: Module):
         self.initialize_tensors()

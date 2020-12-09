@@ -10,5 +10,5 @@ class DefaultEvaluations(BaseConfig):
     """
 
     top_losses = TopLosses(
-        loss=CrossEntropyLoss(reduction="none"), k=200, save_plots=False
+        loss=CrossEntropyLoss(reduction="none"), k=200, dim=2, save_plots=False
     )

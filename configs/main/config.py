@@ -1,4 +1,4 @@
-from configs import (
+from configs import (  # noqa
     DefaultAugmentations,
     DefaultBindedHooks,
     DefaultCallbacks,
@@ -10,6 +10,7 @@ from configs import (
     DefaultPrediction,
     DefaultPreprocessors,
     DefaultResnet,
+    DefaultRNN,
     DefaultTraining,
 )
 

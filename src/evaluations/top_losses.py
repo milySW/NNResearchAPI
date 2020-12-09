@@ -13,11 +13,12 @@ from src.utils.plots import save_data_plot
 
 
 class TopLosses(BaseEvaluation):
-    def __init__(self, loss, k=100, save_reports=True, save_plots=True):
+    def __init__(self, loss, k=100, dim=2, save_reports=True, save_plots=True):
         self.check_loss(loss)
 
         self.loss = loss
         self.k = k
+        self.dim = dim
         self.save_reports = save_reports
         self.save_plots = save_plots
 
@@ -116,8 +117,40 @@ class TopLosses(BaseEvaluation):
                 volume = reshaped_volume.permute(1, 2, 0).numpy()
 
                 plt.imsave(root / name, volume)
-            else:
-                save_data_plot(data=volume.squeeze().T, path=root / name)
+
+                continue
+
+            for channel, one_channel_tensor in enumerate(volume):
+                channel_path = root / f"channel_{channel}"
+                channel_path.mkdir(parents=True, exist_ok=True)
+
+                if (length := len(one_channel_tensor.squeeze().shape)) == 2:
+                    one_channel_tensor = one_channel_tensor.squeeze().T
+                    save_data_plot(
+                        data=one_channel_tensor,
+                        path=channel_path / name,
+                        mark_edges=True,
+                    )
+
+                elif length == 1 and self.dim == 2:
+                    size = one_channel_tensor.shape.numel() // 2
+
+                    one_channel_tensor = one_channel_tensor.reshape(2, size)
+                    save_data_plot(
+                        data=one_channel_tensor,
+                        path=channel_path / name,
+                        mark_edges=True,
+                    )
+
+                elif length == 1 and self.dim == 1:
+                    one_channel_tensor = one_channel_tensor.squeeze()
+                    arranged = range(shape.numel())
+
+                    save_data_plot(
+                        data=[arranged, one_channel_tensor],
+                        path=channel_path / name,
+                        mark_edges=False,
+                    )
 
     def save_report(self, output_path: Path):
         root = output_path / self.folder_name / "reports"

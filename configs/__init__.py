@@ -9,6 +9,7 @@ from configs.tunable.hooks_template import DefaultHooks
 from configs.tunable.metrics_template import DefaultMetrics
 from configs.tunable.models.model_template import DefaultModel
 from configs.tunable.models.resnet_template import DefaultResnet
+from configs.tunable.models.rnn_template import DefaultRNN
 from configs.tunable.optimizers_template import (
     DefaultOptimizers,
     DefaultSchedulers,
@@ -38,4 +39,5 @@ __all__ = [
     "SchedulerCommonKwargs",
     "DefaultOptimizersAndSchedulers",
     "DefaultConfig",
+    "DefaultRNN",
 ]

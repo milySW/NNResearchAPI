@@ -68,9 +68,13 @@ def save_csv_plots(data: Dict[str, Path], output: Path, prefix: str):
         save_column_plot(dataframe_dict, col, output)
 
 
-def save_data_plot(data: Iterable, path: Path):
+def save_data_plot(data: Iterable, path: Path, mark_edges: bool = False):
     plt.figure()
     plt.plot(*data)
+
+    if mark_edges:
+        plt.plot(*data.T[0], "ro")
+        plt.plot(*data.T[-1], "ro")
 
     plt.savefig(path, transparent=True)
     plt.close()

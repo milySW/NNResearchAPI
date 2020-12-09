@@ -4,6 +4,7 @@ import torch
 
 from configs import DefaultConfig
 from src.models.resnet_blocks import ResNet
+from src.models.rnn import RNNModel
 
 
 def get_model(config: DefaultConfig):
@@ -15,6 +16,7 @@ def get_model(config: DefaultConfig):
         resnet50=ResNet,
         resnet101=ResNet,
         resnet152=ResNet,
+        rnn=RNNModel,
     )
 
     kwargs = dict(
@@ -23,6 +25,7 @@ def get_model(config: DefaultConfig):
         resnet50=dict(expansion=4, blocks=[3, 4, 6, 3], config=config),
         resnet101=dict(expansion=4, blocks=[3, 4, 23, 3], config=config),
         resnet152=dict(expansion=4, blocks=[3, 8, 36, 3], config=config),
+        rnn=dict(config=config),
     )
 
     assert name in models.keys(), "Could not find model name"
