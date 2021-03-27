@@ -330,5 +330,8 @@ class LitModel(pl.LightningModule):
         length = sum(1 for x in self.parameters())
 
         for index, param in enumerate(self.parameters()):
+            if len(param.data.shape) == 1:
+                continue
+
             if self.freezing_start <= index <= length + self.freezing_stop:
                 param.requires_grad = not freeze

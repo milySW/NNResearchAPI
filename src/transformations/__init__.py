@@ -6,6 +6,7 @@ from src.transformations.diff import Diff
 from src.transformations.flatten import Flatten
 from src.transformations.flip import Flip
 from src.transformations.fourier import Fourier
+from src.transformations.gaussian_noise import GaussianNoise
 from src.transformations.histogramize import Histogramize
 from src.transformations.permute import Permute
 from src.transformations.remove_classes import RemoveClasses
@@ -24,4 +25,5 @@ __all__ = [
     "ConstantChannel",
     "Histogramize",
     "RemoveClasses",
+    "GaussianNoise",
 ]

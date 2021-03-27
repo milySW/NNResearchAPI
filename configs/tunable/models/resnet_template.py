@@ -33,14 +33,14 @@ class DefaultResnet(DefaultModel):
     """
 
     name: str = "resnet18"  # final
-    data_dim: str = "1D"  # final
+    data_dim: str = "2D"  # final
 
     # Architecture
     depth: int = 3  # final
     in_channels: int = 1  # final
     out_channels: int = 4  # final
-    kernel_size: int = 12  # final
-    f_maps: int = 16  # final
+    kernel_size: int = 3  # final
+    f_maps: int = 32  # final
     bias: bool = True  # final
     activation: torch.nn.Module = nn.ReLU(inplace=True)
 
@@ -50,5 +50,5 @@ class DefaultResnet(DefaultModel):
     xresnet: bool = True  # final
 
     # Pretrained weights (Supported only for 2d)
-    freezing_start: int = 9 if xresnet else 3
+    freezing_start: int = 9 if xresnet else 0
     freezing_stop: int = -2

@@ -9,6 +9,7 @@ import torch
 from src.base.evaluation import BaseEvaluation
 from src.base.loss import BaseLoss
 from src.base.model import LitModel
+from src.utils.features import emsd2d
 from src.utils.plots import save_data_plot
 
 
@@ -106,7 +107,10 @@ class TopLosses(BaseEvaluation):
         zipped_data = zip(count(), self.preds, self.targets, self.losses, data)
 
         for i, pred, target, loss, volume in zipped_data:
-            name = f"top={i + 1}_target={target}_pred={pred}_loss={loss}.png"
+            mse = emsd2d(volume.squeeze().reshape(2, 512), lag=400)
+
+            var = (i + 1, target, pred, loss, mse)
+            name = "top={}_target={}_pred={}_loss={}, mse={}.png".format(*var)
 
             shape = volume.shape
 

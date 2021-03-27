@@ -7,7 +7,7 @@ from pytorch_lightning.profiler import BaseProfiler
 from configs.base.base import BaseConfig
 from src.base.loss import BaseLoss
 from src.callbacks import ModelCheckpoint
-from src.losses import MSELoss
+from src.losses import CrossEntropyLoss, MSELoss  # noqa
 from src.utils.loaders import load_default_sets, load_image_sets  # noqa
 
 
@@ -48,7 +48,6 @@ class DefaultTraining(BaseConfig):
     # Functions
     loader_func: Callable = load_default_sets
     loss: BaseLoss = MSELoss()
-
     # Saving
     experiments_dir: str = ".data/models"
     save: bool = ModelCheckpoint(monitor="val_accuracy", mode="max")

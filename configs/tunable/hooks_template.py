@@ -1,4 +1,5 @@
 from configs.base.base import BaseConfig
+from src.hooks.selective_backprop import SelectiveBackprop  # noqa
 
 
 class DefaultHooks(BaseConfig):
@@ -18,4 +19,4 @@ class DefaultHooks(BaseConfig):
         certain behavior or returns certain data, which makes them unbindable.
     """
 
-    # selective_backprop = SelectiveBackprop(min_sample=0.5, min_loss=0.8)
+    # selective_backprop = SelectiveBackprop(min_sample=0.5, min_loss=0.98)

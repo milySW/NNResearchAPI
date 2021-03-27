@@ -100,12 +100,13 @@ class SelectiveBackprop(BaseHook):
         logger.info(f"Sample ratio used in epoch {self.epoch}: {sample_perc}")
 
     def get_loss_idxs(self, losses: torch.Tensor) -> List:
+        losses = losses.sum(dim=1)
         min_sample = math.ceil(len(losses) * self.min_sample)
         sorted_losses, indices = torch.sort(losses, descending=True)
 
         sorted_losses /= sorted_losses.sum()
         losses_cdf = torch.cumsum(sorted_losses, dim=0)
 
-        min_loss = torch.min(losses_cdf >= self.min_loss, dim=0)[1] + 1
+        min_loss = (losses_cdf >= self.min_loss).nonzero()[0][0]
         indices = indices[: max(min_sample, min_loss)].tolist()
         return indices

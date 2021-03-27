@@ -74,7 +74,7 @@ class CalculateMetrics(BaseCallback):
     ):
 
         metric, _, kwargs = metric_data.values()
-        stat = metric(*kwargs)(self.preds, self.labels)
+        stat = metric(**kwargs)(self.preds, self.labels)
         self.series[name] = round(stat.item(), 4)
 
     def calculate_metrics(self, prefix: str):

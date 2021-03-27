@@ -32,15 +32,15 @@ class DefaultPreprocessors(BaseConfig):
     #     test=True,
     # )
 
-    flatten = Flatten(
-        start_dim=-2,
-        end_dim=-1 * 1,
-        x=True,
-        y=False,
-        train=True,
-        valid=True,
-        test=True,
-    )
+    # flatten = Flatten(
+    #     start_dim=-2,
+    #     end_dim=-1 * 1,
+    #     x=True,
+    #     y=False,
+    #     train=True,
+    #     valid=True,
+    #     test=True,
+    # )
 
     # remove_classes = RemoveClasses(
     #     classes=[0, 1 * 1],
@@ -76,8 +76,26 @@ class DefaultPreprocessors(BaseConfig):
     #     main_class=2, x=False, y=True, train=True, valid=True, test=True,
     # )
 
-    # auto_covariation = AutoCov(
-    #     size=64 * 1 * 1 * 1 * 1 * 1 * 1,
+    # auto_covariation_1 = AutoCov(
+    #     size=8 * 1 * 1 * 1 * 1 * 1 * 1,
+    #     x=True,
+    #     y=False,
+    #     train=True,
+    #     valid=True,
+    #     test=True,
+    # )
+
+    # auto_covariation_2 = AutoCov(
+    #     size=16 * 1 * 1 * 1 * 1 * 1 * 1,
+    #     x=True,
+    #     y=False,
+    #     train=True,
+    #     valid=True,
+    #     test=True,
+    # )
+
+    # auto_covariation_3 = AutoCov(
+    #     size=24 * 1 * 1 * 1 * 1 * 1 * 1,
     #     x=True,
     #     y=False,
     #     train=True,

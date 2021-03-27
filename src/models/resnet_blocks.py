@@ -9,6 +9,12 @@ from configs import DefaultConfig, DefaultResnet
 from src.base.model import LitModel
 from src.models.utils import LayersMap, conv_layer, load_state_dict
 from src.utils.collections import filter_by_prefix, split, unique_keys
+from src.utils.features import (  # noqa
+    asymmetry2d,
+    efficiency2d,
+    emsd2d,
+    fractal_dimension2d,
+)
 from src.utils.logging import get_logger
 
 logger = get_logger("ResNet")
@@ -157,10 +163,7 @@ class ResNetBlock(pl.LightningModule):
 
     def forward(self, x):
         identity = self.id_conv(self.pool(x))
-        shape = identity.shape
-
-        conv = nn.functional.interpolate(self.convs(x), shape[-1])
-        return self.activation(conv + identity)
+        return self.activation(self.convs(x) + identity)
 
 
 class ResNet(LitModel):
@@ -402,8 +405,27 @@ class ResNet(LitModel):
         return self.f_maps // exp if i == 0 else self.f_maps * 2 ** (i - 1)
 
     def forward(self, x):
+        # x = self.add_characteristics(x)
+
         for layer in self.layers:
             x = layer(x)
+        return x
+
+    def add_characteristics(self, x):
+        for index, layer in enumerate(self.layers):
+            if index == 0:
+                characteristic = torch.ones((x.shape[0], 3))
+
+                for i in range(x.shape[0]):
+                    characteristic[i][0] = emsd2d(x[i][0].cpu(), lag=100)
+                    characteristic[i][1] = asymmetry2d(x[i][0].cpu())
+                    characteristic[i][2] = efficiency2d(x[i][0].cpu())
+
+            x = layer(x)
+
+            if isinstance(layer, nn.Flatten):
+                x = torch.cat([x, characteristic.to(x.device)], dim=1)
+
         return x
 
     def tune_with_depth(
@@ -464,4 +486,5 @@ class ResNet(LitModel):
 
             pretrained_layers.extend(list(weights_dict.keys()))
 
+        self.custom_model_dict = model_dict
         return model_dict, pretrained_layers

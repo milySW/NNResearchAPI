@@ -28,7 +28,8 @@ def asymmetry2d(data: torch.Tensor) -> float:
     return -np.log(1 - (nominator / denominator))
 
 
-def distances(x: torch.Tensor, y: torch.Tensor, lag: int = 1) -> float:
+def distances(data: torch.Tensor, lag: int = 1) -> float:
+    x, y = data
     result = torch.zeros_like(x)
 
     for index in range(x.shape.numel() - lag):
@@ -54,7 +55,7 @@ def largest_distance(data: torch.Tensor, patience: int = 1000) -> float:
         i, j = np.unravel_index(dist_mat.argmax(), dist_mat.shape)
 
         x, y = torch.tensor(candidates[i]), torch.tensor(candidates[j])
-        result = distances(x, y).sum().item()
+        result = distances([x, y]).sum().item()
 
         if not math.isnan(result) and result > 0:
             return result
@@ -66,7 +67,7 @@ def fractal_dimension2d(data: torch.Tensor) -> float:
     x, y = data
 
     N = x.shape.numel()
-    L = distances(x, y).sum().item()
+    L = distances([x, y]).sum().item()
     d = largest_distance(data)
 
     nominator = np.log(N)
@@ -75,21 +76,18 @@ def fractal_dimension2d(data: torch.Tensor) -> float:
     return nominator / denominator
 
 
-def efficiency2d(data: torch.Tensor) -> float:
-    N = data.shape[-1]
-    displacements = distances(*data)
-
-    diff = displacements[1:] - displacements[:-1]
-
-    nominator = ((displacements[-1] - displacements[0]) ** 2).item()
-    denominator = (N - 1) * (diff ** 2).sum().item()
-
-    return nominator / denominator
-
-
-def emsd(x: torch.Tensor, y: torch.Tensor, lag: int, k: int = 2) -> float:
-
+def emsd2d(data: torch.Tensor, lag: int) -> float:
+    x, y = data
     N = x.shape[-1]
-    r = (x[lag:N] - x[: N - lag]) ** 2 + (y[lag:N] - y[: N - lag]) ** k
+    r = (x[lag:N] - x[: N - lag]) ** 2 + (y[lag:N] - y[: N - lag]) ** 2
 
     return r.mean()
+
+
+def efficiency2d(data: torch.Tensor) -> float:
+    N = data.shape[-1]
+
+    nominator = emsd2d(data, lag=N - 1)
+    denominator = emsd2d(data, lag=1)
+
+    return nominator / denominator

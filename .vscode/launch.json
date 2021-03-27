@@ -57,9 +57,9 @@
                 "--input_path",
                 ".data",
                 "--predict_path",
-                ".data/models/resnet18/235/predictions/predictions.npy",
+                ".data/models/resnet18/531/predictions/predictions.npy",
                 "--evaluate_path",
-                ".data/models/resnet18/235/evaluations"
+                ".data/models/resnet18/531/evaluations"
             ],
             "justMyCode": false,
             "cwd": "${workspaceFolder}",

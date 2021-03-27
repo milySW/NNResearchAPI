@@ -1,11 +1,22 @@
-from pytorch_lightning.metrics.classification import Accuracy as PLAccuracy
+import numpy as np
+import torch
 
-from src.base.metric import BaseMetric
+from sklearn.metrics import confusion_matrix
 
 
-class Accuracy(BaseMetric, PLAccuracy):
-    __doc__ = PLAccuracy.__doc__
+class Accuracy:
     extremum = "max"
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    def __call__(self, preds: torch.Tensor, target: torch.Tensor):
+        if len(target.unique()) == 4:
+            preds = preds.argmax(dim=1).type(torch.long)
+            target = target.type(torch.long)
+
+            matrix = confusion_matrix(target, preds)
+            numerator = np.sum(matrix.diagonal())
+
+        else:
+            matrix = confusion_matrix(target, preds)
+            numerator = matrix[0][0] + matrix[1][1]
+
+        return numerator / torch.tensor(matrix).sum().item()

@@ -1,5 +1,5 @@
 from configs.base.base import BaseConfig
-from src.metrics import Accuracy
+from src.metrics import F1, Accuracy, Precision, Recall
 
 
 class DefaultMetrics(BaseConfig):
@@ -18,3 +18,6 @@ class DefaultMetrics(BaseConfig):
     """
 
     accuracy = dict(metric=Accuracy, plot=True, kwargs={})
+    precision = dict(metric=Precision, plot=True, kwargs={},)
+    recall = dict(metric=Recall, plot=True, kwargs={})
+    f1_score = dict(metric=F1, plot=True, kwargs={},)

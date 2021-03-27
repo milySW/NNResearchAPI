@@ -22,16 +22,18 @@ class AutoCov(BaseTransformation):
 
     @staticmethod
     def core_transofmation(data: Iterable, size: int) -> torch.Tensor:
-        shape = (*data.shape[:-1], data.shape[-1] - size)
-        data = data.squeeze()
         N = data.shape[-1]
+        shape = (data.shape[0], 1, *data.shape[-2:])
 
-        auto_cov_data = torch.zeros(size=(*data.shape[:-1], N - size))
+        auto_cov_data = torch.zeros(size=shape)
 
         for row, vector in enumerate(data):
             mean = vector.mean()
 
-            var = (vector[size:] - mean) * (vector[:-size] - mean)
-            auto_cov_data[row] = var
+            var = (vector[0, :, size:] - mean) * (vector[0, :, :-size] - mean)
+            auto_cov_data[row][0][:, : N - size] = var
 
-        return (1 / (N - 1)) * auto_cov_data.reshape(shape)
+        tensor = (1 / (N - 1)) * auto_cov_data
+        tensor = torch.cat([data, tensor], dim=1)
+
+        return tensor

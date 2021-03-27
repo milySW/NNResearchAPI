@@ -4,7 +4,7 @@ from typing import List
 import torch
 
 from src.loaders import DataLoader
-from src.utils.features import emsd  # noqa
+from src.utils.features import emsd2d  # noqa
 
 
 def two_classifiers(
