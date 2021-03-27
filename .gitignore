@@ -6,8 +6,6 @@
 /setup/.config
 /.vscode/.ropeproject
 /lightning_logs
-/docs/build
-/docs/_build
 /docs/source/_static
 
 __pycache__/

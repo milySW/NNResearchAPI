@@ -1,0 +1,599 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>src.callbacks.collect_best_metrics &mdash; NNResearchAPI 0.0.1 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+    <link rel="stylesheet" href="../../../_static/sphinx_paramlinks.css" type="text/css" />
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../../genindex.html"/>
+        <link rel="search" title="Search" href="../../../search.html"/>
+    <link rel="top" title="NNResearchAPI 0.0.1 documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> NNResearchAPI
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../configs.html">Configs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models.html">Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../trainer.html">Trainer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../losses.html">Losses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../metrics.html">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../transformations.html">Transformations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../optimizers.html">Optimizers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../hooks.html">Hooks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../callbacks.html">Callbacks</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tools.html">Main Tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tools.html#pipelines">Pipelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tools.html#additional-tools">Additional tools</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">NNResearchAPI</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>src.callbacks.collect_best_metrics</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for src.callbacks.collect_best_metrics</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">operator</span>
+
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">shutil</span> <span class="kn">import</span> <span class="n">copytree</span><span class="p">,</span> <span class="n">rmtree</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">pytorch_lightning.callbacks.base</span> <span class="kn">import</span> <span class="n">Callback</span>
+<span class="kn">from</span> <span class="nn">pytorch_lightning.trainer.trainer</span> <span class="kn">import</span> <span class="n">Trainer</span>
+<span class="kn">from</span> <span class="nn">torch.nn</span> <span class="kn">import</span> <span class="n">Module</span>
+
+<span class="kn">from</span> <span class="nn">src.base.losses</span> <span class="kn">import</span> <span class="n">BaseLoss</span>
+<span class="kn">from</span> <span class="nn">src.callbacks.calculate_class_metrics</span> <span class="kn">import</span> <span class="n">CalculateClassMetrics</span>
+<span class="kn">from</span> <span class="nn">src.callbacks.calculate_metrics</span> <span class="kn">import</span> <span class="n">CalculateMetrics</span>
+
+
+<span class="k">class</span> <span class="nc">CollectBest</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Callback collecting best metrics.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variants</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;val&quot;</span><span class="p">],</span> <span class="n">best</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">supported</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_variant</span><span class="p">(</span><span class="n">variants</span><span class="o">=</span><span class="n">variants</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">variants</span> <span class="o">=</span> <span class="n">variants</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">best</span> <span class="o">=</span> <span class="n">best</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">best_index</span> <span class="o">=</span> <span class="s2">&quot;best&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">history_filename</span> <span class="o">=</span> <span class="s2">&quot;history.csv&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">best_dir_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;best_metrics&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">metrics_dir</span> <span class="o">=</span> <span class="bp">NotImplemented</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">check_variant</span><span class="p">(</span><span class="n">variants</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]):</span>
+        <span class="n">supported</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;val&quot;</span><span class="p">,</span> <span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">]</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Variants not supported. Supported variants: </span><span class="si">{</span><span class="n">supported</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="n">con</span> <span class="o">=</span> <span class="p">[</span><span class="kc">True</span> <span class="k">if</span> <span class="n">variant</span> <span class="ow">in</span> <span class="n">supported</span> <span class="k">else</span> <span class="kc">False</span> <span class="k">for</span> <span class="n">variant</span> <span class="ow">in</span> <span class="n">variants</span><span class="p">]</span>
+        <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">con</span><span class="p">),</span> <span class="n">info</span>
+
+        <span class="k">return</span> <span class="n">supported</span>
+
+    <span class="k">def</span> <span class="nf">check_conflicts</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">:</span> <span class="n">Trainer</span><span class="p">,</span> <span class="n">callback</span><span class="p">:</span> <span class="n">Callback</span><span class="p">):</span>
+        <span class="n">condition</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">==</span> <span class="n">callback</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">trainer</span><span class="o">.</span><span class="n">callbacks</span><span class="p">)</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="s2">&quot;Don&#39;t use </span><span class="si">{}</span><span class="s2"> wrapper with parent callback </span><span class="si">{}</span><span class="s2">.&quot;</span>
+        <span class="n">names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span> <span class="n">callback</span><span class="o">.</span><span class="vm">__name__</span>
+
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">condition</span><span class="p">,</span> <span class="n">info</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="o">*</span><span class="n">names</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">condtition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">col</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">any</span><span class="p">(</span><span class="kc">True</span> <span class="k">for</span> <span class="n">variant</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">variants</span> <span class="k">if</span> <span class="n">variant</span> <span class="ow">in</span> <span class="n">col</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">extract_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">splited</span> <span class="o">=</span> <span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">splited</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">supported</span><span class="p">:</span>
+            <span class="k">del</span> <span class="n">splited</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">splited</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">isnumeric</span><span class="p">():</span>
+            <span class="k">del</span> <span class="n">splited</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">splited</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">set_paths</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_root_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="n">Path</span><span class="p">]:</span>
+
+        <span class="n">metric_subdir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">best_dir_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">best_index</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="n">best_metric_dir</span> <span class="o">=</span> <span class="n">model_root_dir</span> <span class="o">/</span> <span class="n">metric_subdir</span>
+        <span class="n">history_file</span> <span class="o">=</span> <span class="n">best_metric_dir</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">history_filename</span>
+        <span class="n">best_last_file</span> <span class="o">=</span> <span class="n">best_metric_dir</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">subdir</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_file_name</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">history_file</span> <span class="o">=</span> <span class="n">history_file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">best_last_file</span> <span class="o">=</span> <span class="n">best_last_file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">best_metric_dir</span> <span class="o">=</span> <span class="n">best_metric_dir</span>
+
+    <span class="k">def</span> <span class="nf">get_new_metric</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">root_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
+        <span class="n">new_metric</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">new_metric</span> <span class="o">=</span> <span class="n">new_metric</span><span class="o">.</span><span class="n">rename_axis</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">best_index</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">new_metric</span>
+
+    <span class="k">def</span> <span class="nf">add_new_metric</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_metric</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+
+        <span class="n">hist</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history_file</span><span class="p">)</span>
+        <span class="n">hist</span> <span class="o">=</span> <span class="n">hist</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">best_index</span><span class="p">)</span>
+
+        <span class="n">hist</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">new_metric</span><span class="p">,</span> <span class="n">hist</span><span class="p">],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,)</span>
+        <span class="k">return</span> <span class="n">hist</span><span class="o">.</span><span class="n">rename_axis</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">best_index</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">create_best_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">history</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+        <span class="n">copytree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">best_metric_dir</span><span class="p">)</span>
+        <span class="n">history</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history_file</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">replace_best_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">history</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+        <span class="n">rmtree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">best_metric_dir</span><span class="p">)</span>
+        <span class="n">copytree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">best_metric_dir</span><span class="p">)</span>
+        <span class="n">history</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history_file</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">prepare</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">extremum</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">Path</span><span class="p">,</span> <span class="n">Path</span><span class="p">]:</span>
+
+        <span class="n">func</span> <span class="o">=</span> <span class="nb">max</span> <span class="k">if</span> <span class="n">extremum</span> <span class="o">==</span> <span class="s2">&quot;max&quot;</span> <span class="k">else</span> <span class="nb">min</span>
+
+        <span class="k">if</span> <span class="s2">&quot;test&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">name</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">best</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_frame</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">last_path</span><span class="p">)</span>
+
+        <span class="n">stat</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">func</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">))</span>
+
+        <span class="n">root_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics_dir</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_paths</span><span class="p">(</span><span class="n">root_dir</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;model_index&quot;</span><span class="p">:</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">metrics_dir</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">name</span><span class="p">],</span> <span class="n">name</span><span class="p">:</span> <span class="p">[</span><span class="n">stat</span><span class="p">]}</span>
+        <span class="n">new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_new_metric</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">root_dir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">metrics_dir</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">stat</span><span class="p">,</span> <span class="n">new</span>
+
+    <span class="k">def</span> <span class="nf">get_extremum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+
+        <span class="n">metric_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">var</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metrics</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">metric_name</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">extremum</span> <span class="o">=</span> <span class="n">var</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;metric&quot;</span><span class="p">,</span> <span class="n">BaseLoss</span><span class="p">)</span><span class="o">.</span><span class="n">extremum</span>
+
+        <span class="k">return</span> <span class="n">extremum</span>
+
+    <span class="k">def</span> <span class="nf">collect</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">current_statistic</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">new_metric</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+        <span class="n">extremum</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="n">best_metrics</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history_file</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">best_metrics</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Column </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2"> doesn&#39;t exist&quot;</span>
+
+        <span class="n">sign</span> <span class="o">=</span> <span class="n">operator</span><span class="o">.</span><span class="n">lt</span> <span class="k">if</span> <span class="n">extremum</span> <span class="o">==</span> <span class="s2">&quot;max&quot;</span> <span class="k">else</span> <span class="n">operator</span><span class="o">.</span><span class="n">gt</span>
+        <span class="k">if</span> <span class="n">sign</span><span class="p">(</span><span class="n">best_metrics</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">current_statistic</span><span class="p">):</span>
+            <span class="n">history</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_new_metric</span><span class="p">(</span><span class="n">new_metric</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">replace_best_dir</span><span class="p">(</span><span class="n">history</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">collect_best_metric</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">extremum</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">current_statistic</span><span class="p">,</span> <span class="n">new_metric</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prepare</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">extremum</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">best_last_file</span><span class="o">.</span><span class="n">is_file</span><span class="p">()</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">history_file</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">collect</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">current_statistic</span><span class="o">=</span><span class="n">current_statistic</span><span class="p">,</span>
+                <span class="n">new_metric</span><span class="o">=</span><span class="n">new_metric</span><span class="p">,</span>
+                <span class="n">extremum</span><span class="o">=</span><span class="n">extremum</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">create_best_dir</span><span class="p">(</span><span class="n">history</span><span class="o">=</span><span class="n">new_metric</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">collect_best_metrics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">:</span> <span class="n">Trainer</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_final_metrics</span><span class="p">()</span>
+
+        <span class="n">cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_frame</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">condtition</span><span class="p">(</span><span class="n">col</span><span class="p">)]</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">:</span>
+            <span class="n">extremum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_extremum</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">collect_best_metric</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">extremum</span><span class="o">=</span><span class="n">extremum</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="CollectBestMetrics"><a class="viewcode-back" href="../../../callbacks.html#src.callbacks.CollectBestMetrics">[docs]</a><span class="k">class</span> <span class="nc">CollectBestMetrics</span><span class="p">(</span><span class="n">CalculateMetrics</span><span class="p">,</span> <span class="n">CollectBest</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extension of :class:`CalculateMetrics` callback. It&#39;s forbidden to</span>
+<span class="sd">    use them together. Callback first use initiate directory with</span>
+<span class="sd">    best metrics per currently used architecture. At the end of next</span>
+<span class="sd">    runs final metrics will be compared with best metrics currently</span>
+<span class="sd">    saved in directory &quot;best_{metric_name}&quot;. Every record better</span>
+<span class="sd">    than previous ones will be added to file history.csv with info</span>
+<span class="sd">    about experiment number. Furthermore experiment directory</span>
+<span class="sd">    content will be saved as backup in &quot;best_{metric_name}&quot; directory.</span>
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">        List[str] variants: List of supported variants [&#39;&#39;, &#39;test&#39;, &#39;val&#39;]</span>
+<span class="sd">        bool best: Flag responsible for checking best metrics instead of last</span>
+
+<span class="sd">    Output:</span>
+
+<span class="sd">        - `history.csv`: File with history of models with best metric</span>
+<span class="sd">        - content of experiment run directory</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">on_fit_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">:</span> <span class="n">Trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">:</span> <span class="n">Module</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">on_fit_start</span><span class="p">(</span><span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_conflicts</span><span class="p">(</span><span class="n">trainer</span><span class="o">=</span><span class="n">trainer</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="n">CalculateMetrics</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">on_fit_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">:</span> <span class="n">Trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">:</span> <span class="n">Module</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">collect_best_metrics</span><span class="p">(</span><span class="n">trainer</span><span class="o">=</span><span class="n">trainer</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CollectBestClassMetrics"><a class="viewcode-back" href="../../../callbacks.html#src.callbacks.CollectBestClassMetrics">[docs]</a><span class="k">class</span> <span class="nc">CollectBestClassMetrics</span><span class="p">(</span><span class="n">CalculateClassMetrics</span><span class="p">,</span> <span class="n">CollectBest</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extension of :class:`CalculateClassMetrics` callbck. It&#39;s forbidden to</span>
+<span class="sd">    use them together. Callback first use initiate directory with</span>
+<span class="sd">    best metrics per currently used architecture. At the end of next</span>
+<span class="sd">    runs final metrics will be compared with best metrics currently</span>
+<span class="sd">    saved in directory &quot;best_{metric_name}&quot;. Every record better</span>
+<span class="sd">    than previous ones will be added to file history.csv with info</span>
+<span class="sd">    about experiment number. Furthermore experiment directory</span>
+<span class="sd">    content will be saved as backup in &quot;best_{metric_name}&quot; directory.</span>
+
+<span class="sd">    Parameters:</span>
+
+<span class="sd">        List[str] variants: List of supported variants [&#39;&#39;, &#39;test&#39;, &#39;val&#39;]</span>
+<span class="sd">        bool best: Flag responsible for checking best metrics instead of last</span>
+
+<span class="sd">    Output:</span>
+
+<span class="sd">        - `history.csv`: File with history of models with best metric</span>
+<span class="sd">        - content of experiment run directory</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">on_fit_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">:</span> <span class="n">Trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">:</span> <span class="n">Module</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">on_fit_start</span><span class="p">(</span><span class="n">trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_conflicts</span><span class="p">(</span><span class="n">trainer</span><span class="o">=</span><span class="n">trainer</span><span class="p">,</span> <span class="n">callback</span><span class="o">=</span><span class="n">CalculateClassMetrics</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">on_fit_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trainer</span><span class="p">:</span> <span class="n">Trainer</span><span class="p">,</span> <span class="n">pl_module</span><span class="p">:</span> <span class="n">Module</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">collect_best_metrics</span><span class="p">(</span><span class="n">trainer</span><span class="o">=</span><span class="n">trainer</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2020, Miłosz Gajowczyk.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'0.0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE: 'true'
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="../../../_static/language_data.js"></script>
+      <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+    
+
+<style>
+  /* documentation background */
+  .wy-nav-content,
+  code.xref.py.py-class.docutils.literal.notranslate {
+    background: #282424;
+  }
+</style>
+
+<style>
+  /* gold titles */
+  h1,
+  h2,
+  h3,
+  .wy-body-for-nav,
+  .rst-content code.xref,
+  .wy-menu-vertical li.on a,
+  .wy-menu-vertical li.current>a {
+    color: #ddad17;
+  }
+</style>
+
+<style>
+  /* class background */
+  .rst-content dl:not(.docutils) dt {
+    background: #485474;
+  }
+</style>
+
+<style>
+  /* function/method background */
+  .rst-content dl:not(.docutils) dl dt {
+    background: #384454;
+  }
+</style>
+
+<style>
+  /* hyperlinks background */
+  .rst-content code.xref {
+    background: #283444;
+  }
+</style>
+
+<style>
+  /* white letters */
+  .n,
+  .nn,
+  .o,
+  .p,
+  p,
+  .rst-content dl:not(.docutils) dl dt,
+  .rst-content dl:not(.docutils) dt,
+  .MathJax span {
+    color: white;
+  }
+</style>
+
+<style>
+  /* code block background */
+  .codeblock,
+  pre.literal-block,
+  .rst-content .literal-block,
+  .rst-content pre.literal-block,
+  div[class^='highlight'] {
+    background: #201c1c;
+  }
+</style>
+
+<style>
+  /* imports and statements color */
+  .kn,
+  .k,
+  .ow {
+    color: #c37fb0
+  }
+</style>
+
+<style>
+  /* function color */
+  .fm,
+  .nf,
+  .rst-content dl:not(.docutils) code.descname,
+  .rst-content dl:not(.docutils) code.descclassname,
+  cite {
+    color: #dcdcaa
+  }
+</style>
+
+<style>
+  /* class and property color */
+  .nc,
+  .nb,
+  .nd,
+  .pre {
+    color: #4ec9b0
+  }
+</style>
+
+<style>
+  /* code blue */
+  .bp,
+  .si,
+  .sa,
+  .rst-content code,
+  .property,
+  .kc,
+  li {
+    color: #569cd6
+  }
+</style>
+
+<style>
+  /* string color */
+  .s2,
+  .sd {
+    color: #ce9178
+  }
+</style>
+
+<style>
+  /* Variable style */
+  cite {
+    font-style: normal;
+    font-weight: bold;
+  }
+</style>
+
+<style>
+  /* Warning style */
+  .wy-alert.wy-alert-warning,
+  .rst-content .wy-alert-warning.note,
+  .rst-content .attention,
+  .rst-content .caution,
+  .rst-content .wy-alert-warning.danger,
+  .rst-content .wy-alert-warning.error,
+  .rst-content .wy-alert-warning.hint,
+  .rst-content .wy-alert-warning.important,
+  .rst-content .wy-alert-warning.tip,
+  .rst-content .warning,
+  .rst-content .wy-alert-warning.seealso,
+  .rst-content .admonition-todo {
+    background: #c55252;
+  }
+</style>
+
+
+
+
+
+
+
+</body>
+</html>
