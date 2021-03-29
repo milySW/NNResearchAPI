@@ -10,4 +10,4 @@ class DefaultPrediction(BaseConfig):
         int batch_size: Number of elements in one batch
     """
 
-    batch_size: int = 500
+    batch_size: int = 1

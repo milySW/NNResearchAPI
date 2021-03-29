@@ -26,7 +26,7 @@ class DataLoader(PLDataloader):
 
         super().__init__(
             dataset=transformed_dataset,
-            batch_size=self.batch_size,
+            batch_size=1 * 1 * 1,
             shuffle=self.shuffle,
             **kwargs,
         )
@@ -73,7 +73,7 @@ class DataLoader(PLDataloader):
     def set_params(self, config: DefaultConfig, ds_type: str) -> Any:
 
         self.ds_type = ds_type
-        self.batch_size = config.training.batch_size
+        self.batch_size = 1
         self.shuffle = True if ds_type == "train" else False
         self.all_preprocessors = config.preprocessors.value_list()
 

@@ -63,6 +63,34 @@ def load_default_sets(
     return sets
 
 
+def load_szwabin_sets(
+    path: Path, dtype=torch.dtype, preprocessors=None
+) -> Tuple[np.array, ...]:
+
+    X_train, y_train = load_set(path, ["X_train.npy", "y_train.npy"], dtype)
+    X_val, y_val = load_set(path, ["X_val.npy", "y_val.npy"], dtype)
+
+    # Gi_basal_TC685_names
+    # a2AR_basal_TC685_names
+
+    dataset_name = "a2AR_basal_TC685_names"
+    szwabin_data = np.load(path / f"{dataset_name}.npy", allow_pickle=True)
+    data = torch.zeros((szwabin_data.shape[0], 1, 1000, 2))
+
+    for index, (name, trajectory) in enumerate(szwabin_data):
+        data[index, 0, : trajectory.shape[0], :] = torch.tensor(trajectory)
+
+    X_test, y_test = (
+        data,
+        torch.zeros(szwabin_data.shape[0]),
+    )
+
+    train, test, valid = (X_test, y_test), (X_test, y_test), (X_test, y_test)
+    sets = dict(train=train, valid=test, test=valid)
+
+    return sets
+
+
 def load_set(
     path: Path, set_names: List[str], dtype: torch.dtype = torch.float32
 ) -> Tuple[torch.Tensor]:

@@ -65,6 +65,13 @@ def main(
                 preprocessors=config.preprocessors,
             )
 
+        inputs = inputs.permute(0, 1, 3, 2)
+        inputs = inputs.squeeze()
+
+        inputs = inputs[[all(x != torch.tensor([0, 0])) for x in inputs]]
+        inputs = inputs.unsqueeze(dim=0).unsqueeze(dim=0)
+        inputs = inputs.permute(0, 1, 3, 2)
+
         predictions = model(inputs)
         processed_preds = pred_transform(predictions, config.postprocessors)
 

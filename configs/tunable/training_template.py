@@ -8,7 +8,11 @@ from configs.base.base import BaseConfig
 from src.base.loss import BaseLoss
 from src.callbacks import ModelCheckpoint
 from src.losses import CrossEntropyLoss, MSELoss  # noqa
-from src.utils.loaders import load_default_sets, load_image_sets  # noqa
+from src.utils.loaders import (  # noqa
+    load_default_sets,
+    load_image_sets,
+    load_szwabin_sets,
+)
 
 
 class DefaultTraining(BaseConfig):
