@@ -32,15 +32,15 @@ class DefaultPreprocessors(BaseConfig):
     #     test=True,
     # )
 
-    # flatten = Flatten(
-    #     start_dim=-2,
-    #     end_dim=-1 * 1,
-    #     x=True,
-    #     y=False,
-    #     train=True,
-    #     valid=True,
-    #     test=True,
-    # )
+    flatten = Flatten(
+        start_dim=-2,
+        end_dim=-1 * 1,
+        x=True,
+        y=False,
+        train=True,
+        valid=True,
+        test=True,
+    )
 
     # remove_classes = RemoveClasses(
     #     classes=[0, 1 * 1],

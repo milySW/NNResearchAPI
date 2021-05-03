@@ -13,22 +13,24 @@ class Precision:
 
             matrix = confusion_matrix(target, preds)
 
-            prec_1 = matrix[0][0] / (
-                matrix[0][0] + matrix[0][1] + matrix[0][2] + matrix[0][3]
+            precision_1 = matrix[0][0] / (
+                matrix[0][0] + matrix[1][0] + matrix[2][0] + matrix[3][0]
             )
-            prec_2 = matrix[1][1] / (
-                matrix[1][0] + matrix[1][1] + matrix[1][2] + matrix[1][3]
+            precision_2 = matrix[1][1] / (
+                matrix[0][1] + matrix[1][1] + matrix[2][1] + matrix[3][1]
             )
-            prec_3 = matrix[2][2] / (
-                matrix[2][0] + matrix[2][1] + matrix[2][2] + matrix[2][3]
+            precision_3 = matrix[2][2] / (
+                matrix[0][2] + matrix[1][2] + matrix[2][2] + matrix[3][2]
             )
-            prec_4 = matrix[3][3] / (
-                matrix[3][0] + matrix[3][1] + matrix[3][2] + matrix[3][3]
+            precision_4 = matrix[3][3] / (
+                matrix[0][3] + matrix[1][3] + matrix[2][3] + matrix[3][3]
             )
 
-            prec = (prec_1 + prec_2 + prec_3 + prec_4) / 4
+            precision = precision_1 + precision_2 + precision_3 + precision_4
+            precision /= 4
+
         else:
             matrix = confusion_matrix(target, preds)
-            prec = matrix[0][0] / (matrix[0][0] + matrix[0][1])
+            precision = matrix[1][1] / (matrix[0][1] + matrix[1][1])
 
-        return prec
+        return precision

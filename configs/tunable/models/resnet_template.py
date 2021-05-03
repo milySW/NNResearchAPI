@@ -33,13 +33,13 @@ class DefaultResnet(DefaultModel):
     """
 
     name: str = "resnet18"  # final
-    data_dim: str = "2D"  # final
+    data_dim: str = "1D"  # final
 
     # Architecture
     depth: int = 3  # final
     in_channels: int = 1  # final
     out_channels: int = 4  # final
-    kernel_size: int = 3  # final
+    kernel_size: int = 5  # final
     f_maps: int = 32  # final
     bias: bool = True  # final
     activation: torch.nn.Module = nn.ReLU(inplace=True)
